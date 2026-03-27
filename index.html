@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scoreformulier Warhammer Weekend</title>
+  <title>Warhammer Weekend</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -74,6 +74,9 @@
       padding: 20px;
     }
 
+    .round-card {
+      margin-bottom: 20px;
+    }
 
     .round-label, .label {
       display: block;
@@ -84,46 +87,12 @@
     }
 
     .round-label {
-      margin-bottom: 12px;
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -0.01em;
-    }
-
-    .round-card {
-      margin-bottom: 20px;
-    }
-
-    .round-selector {
-      display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 10px;
-      width: 100%;
-    }
-
-    .round-button {
-      width: 100%;
-      min-width: 0;
-      height: 48px;
-      border-radius: 14px;
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: var(--text);
-      font-size: 1rem;
+      margin-bottom: 6px;
+      font-size: 0.82rem;
       font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    }
-
-    .round-button:hover {
-      border-color: #94a3b8;
-    }
-
-    .round-button.active {
-      background: #0f172a;
-      border-color: #0f172a;
-      color: #ffffff;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
     .player-grid {
@@ -148,11 +117,54 @@
       outline: none;
     }
 
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, #475569 50%), linear-gradient(135deg, #475569 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(50% - 3px), calc(100% - 14px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 42px;
+    }
+
     .error {
       margin-top: 6px;
       font-size: 0.9rem;
       color: var(--error);
       min-height: 1.2em;
+    }
+
+    .round-selector {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .round-button {
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .round-button:hover {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+
+    .round-button.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
     }
 
     .toggle-row {
@@ -474,49 +486,34 @@
 
     .hidden { display: none !important; }
 
-    @media (max-width: 900px) {
-      .round-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    }
-
     @media (max-width: 640px) {
-      .round-selector {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .round-button {
-        flex: 0 0 calc((100% - 20px) / 3);
-        max-width: calc((100% - 20px) / 3);
-      }
-
       .actions-bar { align-items: stretch; }
       .button { width: 100%; min-width: 0; }
-      .card-body { padding: 16px; }
-      .card-header { padding: 16px 16px 0; }
+      .round-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1 class="title">Scoreformulier Warhammer Weekend</h1>
+      <h1 class="title">Warhammer Weekend</h1>
       <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
     </div>
 
     <div class="card round-card">
       <div class="card-body">
-        <div class="field-group round-selector-group">
+        <div class="field-group">
           <label class="round-label">Ronde</label>
-          <div class="round-selector" role="tablist" aria-label="Kies ronde">
-            <button type="button" class="round-button" data-round="1">1</button>
-            <button type="button" class="round-button" data-round="2">2</button>
-            <button type="button" class="round-button" data-round="3">3</button>
-            <button type="button" class="round-button" data-round="4">4</button>
-            <button type="button" class="round-button" data-round="5">5</button>
-            <button type="button" class="round-button" data-round="6">6</button>
-            <button type="button" class="round-button" data-round="7">7</button>
+          <div class="round-selector" id="round-selector" role="group" aria-label="Kies een ronde">
+            <button type="button" class="round-button" data-round="1">Ronde 1</button>
+            <button type="button" class="round-button" data-round="2">Ronde 2</button>
+            <button type="button" class="round-button" data-round="3">Ronde 3</button>
+            <button type="button" class="round-button" data-round="4">Ronde 4</button>
+            <button type="button" class="round-button" data-round="5">Ronde 5</button>
+            <button type="button" class="round-button" data-round="6">Ronde 6</button>
+            <button type="button" class="round-button" data-round="7">Ronde 7</button>
           </div>
+          <input id="ronde" type="hidden" />
           <div class="error" id="error-ronde"></div>
         </div>
       </div>
@@ -721,7 +718,7 @@
     let submittedRows = null;
 
     const el = {
-      roundButtons: Array.from(document.querySelectorAll(".round-button")),
+      ronde: document.getElementById("ronde"),
       speler1: {
         naam: document.getElementById("speler1-naam"),
         victoryPoints: document.getElementById("speler1-vp"),
@@ -753,6 +750,7 @@
       summarySpeler2Naam: document.getElementById("summary-speler2-naam"),
       summarySpeler2Score: document.getElementById("summary-speler2-score"),
       summarySpeler2Breakdown: document.getElementById("summary-speler2-breakdown"),
+      roundButtons: Array.from(document.querySelectorAll(".round-button")),
     };
 
     function sanitizeInteger(value) {
@@ -928,16 +926,12 @@
       button.setAttribute("aria-pressed", checked ? "true" : "false");
     }
 
-    function updateRoundButtons() {
-      el.roundButtons.forEach((button) => {
-        const isActive = button.dataset.round === String(form.ronde);
-        button.classList.toggle("active", isActive);
-        button.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-    }
-
     function syncInputsFromState() {
-      updateRoundButtons();
+      el.ronde.value = form.ronde;
+      el.roundButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.round === form.ronde);
+        button.setAttribute("aria-pressed", button.dataset.round === form.ronde ? "true" : "false");
+      });
       el.speler1.naam.value = form.speler1.naam;
       el.speler1.victoryPoints.value = form.speler1.victoryPoints;
       el.speler1.bannersCaptured.value = form.speler1.bannersCaptured;
@@ -992,7 +986,7 @@
     el.roundButtons.forEach((button) => {
       button.addEventListener("click", () => {
         form.ronde = button.dataset.round;
-        updateRoundButtons();
+        syncInputsFromState();
         renderSummary();
       });
     });
@@ -1048,7 +1042,8 @@
         if (!result.ok) throw new Error(result.error || "Opslaan mislukt");
 
         console.log("Verzonden naar Google Sheets:", rows);
-        showSuccess(rows);
+        resetForm();
+        alert("Resultaat succesvol verzonden.");
       } catch (error) {
         console.error("Fout bij verzenden:", error);
         alert("Opslaan naar Google Spreadsheet is mislukt.");
