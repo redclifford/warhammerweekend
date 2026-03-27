@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Warhammer Weekend</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --blue: #1d4ed8;
+      --blue-border: #bfdbfe;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #166534;
+      --error: #dc2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 24px 16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    .card-header {
+      padding: 20px 20px 0;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .round-card {
+      margin-bottom: 20px;
+      max-width: 240px;
+    }
+
+    .round-label, .label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .round-label {
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .player-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+    }
+
+    .error {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      color: var(--error);
+      min-height: 1.2em;
+    }
+
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #f8fafc;
+      padding: 16px;
+    }
+
+    .toggle-choice-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .toggle-choice-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--muted);
+      min-width: 28px;
+      text-align: center;
+    }
+
+    .toggle {
+      position: relative;
+      width: 64px;
+      height: 36px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: #cbd5e1;
+      transition: background 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle.active {
+      background: #0f172a;
+    }
+
+    .toggle-knob {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.25);
+      transition: left 0.2s ease;
+    }
+
+    .toggle.active .toggle-knob {
+      left: 32px;
+    }
+
+    .result-panel {
+      margin-top: 24px;
+      border: 1px solid #dbeafe;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+      padding: 18px;
+      position: relative;
+    }
+
+    .result-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .info-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .info-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid var(--blue-border);
+      background: #ffffff;
+      color: var(--blue);
+      font-size: 0.95rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .info-popover {
+      display: none;
+      position: absolute;
+      top: 38px;
+      right: 0;
+      width: 250px;
+      max-width: calc(100vw - 48px);
+      border: 1px solid var(--blue-border);
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+      padding: 12px 14px;
+      z-index: 30;
+    }
+
+    .info-popover.open { display: block; }
+
+    .info-popover-title {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .info-popover-text {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .result-headline-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .result-headline-text {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .result-badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--blue-border);
+      background: #ffffff;
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .result-stat {
+      border: 1px solid #dbeafe;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.95);
+      padding: 14px;
+    }
+
+    .result-stat-top {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .result-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #334155;
+    }
+
+    .result-score {
+      margin: 6px 0 0;
+      font-size: 1.9rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .result-meta {
+      margin: 8px 0 0;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .result-breakdown {
+      margin: 6px 0 0;
+      font-size: 0.88rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    .actions-wrap {
+      position: sticky;
+      bottom: 16px;
+      margin-top: 24px;
+    }
+
+    .actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+    }
+
+    .actions-text {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.5;
+      flex: 1 1 280px;
+    }
+
+    .button, .secondary-button {
+      height: 48px;
+      border-radius: 14px;
+      padding: 0 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button {
+      border: none;
+      background: #0f172a;
+      color: #ffffff;
+      min-width: 220px;
+    }
+
+    .secondary-button {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+    }
+
+    .success-box {
+      border: 1px solid var(--success-border);
+      background: var(--success-bg);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .success-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--success-text);
+    }
+
+    .success-text {
+      margin: 6px 0 0;
+      color: var(--success-text);
+      line-height: 1.5;
+    }
+
+    .results-list {
+      margin-top: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .result-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #ffffff;
+      padding: 16px;
+    }
+
+    .result-json-title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 0.9rem;
+      color: #334155;
+      overflow-x: auto;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .actions-bar { align-items: stretch; }
+      .button { width: 100%; min-width: 0; }
+      .round-card { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">Warhammer Weekend</h1>
+      <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
+    </div>
+
+    <div class="card round-card">
+      <div class="card-body">
+        <div class="field-group">
+          <label for="ronde" class="round-label">Ronde</label>
+          <input id="ronde" type="text" inputmode="numeric" placeholder="1 - 9" />
+          <div class="error" id="error-ronde"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="form-view">
+      <form id="score-form">
+        <div class="player-grid">
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Speler 1</h2></div>
+            <div class="card-body">
+              <div class="field-group">
+                <label for="speler1-naam" class="label">Naam</label>
+                <input id="speler1-naam" type="text" placeholder="Voer naam in" />
+                <div class="error" id="error-speler1-naam"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler1-vp" class="label">Victory Points</label>
+                <input id="speler1-vp" type="text" inputmode="numeric" placeholder="0" />
+                <div class="error" id="error-speler1-victoryPoints"></div>
+              </div>
+              <div class="field-group">
+                <div class="toggle-row">
+                  <div>
+                    <label for="speler1-general" class="label">Enemy General slain</label>
+                  </div>
+                  <div class="toggle-choice-row">
+                    <span class="toggle-choice-label">Nee</span>
+                    <button id="speler1-general" class="toggle" type="button" aria-pressed="false" aria-label="Enemy General slain">
+                      <span class="toggle-knob"></span>
+                    </button>
+                    <span class="toggle-choice-label">Ja</span>
+                  </div>
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="speler1-banners" class="label">Banners Captured</label>
+                <input id="speler1-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <div class="error" id="error-speler1-bannersCaptured"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler1-bonus" class="label">Bonus Objectives</label>
+                <input id="speler1-bonus" type="text" inputmode="numeric" placeholder="0 - 2" />
+                <div class="error" id="error-speler1-bonusObjectives"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2 class="card-title">Speler 2</h2></div>
+            <div class="card-body">
+              <div class="field-group">
+                <label for="speler2-naam" class="label">Naam</label>
+                <input id="speler2-naam" type="text" placeholder="Voer naam in" />
+                <div class="error" id="error-speler2-naam"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler2-vp" class="label">Victory Points</label>
+                <input id="speler2-vp" type="text" inputmode="numeric" placeholder="0" />
+                <div class="error" id="error-speler2-victoryPoints"></div>
+              </div>
+              <div class="field-group">
+                <div class="toggle-row">
+                  <div>
+                    <label for="speler2-general" class="label">Enemy General slain</label>
+                  </div>
+                  <div class="toggle-choice-row">
+                    <span class="toggle-choice-label">Nee</span>
+                    <button id="speler2-general" class="toggle" type="button" aria-pressed="false" aria-label="Enemy General slain">
+                      <span class="toggle-knob"></span>
+                    </button>
+                    <span class="toggle-choice-label">Ja</span>
+                  </div>
+                </div>
+              </div>
+              <div class="field-group">
+                <label for="speler2-banners" class="label">Banners Captured</label>
+                <input id="speler2-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <div class="error" id="error-speler2-bannersCaptured"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler2-bonus" class="label">Bonus Objectives</label>
+                <input id="speler2-bonus" type="text" inputmode="numeric" placeholder="0 - 2" />
+                <div class="error" id="error-speler2-bonusObjectives"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-panel">
+          <div class="result-top-bar">
+            <p class="result-title">Resultaat</p>
+            <div class="info-wrap" id="info-wrap">
+              <button type="button" class="info-button" id="info-button" aria-label="Toon puntentelling">?</button>
+              <div class="info-popover" id="info-popover">
+                <p class="info-popover-title">Puntentelling</p>
+                <p class="info-popover-text">
+                  50 VP per Banner Captured<br />
+                  100 VP Enemy General Slain<br />
+                  100 VP per Bonus Objective
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-headline-row">
+            <p class="result-headline-text" id="headline-text">Speler 1 tied with Speler 2</p>
+            <div class="result-badge-row">
+              <span class="badge" id="result-label">Draw</span>
+              <span class="badge" id="result-difference">+0</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <div class="result-stat">
+              <div class="result-stat-top">
+                <p class="result-name" id="summary-speler1-naam">Speler 1</p>
+                <p class="result-score" id="summary-speler1-score">0</p>
+              </div>
+              <p class="result-meta">Total Score</p>
+              <p class="result-breakdown" id="summary-speler1-breakdown">0 VP · 0 Banners · No General Killed · 0 Bonus Objectives</p>
+            </div>
+
+            <div class="result-stat">
+              <div class="result-stat-top">
+                <p class="result-name" id="summary-speler2-naam">Speler 2</p>
+                <p class="result-score" id="summary-speler2-score">0</p>
+              </div>
+              <p class="result-meta">Total Score</p>
+              <p class="result-breakdown" id="summary-speler2-breakdown">0 VP · 0 Banners · No General Killed · 0 Bonus Objectives</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions-wrap">
+          <div class="card" style="box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);">
+            <div class="actions-bar">
+              <p class="actions-text">Alle velden zijn verplicht. Controleer goed of alles correct is ingevuld.</p>
+              <button type="submit" class="button">Resultaat verzenden</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div id="success-view" class="hidden">
+      <div class="card">
+        <div class="card-body">
+          <div class="success-box">
+            <p class="success-title">Resultaat succesvol verzonden</p>
+            <p class="success-text">Hieronder zie je de data zoals die klaarstaat voor opslag/import.</p>
+          </div>
+
+          <div class="results-list" id="results-list"></div>
+
+          <div style="margin-top: 20px;">
+            <button type="button" class="secondary-button" id="reset-button">Nog een resultaat invoeren</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEETS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyE0J4sDyEfyUp7hhnBGGHUfTrEyt3K5M4CsmdNXFoU7PId66jXo2rIRYbyHlak5rg7/exec";
+
+    const initialPlayer = {
+      naam: "",
+      victoryPoints: "",
+      bannersCaptured: "",
+      enemyGeneralSlain: false,
+      bonusObjectives: "",
+    };
+
+    const initialForm = {
+      ronde: "",
+      speler1: { ...initialPlayer },
+      speler2: { ...initialPlayer },
+    };
+
+    let form = structuredClone(initialForm);
+    let submittedRows = null;
+
+    const el = {
+      ronde: document.getElementById("ronde"),
+      speler1: {
+        naam: document.getElementById("speler1-naam"),
+        victoryPoints: document.getElementById("speler1-vp"),
+        bannersCaptured: document.getElementById("speler1-banners"),
+        enemyGeneralSlain: document.getElementById("speler1-general"),
+        bonusObjectives: document.getElementById("speler1-bonus"),
+      },
+      speler2: {
+        naam: document.getElementById("speler2-naam"),
+        victoryPoints: document.getElementById("speler2-vp"),
+        bannersCaptured: document.getElementById("speler2-banners"),
+        enemyGeneralSlain: document.getElementById("speler2-general"),
+        bonusObjectives: document.getElementById("speler2-bonus"),
+      },
+      formView: document.getElementById("form-view"),
+      successView: document.getElementById("success-view"),
+      scoreForm: document.getElementById("score-form"),
+      resultsList: document.getElementById("results-list"),
+      resetButton: document.getElementById("reset-button"),
+      infoButton: document.getElementById("info-button"),
+      infoPopover: document.getElementById("info-popover"),
+      infoWrap: document.getElementById("info-wrap"),
+      headlineText: document.getElementById("headline-text"),
+      resultLabel: document.getElementById("result-label"),
+      resultDifference: document.getElementById("result-difference"),
+      summarySpeler1Naam: document.getElementById("summary-speler1-naam"),
+      summarySpeler1Score: document.getElementById("summary-speler1-score"),
+      summarySpeler1Breakdown: document.getElementById("summary-speler1-breakdown"),
+      summarySpeler2Naam: document.getElementById("summary-speler2-naam"),
+      summarySpeler2Score: document.getElementById("summary-speler2-score"),
+      summarySpeler2Breakdown: document.getElementById("summary-speler2-breakdown"),
+    };
+
+    function sanitizeInteger(value) {
+      return value.replace(/[^0-9]/g, "");
+    }
+
+    function clampValue(value, max) {
+      if (value === "") return "";
+      const parsed = Number(value);
+      if (Number.isNaN(parsed)) return "";
+      if (typeof max === "number") return String(Math.min(parsed, max));
+      return String(parsed);
+    }
+
+    function normalizeName(value) {
+      return value.trim().toLowerCase();
+    }
+
+    function buildMatchKey(currentForm) {
+      const names = [normalizeName(currentForm.speler1.naam), normalizeName(currentForm.speler2.naam)].sort();
+      return `${currentForm.ronde}__${names[0]}__${names[1]}`;
+    }
+
+    function calculatePlayerTotal(player) {
+      return (
+        Number(player.victoryPoints || 0) +
+        Number(player.bannersCaptured || 0) * 50 +
+        (player.enemyGeneralSlain ? 100 : 0) +
+        Number(player.bonusObjectives || 0) * 100
+      );
+    }
+
+    function getResultLabel(verschil) {
+      if (verschil <= 100) return "Draw";
+      if (verschil <= 300) return "Marginal Victory";
+      if (verschil <= 750) return "Resounding Victory";
+      return "Crushing Victory";
+    }
+
+    function buildResultSummary(currentForm) {
+      const speler1Naam = currentForm.speler1.naam.trim() || "Speler 1";
+      const speler2Naam = currentForm.speler2.naam.trim() || "Speler 2";
+      const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
+      const speler2Totaal = calculatePlayerTotal(currentForm.speler2);
+      const verschil = Math.abs(speler1Totaal - speler2Totaal);
+      const resultLabel = getResultLabel(verschil);
+
+      let headlineTekst = `${speler1Naam} tied with ${speler2Naam}`;
+      if (speler1Totaal > speler2Totaal) {
+        headlineTekst = `${speler1Naam} verslaat ${speler2Naam}`;
+      } else if (speler2Totaal > speler1Totaal) {
+        headlineTekst = `${speler2Naam} verslaat ${speler1Naam}`;
+      } else {
+        headlineTekst = `${speler1Naam} en ${speler2Naam} spelen gelijk`;
+      }
+
+      return { speler1Naam, speler2Naam, speler1Totaal, speler2Totaal, verschil, resultLabel, headlineTekst };
+    }
+
+    function buildRows(currentForm) {
+      const matchKey = buildMatchKey(currentForm);
+      const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
+      const speler2Totaal = calculatePlayerTotal(currentForm.speler2);
+      const resultDifference = Math.abs(speler1Totaal - speler2Totaal);
+
+      return [
+        {
+          matchKey,
+          ronde: Number(currentForm.ronde),
+          naam: currentForm.speler1.naam.trim(),
+          victoryPoints: Number(currentForm.speler1.victoryPoints),
+          bannersCaptured: Number(currentForm.speler1.bannersCaptured),
+          enemyGeneralSlain: currentForm.speler1.enemyGeneralSlain ? 1 : 0,
+          bonusObjectives: Number(currentForm.speler1.bonusObjectives),
+          totalScore: speler1Totaal,
+          resultDifference,
+          tegenstander: currentForm.speler2.naam.trim(),
+        },
+        {
+          matchKey,
+          ronde: Number(currentForm.ronde),
+          naam: currentForm.speler2.naam.trim(),
+          victoryPoints: Number(currentForm.speler2.victoryPoints),
+          bannersCaptured: Number(currentForm.speler2.bannersCaptured),
+          enemyGeneralSlain: currentForm.speler2.enemyGeneralSlain ? 1 : 0,
+          bonusObjectives: Number(currentForm.speler2.bonusObjectives),
+          totalScore: speler2Totaal,
+          resultDifference,
+          tegenstander: currentForm.speler1.naam.trim(),
+        },
+      ];
+    }
+
+    function validateForm(currentForm) {
+      const errors = {};
+
+      if (!currentForm.ronde) {
+        errors.ronde = "Ronde is verplicht.";
+      } else {
+        const ronde = Number(currentForm.ronde);
+        if (!Number.isInteger(ronde) || ronde < 1 || ronde > 9) {
+          errors.ronde = "Ronde moet tussen 1 en 9 zijn.";
+        }
+      }
+
+      ["speler1", "speler2"].forEach((key, index) => {
+        const speler = currentForm[key];
+        const prefix = `speler${index + 1}`;
+
+        if (!speler.naam.trim()) errors[`${prefix}.naam`] = "Naam is verplicht.";
+        if (speler.victoryPoints === "") errors[`${prefix}.victoryPoints`] = "Victory Points is verplicht.";
+
+        if (speler.bannersCaptured === "") {
+          errors[`${prefix}.bannersCaptured`] = "Banners Captured is verplicht.";
+        } else if (Number(speler.bannersCaptured) > 9) {
+          errors[`${prefix}.bannersCaptured`] = "Maximum is 9.";
+        }
+
+        if (speler.bonusObjectives === "") {
+          errors[`${prefix}.bonusObjectives`] = "Bonus Objectives is verplicht.";
+        } else if (Number(speler.bonusObjectives) > 2) {
+          errors[`${prefix}.bonusObjectives`] = "Maximum is 2.";
+        }
+      });
+
+      const n1 = normalizeName(currentForm.speler1.naam);
+      const n2 = normalizeName(currentForm.speler2.naam);
+      if (n1 && n2 && n1 === n2) {
+        errors["speler2.naam"] = "Speler 2 moet een andere naam hebben dan speler 1.";
+      }
+
+      return errors;
+    }
+
+    function setError(key, message) {
+      const node = document.getElementById(`error-${key}`);
+      if (node) node.textContent = message || "";
+    }
+
+    function renderErrors(errors) {
+      [
+        "ronde",
+        "speler1-naam",
+        "speler1-victoryPoints",
+        "speler1-bannersCaptured",
+        "speler1-bonusObjectives",
+        "speler2-naam",
+        "speler2-victoryPoints",
+        "speler2-bannersCaptured",
+        "speler2-bonusObjectives",
+      ].forEach(id => setError(id, ""));
+
+      Object.entries(errors).forEach(([key, value]) => {
+        setError(key.replace(".", "-"), value);
+      });
+    }
+
+    function renderSummary() {
+      const s = buildResultSummary(form);
+      el.headlineText.textContent = s.headlineTekst;
+      el.resultLabel.textContent = s.resultLabel;
+      el.resultDifference.textContent = `+${s.verschil}`;
+      el.summarySpeler1Naam.textContent = s.speler1Naam;
+      el.summarySpeler1Score.textContent = s.speler1Totaal;
+      el.summarySpeler1Breakdown.textContent = `${Number(form.speler1.victoryPoints || 0)} VP · ${Number(form.speler1.bannersCaptured || 0)} Banners · ${form.speler1.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${Number(form.speler1.bonusObjectives || 0)} Bonus Objectives`;
+      el.summarySpeler2Naam.textContent = s.speler2Naam;
+      el.summarySpeler2Score.textContent = s.speler2Totaal;
+      el.summarySpeler2Breakdown.textContent = `${Number(form.speler2.victoryPoints || 0)} VP · ${Number(form.speler2.bannersCaptured || 0)} Banners · ${form.speler2.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${Number(form.speler2.bonusObjectives || 0)} Bonus Objectives`;
+    }
+
+    function updateToggle(button, checked) {
+      button.classList.toggle("active", checked);
+      button.setAttribute("aria-pressed", checked ? "true" : "false");
+    }
+
+    function syncInputsFromState() {
+      el.ronde.value = form.ronde;
+      el.speler1.naam.value = form.speler1.naam;
+      el.speler1.victoryPoints.value = form.speler1.victoryPoints;
+      el.speler1.bannersCaptured.value = form.speler1.bannersCaptured;
+      el.speler1.bonusObjectives.value = form.speler1.bonusObjectives;
+      updateToggle(el.speler1.enemyGeneralSlain, form.speler1.enemyGeneralSlain);
+
+      el.speler2.naam.value = form.speler2.naam;
+      el.speler2.victoryPoints.value = form.speler2.victoryPoints;
+      el.speler2.bannersCaptured.value = form.speler2.bannersCaptured;
+      el.speler2.bonusObjectives.value = form.speler2.bonusObjectives;
+      updateToggle(el.speler2.enemyGeneralSlain, form.speler2.enemyGeneralSlain);
+    }
+
+    function showSuccess(rows) {
+      submittedRows = rows;
+      el.resultsList.innerHTML = rows.map((row, index) => `
+        <div class="result-card">
+          <p class="result-json-title">Speler ${index + 1}</p>
+          <pre>${escapeHtml(JSON.stringify(row, null, 2))}</pre>
+        </div>
+      `).join("");
+      el.formView.classList.add("hidden");
+      el.successView.classList.remove("hidden");
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function resetForm() {
+      form = structuredClone(initialForm);
+      submittedRows = null;
+      syncInputsFromState();
+      renderErrors({});
+      renderSummary();
+      el.infoPopover.classList.remove("open");
+      el.successView.classList.add("hidden");
+      el.formView.classList.remove("hidden");
+    }
+
+    function bindTextInput(input, playerKey, field, max) {
+      input.addEventListener("input", (e) => {
+        form[playerKey][field] = max !== undefined ? clampValue(sanitizeInteger(e.target.value), max) : e.target.value;
+        e.target.value = form[playerKey][field];
+        renderSummary();
+      });
+    }
+
+    el.ronde.addEventListener("input", (e) => {
+      form.ronde = clampValue(sanitizeInteger(e.target.value), 9);
+      e.target.value = form.ronde;
+      renderSummary();
+    });
+
+    el.speler1.naam.addEventListener("input", (e) => { form.speler1.naam = e.target.value; renderSummary(); });
+    el.speler2.naam.addEventListener("input", (e) => { form.speler2.naam = e.target.value; renderSummary(); });
+
+    bindTextInput(el.speler1.victoryPoints, "speler1", "victoryPoints");
+    bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 9);
+    bindTextInput(el.speler1.bonusObjectives, "speler1", "bonusObjectives", 2);
+    bindTextInput(el.speler2.victoryPoints, "speler2", "victoryPoints");
+    bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 9);
+    bindTextInput(el.speler2.bonusObjectives, "speler2", "bonusObjectives", 2);
+
+    el.speler1.enemyGeneralSlain.addEventListener("click", () => {
+      form.speler1.enemyGeneralSlain = !form.speler1.enemyGeneralSlain;
+      updateToggle(el.speler1.enemyGeneralSlain, form.speler1.enemyGeneralSlain);
+      renderSummary();
+    });
+
+    el.speler2.enemyGeneralSlain.addEventListener("click", () => {
+      form.speler2.enemyGeneralSlain = !form.speler2.enemyGeneralSlain;
+      updateToggle(el.speler2.enemyGeneralSlain, form.speler2.enemyGeneralSlain);
+      renderSummary();
+    });
+
+    el.infoButton.addEventListener("click", () => {
+      el.infoPopover.classList.toggle("open");
+    });
+
+    document.addEventListener("mousedown", (event) => {
+      if (!el.infoWrap.contains(event.target)) {
+        el.infoPopover.classList.remove("open");
+      }
+    });
+
+    el.scoreForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const validationErrors = validateForm(form);
+      renderErrors(validationErrors);
+      if (Object.keys(validationErrors).length > 0) return;
+
+      const rows = buildRows(form);
+
+      try {
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ rows }),
+        });
+
+        const result = await response.json();
+        if (!result.ok) throw new Error(result.error || "Opslaan mislukt");
+
+        console.log("Verzonden naar Google Sheets:", rows);
+        showSuccess(rows);
+      } catch (error) {
+        console.error("Fout bij verzenden:", error);
+        alert("Opslaan naar Google Spreadsheet is mislukt.");
+      }
+    });
+
+    el.resetButton.addEventListener("click", resetForm);
+
+    syncInputsFromState();
+    renderSummary();
+  </script>
+</body>
+</html>
