@@ -36,8 +36,28 @@
     }
 
     .header {
+      position: relative;
       text-align: center;
       margin-bottom: 24px;
+      padding-top: 8px;
+    }
+
+    .version-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--blue-border);
+      background: #ffffff;
+      color: var(--blue);
+      font-size: 0.9rem;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
     }
 
     .title {
@@ -103,6 +123,93 @@
 
     .field-group {
       margin-bottom: 18px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .label-row .label {
+      margin-bottom: 0;
+    }
+
+    .field-info-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .field-info-button {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--blue-border);
+      background: #ffffff;
+      color: var(--blue);
+      font-size: 0.82rem;
+      font-weight: 800;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .field-info-popover {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 0;
+      width: min(420px, calc(100vw - 48px));
+      border: 1px solid var(--blue-border);
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+      padding: 14px;
+      z-index: 40;
+    }
+
+    .field-info-wrap:hover .field-info-popover,
+    .field-info-wrap:focus-within .field-info-popover,
+    .field-info-popover.open {
+      display: block;
+    }
+
+    .field-info-title {
+      margin: 0;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .field-info-text {
+      margin: 8px 0 12px;
+      font-size: 0.92rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .vp-info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      color: #1e293b;
+    }
+
+    .vp-info-table th,
+    .vp-info-table td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .vp-info-table th {
+      background: #f8fafc;
+      font-weight: 800;
     }
 
     input[type="text"], input[type="number"], select {
@@ -490,12 +597,20 @@
       .actions-bar { align-items: stretch; }
       .button { width: 100%; min-width: 0; }
       .round-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .header {
+        padding-top: 52px;
+      }
+      .version-badge {
+        right: 50%;
+        transform: translateX(50%);
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
+      <span class="version-badge" aria-label="Versie 1.1">v1.1</span>
       <h1 class="title">Warhammer Weekend</h1>
       <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
     </div>
@@ -541,8 +656,43 @@
                 <div class="error" id="error-speler1-naam"></div>
               </div>
               <div class="field-group">
-                <label for="speler1-vp" class="label">Victory Points</label>
-                <input id="speler1-vp" type="text" inputmode="numeric" placeholder="0" />
+                <div class="label-row">
+                  <label for="speler1-vp" class="label">Victory Points</label>
+                  <div class="field-info-wrap">
+                    <button type="button" class="field-info-button" aria-label="Meer informatie over Victory Points">?</button>
+                    <div class="field-info-popover" role="tooltip">
+                      <p class="field-info-title">Victory Points</p>
+                      <p class="field-info-text">Voer hier het aantal Victory Points in dat je hebt vernietigd van je tegenstander.</p>
+                      <table class="vp-info-table" aria-label="Overzicht van percentage van punten op basis van resterende sterkte van vijandelijke units">
+                        <thead>
+                          <tr>
+                            <th>Remaining strength of enemy units</th>
+                            <th>% van punten</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>&gt;50% van originele unit strength/wounds</td>
+                            <td>25%</td>
+                          </tr>
+                          <tr>
+                            <td>Fleeing units at end of battle</td>
+                            <td>50%</td>
+                          </tr>
+                          <tr>
+                            <td>&gt;50% van originele unit strength/wounds &amp; Fleeing units at end of battle</td>
+                            <td>75%</td>
+                          </tr>
+                          <tr>
+                            <td>Destroyed or fled of battlefield completely</td>
+                            <td>100%</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <input id="speler1-vp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler1-victoryPoints"></div>
               </div>
               <div class="field-group">
@@ -591,8 +741,43 @@
                 <div class="error" id="error-speler2-naam"></div>
               </div>
               <div class="field-group">
-                <label for="speler2-vp" class="label">Victory Points</label>
-                <input id="speler2-vp" type="text" inputmode="numeric" placeholder="0" />
+                <div class="label-row">
+                  <label for="speler2-vp" class="label">Victory Points</label>
+                  <div class="field-info-wrap">
+                    <button type="button" class="field-info-button" aria-label="Meer informatie over Victory Points">?</button>
+                    <div class="field-info-popover" role="tooltip">
+                      <p class="field-info-title">Victory Points</p>
+                      <p class="field-info-text">Voer hier het aantal Victory Points in dat je hebt vernietigd van je tegenstander.</p>
+                      <table class="vp-info-table" aria-label="Overzicht van percentage van punten op basis van resterende sterkte van vijandelijke units">
+                        <thead>
+                          <tr>
+                            <th>Remaining strength of enemy units</th>
+                            <th>% van punten</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>&gt;50% van originele unit strength/wounds</td>
+                            <td>25%</td>
+                          </tr>
+                          <tr>
+                            <td>Fleeing units at end of battle</td>
+                            <td>50%</td>
+                          </tr>
+                          <tr>
+                            <td>&gt;50% van originele unit strength/wounds &amp; Fleeing units at end of battle</td>
+                            <td>75%</td>
+                          </tr>
+                          <tr>
+                            <td>Destroyed or fled of battlefield completely</td>
+                            <td>100%</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <input id="speler2-vp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler2-victoryPoints"></div>
               </div>
               <div class="field-group">
@@ -983,6 +1168,49 @@
       });
     }
 
+
+    function enforceDigitOnlyInput(input) {
+      input.addEventListener("beforeinput", (event) => {
+        if (event.data && /[^0-9]/.test(event.data)) {
+          event.preventDefault();
+        }
+      });
+
+      input.addEventListener("paste", (event) => {
+        const pasted = (event.clipboardData || window.clipboardData).getData("text");
+        if (/[^0-9]/.test(pasted)) {
+          event.preventDefault();
+          const digitsOnly = sanitizeInteger(pasted);
+          const start = input.selectionStart ?? input.value.length;
+          const end = input.selectionEnd ?? input.value.length;
+          const nextValue = input.value.slice(0, start) + digitsOnly + input.value.slice(end);
+          input.value = nextValue;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      });
+    }
+
+    function setupFieldInfoPopovers() {
+      const infoButtons = Array.from(document.querySelectorAll(".field-info-button"));
+      const infoPopovers = Array.from(document.querySelectorAll(".field-info-popover"));
+
+      infoButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const popover = button.nextElementSibling;
+          const shouldOpen = !popover.classList.contains("open");
+          infoPopovers.forEach((item) => item.classList.remove("open"));
+          if (shouldOpen) popover.classList.add("open");
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".field-info-wrap")) {
+          infoPopovers.forEach((item) => item.classList.remove("open"));
+        }
+      });
+    }
+
     el.roundButtons.forEach((button) => {
       button.addEventListener("click", () => {
         form.ronde = button.dataset.round;
@@ -1000,6 +1228,17 @@
     bindTextInput(el.speler2.victoryPoints, "speler2", "victoryPoints");
     bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 9);
     bindTextInput(el.speler2.bonusObjectives, "speler2", "bonusObjectives", 2);
+
+    [
+      el.speler1.victoryPoints,
+      el.speler1.bannersCaptured,
+      el.speler1.bonusObjectives,
+      el.speler2.victoryPoints,
+      el.speler2.bannersCaptured,
+      el.speler2.bonusObjectives,
+    ].forEach(enforceDigitOnlyInput);
+
+    setupFieldInfoPopovers();
 
     el.speler1.enemyGeneralSlain.addEventListener("click", () => {
       form.speler1.enemyGeneralSlain = !form.speler1.enemyGeneralSlain;
