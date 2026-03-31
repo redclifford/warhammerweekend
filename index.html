@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Warhammer Weekend v1.4</title>
+  <title>Warhammer Weekend v1.5</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -98,6 +98,12 @@
 
     .round-card {
       margin-bottom: 20px;
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
     }
 
     .round-label, .label {
@@ -247,7 +253,7 @@
 
     .round-selector {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
       width: 100%;
     }
@@ -274,6 +280,47 @@
       color: #ffffff;
       border-color: #0f172a;
       box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    }
+
+    .matchsize-selector {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .matchsize-button {
+      min-height: 48px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 10px 12px;
+    }
+
+    .matchsize-button:hover:not(:disabled) {
+      border-color: #94a3b8;
+      transform: translateY(-1px);
+    }
+
+    .matchsize-button.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    }
+
+    .matchsize-button:disabled,
+    .matchsize-button.is-locked {
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: #e2e8f0;
+      cursor: not-allowed;
+      opacity: 1;
     }
 
     .toggle-row {
@@ -598,7 +645,9 @@
     @media (max-width: 640px) {
       .actions-bar { align-items: stretch; }
       .button { width: 100%; min-width: 0; }
-      .round-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .round-selector { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .matchsize-selector { grid-template-columns: 1fr; }
+      .top-grid { grid-template-columns: 1fr; }
       .page-meta {
         justify-content: center;
         margin-top: 12px;
@@ -616,19 +665,34 @@
 
     <div class="card round-card">
       <div class="card-body">
-        <div class="field-group">
-          <label class="round-label">Ronde</label>
-          <div class="round-selector" id="round-selector" role="group" aria-label="Kies een ronde">
-            <button type="button" class="round-button" data-round="1">Ronde 1</button>
-            <button type="button" class="round-button" data-round="2">Ronde 2</button>
-            <button type="button" class="round-button" data-round="3">Ronde 3</button>
-            <button type="button" class="round-button" data-round="4">Ronde 4</button>
-            <button type="button" class="round-button" data-round="5">Ronde 5</button>
-            <button type="button" class="round-button" data-round="6">Ronde 6</button>
-            <button type="button" class="round-button" data-round="7">Ronde 7</button>
+        <div class="top-grid">
+          <div class="field-group">
+            <label class="round-label">Ronde</label>
+            <div class="round-selector" id="round-selector" role="group" aria-label="Kies een ronde">
+              <button type="button" class="round-button" data-round="1">Ronde 1</button>
+              <button type="button" class="round-button" data-round="2">Ronde 2</button>
+              <button type="button" class="round-button" data-round="3">Ronde 3</button>
+              <button type="button" class="round-button" data-round="4">Ronde 4</button>
+              <button type="button" class="round-button" data-round="5">Ronde 5</button>
+              <button type="button" class="round-button" data-round="6">Ronde 6</button>
+              <button type="button" class="round-button" data-round="7">Ronde 7</button>
+            </div>
+            <input id="ronde" type="hidden" />
+            <div class="error" id="error-ronde"></div>
           </div>
-          <input id="ronde" type="hidden" />
-          <div class="error" id="error-ronde"></div>
+
+          <div class="field-group">
+            <label class="round-label">Match Size</label>
+            <div class="matchsize-selector" id="matchsize-selector" role="group" aria-label="Kies een match size">
+              <button type="button" class="matchsize-button active" data-matchsize="Up to 1,000" aria-pressed="true">Up to 1,000</button>
+              <button type="button" class="matchsize-button is-locked" data-matchsize="1,001-1,500" disabled aria-disabled="true">1,001-1,500</button>
+              <button type="button" class="matchsize-button is-locked" data-matchsize="1,501-2,000" disabled aria-disabled="true">1,501-2,000</button>
+              <button type="button" class="matchsize-button is-locked" data-matchsize="2,001-3,000" disabled aria-disabled="true">2,001-3,000</button>
+              <button type="button" class="matchsize-button is-locked" data-matchsize="3,001+" disabled aria-disabled="true">3,001+</button>
+            </div>
+            <input id="match-size" type="hidden" />
+            <div class="error" id="error-matchSize"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -899,7 +963,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 1.4">v1.4</span>
+      <span class="version-badge" aria-label="Versie 1.5">v1.5</span>
     </div>
   </div>
 
@@ -916,6 +980,7 @@
 
     const initialForm = {
       ronde: "",
+      matchSize: "Up to 1,000",
       speler1: { ...initialPlayer },
       speler2: { ...initialPlayer },
     };
@@ -925,6 +990,7 @@
 
     const el = {
       ronde: document.getElementById("ronde"),
+      matchSize: document.getElementById("match-size"),
       speler1: {
         naam: document.getElementById("speler1-naam"),
         victoryPoints: document.getElementById("speler1-vp"),
@@ -957,6 +1023,7 @@
       summarySpeler2Score: document.getElementById("summary-speler2-score"),
       summarySpeler2Breakdown: document.getElementById("summary-speler2-breakdown"),
       roundButtons: Array.from(document.querySelectorAll(".round-button")),
+      matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-button")),
     };
 
     function sanitizeInteger(value) {
@@ -1030,6 +1097,7 @@
         {
           matchKey,
           ronde: Number(currentForm.ronde),
+          matchSize: currentForm.matchSize,
           naam: currentForm.speler1.naam.trim(),
           victoryPoints: Number(currentForm.speler1.victoryPoints),
           bannersCaptured: Number(currentForm.speler1.bannersCaptured),
@@ -1042,6 +1110,7 @@
         {
           matchKey,
           ronde: Number(currentForm.ronde),
+          matchSize: currentForm.matchSize,
           naam: currentForm.speler2.naam.trim(),
           victoryPoints: Number(currentForm.speler2.victoryPoints),
           bannersCaptured: Number(currentForm.speler2.bannersCaptured),
@@ -1066,6 +1135,20 @@
         }
       }
 
+      const allowedMatchSizes = [
+        "Up to 1,000",
+        "1,001-1,500",
+        "1,501-2,000",
+        "2,001-3,000",
+        "3,001+",
+      ];
+
+      if (!currentForm.matchSize) {
+        errors.matchSize = "Match Size is verplicht.";
+      } else if (!allowedMatchSizes.includes(currentForm.matchSize)) {
+        errors.matchSize = "Ongeldige Match Size.";
+      }
+
       ["speler1", "speler2"].forEach((key, index) => {
         const speler = currentForm[key];
         const prefix = `speler${index + 1}`;
@@ -1082,7 +1165,6 @@
         } else if (Number(speler.bannersCaptured) > 9) {
           errors[`${prefix}.bannersCaptured`] = "Maximum is 9.";
         }
-
       });
 
       const n1 = normalizeName(currentForm.speler1.naam);
@@ -1102,6 +1184,7 @@
     function renderErrors(errors) {
       [
         "ronde",
+        "matchSize",
         "speler1-naam",
         "speler1-victoryPoints",
         "speler1-bannersCaptured",
@@ -1135,10 +1218,19 @@
 
     function syncInputsFromState() {
       el.ronde.value = form.ronde;
+      el.matchSize.value = form.matchSize;
+
       el.roundButtons.forEach((button) => {
         button.classList.toggle("active", button.dataset.round === form.ronde);
         button.setAttribute("aria-pressed", button.dataset.round === form.ronde ? "true" : "false");
       });
+
+      el.matchSizeButtons.forEach((button) => {
+        const isActive = button.dataset.matchsize === form.matchSize;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
       el.speler1.naam.value = form.speler1.naam;
       el.speler1.victoryPoints.value = form.speler1.victoryPoints;
       el.speler1.bannersCaptured.value = form.speler1.bannersCaptured;
@@ -1245,6 +1337,14 @@
       });
     });
 
+    el.matchSizeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.disabled) return;
+        form.matchSize = button.dataset.matchsize;
+        syncInputsFromState();
+      });
+    });
+
     el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); });
     el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); });
 
@@ -1308,8 +1408,7 @@
         if (!result.ok) throw new Error(result.error || "Opslaan mislukt");
 
         console.log("Verzonden naar Google Sheets:", rows);
-        resetForm();
-        alert("Resultaat succesvol verzonden.");
+        showSuccess(rows);
       } catch (error) {
         console.error("Fout bij verzenden:", error);
         alert("Opslaan naar Google Spreadsheet is mislukt.");
