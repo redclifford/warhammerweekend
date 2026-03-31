@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Warhammer Weekend</title>
+  <title>Warhammer Weekend v1.4</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -36,28 +36,30 @@
     }
 
     .header {
-      position: relative;
       text-align: center;
       margin-bottom: 24px;
-      padding-top: 8px;
     }
 
     .version-badge {
-      position: absolute;
-      top: 0;
-      right: 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 72px;
-      padding: 8px 12px;
+      min-width: 64px;
+      padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--blue-border);
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.9);
       color: var(--blue);
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: 800;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .page-meta {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      padding-bottom: 8px;
     }
 
     .title {
@@ -597,12 +599,10 @@
       .actions-bar { align-items: stretch; }
       .button { width: 100%; min-width: 0; }
       .round-selector { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-      .header {
-        padding-top: 52px;
-      }
-      .version-badge {
-        right: 50%;
-        transform: translateX(50%);
+      .page-meta {
+        justify-content: center;
+        margin-top: 12px;
+        padding-bottom: 0;
       }
     }
   </style>
@@ -610,7 +610,6 @@
 <body>
   <div class="container">
     <div class="header">
-      <span class="version-badge" aria-label="Versie 1.1">v1.1</span>
       <h1 class="title">Warhammer Weekend</h1>
       <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
     </div>
@@ -692,8 +691,13 @@
                     </div>
                   </div>
                 </div>
-                <input id="speler1-vp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0" />
+                <input id="speler1-vp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler1-victoryPoints"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler1-banners" class="label">Banners Captured</label>
+                <input id="speler1-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <div class="error" id="error-speler1-bannersCaptured"></div>
               </div>
               <div class="field-group">
                 <div class="toggle-row">
@@ -710,14 +714,18 @@
                 </div>
               </div>
               <div class="field-group">
-                <label for="speler1-banners" class="label">Banners Captured</label>
-                <input id="speler1-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
-                <div class="error" id="error-speler1-bannersCaptured"></div>
-              </div>
-              <div class="field-group">
-                <label for="speler1-bonus" class="label">Bonus Objectives</label>
-                <input id="speler1-bonus" type="text" inputmode="numeric" placeholder="0 - 2" />
-                <div class="error" id="error-speler1-bonusObjectives"></div>
+                <div class="toggle-row">
+                  <div>
+                    <label for="speler1-bonus" class="label">Bonus Objective</label>
+                  </div>
+                  <div class="toggle-choice-row">
+                    <span class="toggle-choice-label">Nee</span>
+                    <button id="speler1-bonus" class="toggle" type="button" aria-pressed="false" aria-label="Bonus Objective">
+                      <span class="toggle-knob"></span>
+                    </button>
+                    <span class="toggle-choice-label">Ja</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -777,8 +785,13 @@
                     </div>
                   </div>
                 </div>
-                <input id="speler2-vp" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="0" />
+                <input id="speler2-vp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler2-victoryPoints"></div>
+              </div>
+              <div class="field-group">
+                <label for="speler2-banners" class="label">Banners Captured</label>
+                <input id="speler2-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <div class="error" id="error-speler2-bannersCaptured"></div>
               </div>
               <div class="field-group">
                 <div class="toggle-row">
@@ -795,14 +808,18 @@
                 </div>
               </div>
               <div class="field-group">
-                <label for="speler2-banners" class="label">Banners Captured</label>
-                <input id="speler2-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
-                <div class="error" id="error-speler2-bannersCaptured"></div>
-              </div>
-              <div class="field-group">
-                <label for="speler2-bonus" class="label">Bonus Objectives</label>
-                <input id="speler2-bonus" type="text" inputmode="numeric" placeholder="0 - 2" />
-                <div class="error" id="error-speler2-bonusObjectives"></div>
+                <div class="toggle-row">
+                  <div>
+                    <label for="speler2-bonus" class="label">Bonus Objective</label>
+                  </div>
+                  <div class="toggle-choice-row">
+                    <span class="toggle-choice-label">Nee</span>
+                    <button id="speler2-bonus" class="toggle" type="button" aria-pressed="false" aria-label="Bonus Objective">
+                      <span class="toggle-knob"></span>
+                    </button>
+                    <span class="toggle-choice-label">Ja</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -839,7 +856,7 @@
                 <p class="result-score" id="summary-speler1-score">0</p>
               </div>
               <p class="result-meta">Total Score</p>
-              <p class="result-breakdown" id="summary-speler1-breakdown">0 VP · 0 Banners · No General Killed · 0 Bonus Objectives</p>
+              <p class="result-breakdown" id="summary-speler1-breakdown">0 VP · 0 Banners · No General Killed · No Bonus Objective</p>
             </div>
 
             <div class="result-stat">
@@ -848,7 +865,7 @@
                 <p class="result-score" id="summary-speler2-score">0</p>
               </div>
               <p class="result-meta">Total Score</p>
-              <p class="result-breakdown" id="summary-speler2-breakdown">0 VP · 0 Banners · No General Killed · 0 Bonus Objectives</p>
+              <p class="result-breakdown" id="summary-speler2-breakdown">0 VP · 0 Banners · No General Killed · No Bonus Objective</p>
             </div>
           </div>
         </div>
@@ -880,6 +897,10 @@
         </div>
       </div>
     </div>
+
+    <div class="page-meta">
+      <span class="version-badge" aria-label="Versie 1.4">v1.4</span>
+    </div>
   </div>
 
   <script>
@@ -890,7 +911,7 @@
       victoryPoints: "",
       bannersCaptured: "",
       enemyGeneralSlain: false,
-      bonusObjectives: "",
+      bonusObjectives: false,
     };
 
     const initialForm = {
@@ -939,7 +960,11 @@
     };
 
     function sanitizeInteger(value) {
-      return value.replace(/[^0-9]/g, "");
+      return String(value).replace(/[^0-9]/g, "");
+    }
+
+    function sanitizeVictoryPoints(value) {
+      return sanitizeInteger(value).slice(0, 4);
     }
 
     function clampValue(value, max) {
@@ -964,7 +989,7 @@
         Number(player.victoryPoints || 0) +
         Number(player.bannersCaptured || 0) * 50 +
         (player.enemyGeneralSlain ? 100 : 0) +
-        Number(player.bonusObjectives || 0) * 100
+        (player.bonusObjectives ? 1 : 0) * 100
       );
     }
 
@@ -1009,7 +1034,7 @@
           victoryPoints: Number(currentForm.speler1.victoryPoints),
           bannersCaptured: Number(currentForm.speler1.bannersCaptured),
           enemyGeneralSlain: currentForm.speler1.enemyGeneralSlain ? 1 : 0,
-          bonusObjectives: Number(currentForm.speler1.bonusObjectives),
+          bonusObjectives: currentForm.speler1.bonusObjectives ? 1 : 0,
           totalScore: speler1Totaal,
           resultDifference,
           tegenstander: currentForm.speler2.naam.trim(),
@@ -1021,7 +1046,7 @@
           victoryPoints: Number(currentForm.speler2.victoryPoints),
           bannersCaptured: Number(currentForm.speler2.bannersCaptured),
           enemyGeneralSlain: currentForm.speler2.enemyGeneralSlain ? 1 : 0,
-          bonusObjectives: Number(currentForm.speler2.bonusObjectives),
+          bonusObjectives: currentForm.speler2.bonusObjectives ? 1 : 0,
           totalScore: speler2Totaal,
           resultDifference,
           tegenstander: currentForm.speler1.naam.trim(),
@@ -1046,7 +1071,11 @@
         const prefix = `speler${index + 1}`;
 
         if (!speler.naam.trim()) errors[`${prefix}.naam`] = "Naam is verplicht.";
-        if (speler.victoryPoints === "") errors[`${prefix}.victoryPoints`] = "Victory Points is verplicht.";
+        if (speler.victoryPoints === "") {
+          errors[`${prefix}.victoryPoints`] = "Victory Points is verplicht.";
+        } else if (!/^\d{1,4}$/.test(String(speler.victoryPoints)) || Number(speler.victoryPoints) > 9999) {
+          errors[`${prefix}.victoryPoints`] = "Gebruik alleen hele getallen van 0 t/m 9999.";
+        }
 
         if (speler.bannersCaptured === "") {
           errors[`${prefix}.bannersCaptured`] = "Banners Captured is verplicht.";
@@ -1054,11 +1083,6 @@
           errors[`${prefix}.bannersCaptured`] = "Maximum is 9.";
         }
 
-        if (speler.bonusObjectives === "") {
-          errors[`${prefix}.bonusObjectives`] = "Bonus Objectives is verplicht.";
-        } else if (Number(speler.bonusObjectives) > 2) {
-          errors[`${prefix}.bonusObjectives`] = "Maximum is 2.";
-        }
       });
 
       const n1 = normalizeName(currentForm.speler1.naam);
@@ -1081,11 +1105,9 @@
         "speler1-naam",
         "speler1-victoryPoints",
         "speler1-bannersCaptured",
-        "speler1-bonusObjectives",
         "speler2-naam",
         "speler2-victoryPoints",
         "speler2-bannersCaptured",
-        "speler2-bonusObjectives",
       ].forEach(id => setError(id, ""));
 
       Object.entries(errors).forEach(([key, value]) => {
@@ -1100,10 +1122,10 @@
       el.resultDifference.textContent = `+${s.verschil}`;
       el.summarySpeler1Naam.textContent = s.speler1Naam;
       el.summarySpeler1Score.textContent = s.speler1Totaal;
-      el.summarySpeler1Breakdown.textContent = `${Number(form.speler1.victoryPoints || 0)} VP · ${Number(form.speler1.bannersCaptured || 0)} Banners · ${form.speler1.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${Number(form.speler1.bonusObjectives || 0)} Bonus Objectives`;
+      el.summarySpeler1Breakdown.textContent = `${Number(form.speler1.victoryPoints || 0)} VP · ${Number(form.speler1.bannersCaptured || 0)} Banners · ${form.speler1.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${form.speler1.bonusObjectives ? "Bonus Objective Completed" : "No Bonus Objective"}`;
       el.summarySpeler2Naam.textContent = s.speler2Naam;
       el.summarySpeler2Score.textContent = s.speler2Totaal;
-      el.summarySpeler2Breakdown.textContent = `${Number(form.speler2.victoryPoints || 0)} VP · ${Number(form.speler2.bannersCaptured || 0)} Banners · ${form.speler2.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${Number(form.speler2.bonusObjectives || 0)} Bonus Objectives`;
+      el.summarySpeler2Breakdown.textContent = `${Number(form.speler2.victoryPoints || 0)} VP · ${Number(form.speler2.bannersCaptured || 0)} Banners · ${form.speler2.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${form.speler2.bonusObjectives ? "Bonus Objective Completed" : "No Bonus Objective"}`;
     }
 
     function updateToggle(button, checked) {
@@ -1120,14 +1142,14 @@
       el.speler1.naam.value = form.speler1.naam;
       el.speler1.victoryPoints.value = form.speler1.victoryPoints;
       el.speler1.bannersCaptured.value = form.speler1.bannersCaptured;
-      el.speler1.bonusObjectives.value = form.speler1.bonusObjectives;
       updateToggle(el.speler1.enemyGeneralSlain, form.speler1.enemyGeneralSlain);
+      updateToggle(el.speler1.bonusObjectives, form.speler1.bonusObjectives);
 
       el.speler2.naam.value = form.speler2.naam;
       el.speler2.victoryPoints.value = form.speler2.victoryPoints;
       el.speler2.bannersCaptured.value = form.speler2.bannersCaptured;
-      el.speler2.bonusObjectives.value = form.speler2.bonusObjectives;
       updateToggle(el.speler2.enemyGeneralSlain, form.speler2.enemyGeneralSlain);
+      updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
     }
 
     function showSuccess(rows) {
@@ -1168,25 +1190,29 @@
       });
     }
 
-
-    function enforceDigitOnlyInput(input) {
+    function bindVictoryPointsInput(input, playerKey) {
       input.addEventListener("beforeinput", (event) => {
         if (event.data && /[^0-9]/.test(event.data)) {
           event.preventDefault();
         }
       });
 
+      input.addEventListener("input", (e) => {
+        form[playerKey].victoryPoints = sanitizeVictoryPoints(e.target.value);
+        e.target.value = form[playerKey].victoryPoints;
+        renderSummary();
+      });
+
       input.addEventListener("paste", (event) => {
-        const pasted = (event.clipboardData || window.clipboardData).getData("text");
-        if (/[^0-9]/.test(pasted)) {
-          event.preventDefault();
-          const digitsOnly = sanitizeInteger(pasted);
-          const start = input.selectionStart ?? input.value.length;
-          const end = input.selectionEnd ?? input.value.length;
-          const nextValue = input.value.slice(0, start) + digitsOnly + input.value.slice(end);
-          input.value = nextValue;
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        }
+        event.preventDefault();
+        const pasted = (event.clipboardData || window.clipboardData).getData("text") || "";
+        const digits = sanitizeVictoryPoints(pasted);
+        const start = input.selectionStart ?? input.value.length;
+        const end = input.selectionEnd ?? input.value.length;
+        const nextValue = sanitizeVictoryPoints(input.value.slice(0, start) + digits + input.value.slice(end));
+        form[playerKey].victoryPoints = nextValue;
+        input.value = nextValue;
+        renderSummary();
       });
     }
 
@@ -1222,21 +1248,10 @@
     el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); });
     el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); });
 
-    bindTextInput(el.speler1.victoryPoints, "speler1", "victoryPoints");
+    bindVictoryPointsInput(el.speler1.victoryPoints, "speler1");
     bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 9);
-    bindTextInput(el.speler1.bonusObjectives, "speler1", "bonusObjectives", 2);
-    bindTextInput(el.speler2.victoryPoints, "speler2", "victoryPoints");
+    bindVictoryPointsInput(el.speler2.victoryPoints, "speler2");
     bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 9);
-    bindTextInput(el.speler2.bonusObjectives, "speler2", "bonusObjectives", 2);
-
-    [
-      el.speler1.victoryPoints,
-      el.speler1.bannersCaptured,
-      el.speler1.bonusObjectives,
-      el.speler2.victoryPoints,
-      el.speler2.bannersCaptured,
-      el.speler2.bonusObjectives,
-    ].forEach(enforceDigitOnlyInput);
 
     setupFieldInfoPopovers();
 
@@ -1249,6 +1264,18 @@
     el.speler2.enemyGeneralSlain.addEventListener("click", () => {
       form.speler2.enemyGeneralSlain = !form.speler2.enemyGeneralSlain;
       updateToggle(el.speler2.enemyGeneralSlain, form.speler2.enemyGeneralSlain);
+      renderSummary();
+    });
+
+    el.speler1.bonusObjectives.addEventListener("click", () => {
+      form.speler1.bonusObjectives = !form.speler1.bonusObjectives;
+      updateToggle(el.speler1.bonusObjectives, form.speler1.bonusObjectives);
+      renderSummary();
+    });
+
+    el.speler2.bonusObjectives.addEventListener("click", () => {
+      form.speler2.bonusObjectives = !form.speler2.bonusObjectives;
+      updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
       renderSummary();
     });
 
