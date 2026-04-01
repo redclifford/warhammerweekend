@@ -669,6 +669,13 @@
       padding: 16px;
     }
 
+    .error-box {
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      border-radius: 18px;
+      padding: 16px;
+    }
+
     .success-title {
       margin: 0;
       font-size: 1rem;
@@ -679,6 +686,19 @@
     .success-text {
       margin: 6px 0 0;
       color: var(--success-text);
+      line-height: 1.5;
+    }
+
+    .error-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #991b1b;
+    }
+
+    .error-text {
+      margin: 6px 0 0;
+      color: #991b1b;
       line-height: 1.5;
     }
 
@@ -760,7 +780,7 @@
       <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
     </div>
 
-    <div class="top-selector-grid">
+    <div id="top-selector-grid" class="top-selector-grid">
       <div class="card round-card">
         <div class="card-header"><h2 class="card-title">Ronde</h2></div>
         <div class="card-body compact-top-card-body">
@@ -1070,12 +1090,10 @@
     <div id="success-view" class="hidden">
       <div class="card">
         <div class="card-body">
-          <div class="success-box">
-            <p class="success-title">Resultaat succesvol verzonden</p>
-            <p class="success-text">Hieronder zie je de data zoals die klaarstaat voor opslag/import.</p>
+          <div id="status-box" class="success-box">
+            <p id="status-title" class="success-title">Resultaat succesvol verzonden</p>
+            <p id="status-text" class="success-text">Je resultaat is goed verzonden. Je kunt hieronder direct nog een resultaat invoeren.</p>
           </div>
-
-          <div class="results-list" id="results-list"></div>
 
           <div style="margin-top: 20px;">
             <button type="button" class="secondary-button" id="reset-button">Nog een resultaat invoeren</button>
@@ -1130,7 +1148,10 @@
       formView: document.getElementById("form-view"),
       successView: document.getElementById("success-view"),
       scoreForm: document.getElementById("score-form"),
-      resultsList: document.getElementById("results-list"),
+      topSelectorGrid: document.getElementById("top-selector-grid"),
+      statusBox: document.getElementById("status-box"),
+      statusTitle: document.getElementById("status-title"),
+      statusText: document.getElementById("status-text"),
       resetButton: document.getElementById("reset-button"),
       infoButton: document.getElementById("info-button"),
       infoPopover: document.getElementById("info-popover"),
@@ -1374,23 +1395,16 @@
       updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
     }
 
-    function showSuccess(rows) {
-      submittedRows = rows;
-      el.resultsList.innerHTML = rows.map((row, index) => `
-        <div class="result-card">
-          <p class="result-json-title">Speler ${index + 1}</p>
-          <pre>${escapeHtml(JSON.stringify(row, null, 2))}</pre>
-        </div>
-      `).join("");
+    function showStatus(type, title, text) {
+      const isSuccess = type === "success";
+      el.statusBox.className = isSuccess ? "success-box" : "error-box";
+      el.statusTitle.className = isSuccess ? "success-title" : "error-title";
+      el.statusText.className = isSuccess ? "success-text" : "error-text";
+      el.statusTitle.textContent = title;
+      el.statusText.textContent = text;
       el.formView.classList.add("hidden");
+      el.topSelectorGrid.classList.add("hidden");
       el.successView.classList.remove("hidden");
-    }
-
-    function escapeHtml(str) {
-      return str
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;");
     }
 
     function resetForm() {
@@ -1401,6 +1415,7 @@
       renderSummary();
       el.infoPopover.classList.remove("open");
       el.successView.classList.add("hidden");
+      el.topSelectorGrid.classList.remove("hidden");
       el.formView.classList.remove("hidden");
     }
 
@@ -1553,10 +1568,10 @@
         if (!result.ok) throw new Error(result.error || "Opslaan mislukt");
 
         console.log("Verzonden naar Google Sheets:", rows);
-        showSuccess(rows);
+        showStatus("success", "Resultaat succesvol verzonden", "Je resultaat is goed verzonden. Je kunt hieronder direct nog een resultaat invoeren.");
       } catch (error) {
         console.error("Fout bij verzenden:", error);
-        alert("Opslaan naar Google Spreadsheet is mislukt.");
+        showStatus("error", "Resultaat niet verzonden", "Er ging iets mis bij het verzenden. Probeer het opnieuw via de knop hieronder.");
       }
     });
 
