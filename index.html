@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Warhammer Weekend v1.5</title>
+  <title>Warhammer Weekend</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -73,6 +73,65 @@
       margin: 8px 0 0;
       color: var(--muted);
       font-size: 1rem;
+    }
+
+
+
+    .top-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 0 0 24px;
+      flex-wrap: wrap;
+    }
+
+    .nav-button {
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .nav-button:hover {
+      background: #eff6ff;
+      border-color: var(--blue-border);
+    }
+
+    .nav-button.active {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+    }
+
+    .sheet-card {
+      margin-bottom: 24px;
+    }
+
+    .sheet-card .card-body {
+      padding: 10px;
+    }
+
+    .sheet-frame-wrap {
+      width: 100%;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #ffffff;
+      min-height: 720px;
+    }
+
+    .sheet-frame {
+      width: 100%;
+      height: 720px;
+      border: 0;
+      display: block;
+      background: #ffffff;
     }
 
     .card {
@@ -736,6 +795,58 @@
     .hidden { display: none !important; }
 
 
+
+    .round-results-section {
+      margin-top: 28px;
+    }
+
+    .round-results-title {
+      margin: 0 0 16px;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .round-results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    .round-result-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 14px;
+      min-height: 132px;
+    }
+
+    .round-result-card-title {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .round-results-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.9rem;
+    }
+
+    .round-results-list li + li {
+      margin-top: 6px;
+    }
+
+    .round-results-empty {
+      margin: 0;
+      color: #64748b;
+      line-height: 1.45;
+      font-size: 0.9rem;
+    }
+
     @media (max-width: 1020px) {
       #matchsize-selector-compact.desktop-only {
         display: none;
@@ -748,6 +859,10 @@
 
       .top-selector-grid {
         grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      }
+
+      .round-results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
@@ -765,11 +880,29 @@
       .field-group { margin-bottom: 12px; }
       .player-grid { gap: 14px; }
       .toggle-row { padding: 10px 12px; min-height: 52px; }
+      .round-results-grid { grid-template-columns: 1fr; }
+      .round-result-card { min-height: 0; }
       .page-meta {
         justify-content: center;
         margin-top: 12px;
         padding-bottom: 0;
       }
+
+      .top-nav {
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .nav-button {
+        flex: 1 1 140px;
+      }
+
+      .sheet-frame-wrap,
+      .sheet-frame {
+        min-height: 640px;
+        height: 640px;
+      }
+
     }
   </style>
 </head>
@@ -777,7 +910,39 @@
   <div class="container">
     <div class="header">
       <h1 class="title">Warhammer Weekend</h1>
-      <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
+          </div>
+
+
+
+    <div class="top-nav" aria-label="Navigatie">
+      <button type="button" class="nav-button active" id="nav-formulier">Formulier</button>
+      <button type="button" class="nav-button" id="nav-stand">Stand</button>
+    </div>
+
+    <div id="sheet-view" class="hidden">
+      <div class="card sheet-card">
+        <div class="card-header"><h2 class="card-title">Stand</h2></div>
+        <div class="card-body">
+          <div class="standings-toolbar">
+            <button type="button" class="standings-refresh" id="standings-refresh">Ververs stand</button>
+          </div>
+          <div id="standings-loading" class="standings-loading">Stand wordt geladen...</div>
+          <div id="standings-error" class="standings-error hidden">De stand kon niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
+          <div id="standings-table-wrap" class="standings-table-wrap hidden">
+            <table class="standings-table" aria-label="Standen">
+              <thead id="standings-head"></thead>
+              <tbody id="standings-body"></tbody>
+            </table>
+          </div>
+
+          <div class="round-results-section">
+            <h3 class="round-results-title">Resultaten rondes</h3>
+            <div id="round-results-loading" class="standings-loading hidden">Ronderesultaten worden geladen...</div>
+            <div id="round-results-error" class="standings-error hidden">De ronderesultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
+            <div id="round-results-grid" class="round-results-grid hidden"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="top-selector-grid" class="top-selector-grid">
@@ -1103,7 +1268,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 1.5">v1.5</span>
+      <span class="version-badge" aria-label="Versie 2.0">v2.0</span>
     </div>
   </div>
 
@@ -1169,6 +1334,18 @@
       roundSelectMobile: document.getElementById("round-select-mobile"),
       matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-segment")),
       matchSizeMobile: document.getElementById("match-size-mobile"),
+      navFormulier: document.getElementById("nav-formulier"),
+      navStand: document.getElementById("nav-stand"),
+      sheetView: document.getElementById("sheet-view"),
+      standingsHead: document.getElementById("standings-head"),
+      standingsBody: document.getElementById("standings-body"),
+      standingsLoading: document.getElementById("standings-loading"),
+      standingsError: document.getElementById("standings-error"),
+      standingsTableWrap: document.getElementById("standings-table-wrap"),
+      standingsRefresh: document.getElementById("standings-refresh"),
+      roundResultsLoading: document.getElementById("round-results-loading"),
+      roundResultsError: document.getElementById("round-results-error"),
+      roundResultsGrid: document.getElementById("round-results-grid"),
     };
 
     function sanitizeInteger(value) {
@@ -1395,6 +1572,307 @@
       updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
     }
 
+
+
+    const STANDINGS_GVIZ_URL = "https://docs.google.com/spreadsheets/d/17tMmwqTE3tO9JnGIFXFZ2BIlFEd92N2GOkitUE3LTkg/gviz/tq?gid=1819639186&range=B4:P12&headers=1&tqx=out:json;responseHandler:handleStandingsQuery";
+    const ROUND_RESULTS_GVIZ_BASE_URLS = [
+      "https://docs.google.com/spreadsheets/d/17tMmwqTE3tO9JnGIFXFZ2BIlFEd92N2GOkitUE3LTkg/gviz/tq?gid=67845043&headers=0&tqx=out:json"
+    ];
+    const ROUND_RESULT_RANGE = "A1:G79";
+    const ROUND_RESULT_BLOCKS = [
+      { defaultTitle: "Ronde 1", titleRow: 1, resultsStartRow: 4, nextTitleRow: 10 },
+      { defaultTitle: "Ronde 2", titleRow: 10, resultsStartRow: 13, nextTitleRow: 20 },
+      { defaultTitle: "Ronde 3", titleRow: 20, resultsStartRow: 23, nextTitleRow: 30 },
+      { defaultTitle: "Ronde 4", titleRow: 30, resultsStartRow: 33, nextTitleRow: 40 },
+      { defaultTitle: "Ronde 5", titleRow: 40, resultsStartRow: 43, nextTitleRow: 50 },
+      { defaultTitle: "Ronde 6", titleRow: 50, resultsStartRow: 53, nextTitleRow: 60 },
+      { defaultTitle: "Ronde 7", titleRow: 60, resultsStartRow: 63, nextTitleRow: 70 },
+      { defaultTitle: "Ronde 8", titleRow: 70, resultsStartRow: 73, nextTitleRow: 80 },
+    ];
+    let standingsRequestId = 0;
+    let roundResultsRequestId = 0;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function extractRowsFromGvizResponse(response, includeHeaderRow = true) {
+      const table = response && response.table;
+      const cols = (table && table.cols) || [];
+      const rows = (table && table.rows) || [];
+
+      const headerRow = cols.map((col) => String((col && col.label) || '').trim());
+      const dataRows = rows.map((row) => {
+        const cells = (row && row.c) || [];
+        return cells.map((cell) => {
+          if (!cell) return '';
+          if (cell.f != null && cell.f !== '') return String(cell.f).trim();
+          if (cell.v == null) return '';
+          return String(cell.v).trim();
+        });
+      });
+
+      return includeHeaderRow ? [headerRow, ...dataRows] : dataRows;
+    }
+
+    function renderTableFromRows(rows, headEl, bodyEl, wrapEl, emptyMessage, firstColClass = "standings-rank", secondColClass = "standings-player") {
+      const normalizedRows = rows
+        .map((row) => row.map((value) => String(value ?? "").trim()))
+        .filter((row) => row.some((value) => value !== ""));
+
+      if (!normalizedRows.length) {
+        headEl.innerHTML = "";
+        bodyEl.innerHTML = `<tr><td colspan="15" class="standings-empty">${escapeHtml(emptyMessage)}</td></tr>`;
+        wrapEl.classList.remove("hidden");
+        return;
+      }
+
+      const [columns, ...dataRows] = normalizedRows;
+      const columnCount = columns.length || 15;
+
+      headEl.innerHTML = `<tr>${columns.map((label) => `<th>${escapeHtml(label)}</th>`).join("")}</tr>`;
+
+      if (!dataRows.length) {
+        bodyEl.innerHTML = `<tr><td colspan="${columnCount}" class="standings-empty">${escapeHtml(emptyMessage)}</td></tr>`;
+      } else {
+        bodyEl.innerHTML = dataRows.map((cells) => {
+          const padded = [...cells];
+          while (padded.length < columnCount) padded.push("");
+          const tds = padded.map((value, index) => {
+            const className = index === 0 ? firstColClass : index === 1 ? secondColClass : "";
+            return `<td class="${className}">${escapeHtml(value)}</td>`;
+          }).join("");
+          return `<tr>${tds}</tr>`;
+        }).join("");
+      }
+
+      wrapEl.classList.remove("hidden");
+    }
+
+    function renderStandingsTableFromRows(rows) {
+      renderTableFromRows(rows, el.standingsHead, el.standingsBody, el.standingsTableWrap, "Er zijn nog geen standen beschikbaar.");
+    }
+
+    function getJoinedRowText(cells) {
+      return cells
+        .map((value) => String(value || "").trim())
+        .filter(Boolean)
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function renderRoundResultsCards(roundBlocks) {
+      const cardsHtml = roundBlocks.map((block) => {
+        const title = String(block.title || "").trim();
+        const results = (block.results || []).filter(Boolean);
+        const itemsHtml = results.length
+          ? `<ul class="round-results-list">${results.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+          : `<p class="round-results-empty">Nog geen resultaten.</p>`;
+
+        return `
+          <article class="round-result-card">
+            <h4 class="round-result-card-title">${escapeHtml(title)}</h4>
+            ${itemsHtml}
+          </article>
+        `;
+      }).join("");
+
+      el.roundResultsGrid.innerHTML = cardsHtml;
+      el.roundResultsGrid.classList.remove("hidden");
+    }
+
+    function setStandingsState(state) {
+      el.standingsLoading.classList.toggle("hidden", state !== "loading");
+      el.standingsError.classList.toggle("hidden", state !== "error");
+      if (state === "loading") {
+        el.standingsTableWrap.classList.add("hidden");
+      }
+    }
+
+    function setRoundResultsState(state) {
+      el.roundResultsLoading.classList.toggle("hidden", state !== "loading");
+      el.roundResultsError.classList.toggle("hidden", state !== "error");
+      if (state === "loading") {
+        el.roundResultsGrid.classList.add("hidden");
+      }
+    }
+
+    function loadStandings() {
+      setStandingsState("loading");
+      standingsRequestId += 1;
+      const requestId = standingsRequestId;
+
+      document.querySelectorAll('script[data-standings-script="true"]').forEach((node) => node.remove());
+
+      let timeoutId = null;
+
+      window.handleStandingsQuery = function(response) {
+        if (requestId !== standingsRequestId) return;
+        if (timeoutId) window.clearTimeout(timeoutId);
+
+        try {
+          renderStandingsTableFromRows(extractRowsFromGvizResponse(response));
+          setStandingsState('ready');
+        } catch (error) {
+          console.error('Fout bij verwerken stand:', error);
+          setStandingsState('error');
+        }
+      };
+
+      timeoutId = window.setTimeout(() => {
+        if (requestId !== standingsRequestId) return;
+        console.error('Timeout bij laden stand');
+        setStandingsState('error');
+      }, 10000);
+
+      const script = document.createElement('script');
+      script.src = `${STANDINGS_GVIZ_URL}&_=${Date.now()}`;
+      script.async = true;
+      script.dataset.standingsScript = 'true';
+      script.onerror = function() {
+        if (requestId !== standingsRequestId) return;
+        if (timeoutId) window.clearTimeout(timeoutId);
+        console.error('Fout bij laden stand-script');
+        setStandingsState('error');
+      };
+
+      document.body.appendChild(script);
+    }
+
+
+    function loadGvizRangeJsonp(range, requestId, prefix, baseUrl = ROUND_RESULTS_GVIZ_BASE_URL) {
+      return new Promise((resolve, reject) => {
+        const callbackName = `${prefix}_${requestId}_${Math.random().toString(36).slice(2, 10)}`;
+        const script = document.createElement('script');
+        let timeoutId = null;
+
+        window[callbackName] = function(response) {
+          if (timeoutId) window.clearTimeout(timeoutId);
+          script.remove();
+          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
+          resolve(extractRowsFromGvizResponse(response, false));
+        };
+
+        timeoutId = window.setTimeout(() => {
+          script.remove();
+          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
+          reject(new Error(`Timeout bij laden van bereik ${range}`));
+        }, 10000);
+
+        script.async = true;
+        script.dataset.roundResultsScript = 'true';
+        script.onerror = function() {
+          if (timeoutId) window.clearTimeout(timeoutId);
+          script.remove();
+          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
+          reject(new Error(`Fout bij laden van bereik ${range}`));
+        };
+        script.src = `${baseUrl}&range=${encodeURIComponent(range)}&tqx=${encodeURIComponent(`out:json;responseHandler:${callbackName}`)}&_=${Date.now()}`;
+        document.body.appendChild(script);
+      });
+    }
+
+    function buildRoundResultsFromRoundSheet(rows) {
+      const dataRows = rows;
+      const getCell = (sheetRowNumber, columnIndex) => {
+        const row = dataRows[sheetRowNumber - 1] || [];
+        return String((row && row[columnIndex]) || '').trim();
+      };
+
+      return ROUND_RESULT_BLOCKS.map((block) => {
+        const title = getCell(block.titleRow, 0) || block.defaultTitle;
+        const results = [];
+
+        for (let sheetRow = block.resultsStartRow; sheetRow < block.nextTitleRow; sheetRow += 1) {
+          const value = getCell(sheetRow, 6);
+          if (!value) continue;
+          if (/^Ronde\s+\d+$/i.test(value)) continue;
+          results.push(value);
+        }
+
+        return { title, results };
+      });
+    }
+
+    function loadRoundResults() {
+      setRoundResultsState("loading");
+      roundResultsRequestId += 1;
+      const requestId = roundResultsRequestId;
+
+      document.querySelectorAll('script[data-round-results-script="true"]').forEach((node) => node.remove());
+
+      const tryLoad = (baseUrlIndex = 0) => {
+        const baseUrl = ROUND_RESULTS_GVIZ_BASE_URLS[baseUrlIndex];
+        if (!baseUrl) {
+          throw new Error('Geen geldige bron gevonden voor ronderesultaten');
+        }
+
+        return loadGvizRangeJsonp(ROUND_RESULT_RANGE, requestId, 'handleRoundResultsSheet', baseUrl)
+          .catch((error) => {
+            if (baseUrlIndex + 1 < ROUND_RESULTS_GVIZ_BASE_URLS.length) {
+              return tryLoad(baseUrlIndex + 1);
+            }
+            throw error;
+          });
+      };
+
+      tryLoad()
+        .then((rows) => {
+          if (requestId !== roundResultsRequestId) return;
+          const roundBlocks = buildRoundResultsFromRoundSheet(rows);
+          renderRoundResultsCards(roundBlocks);
+          setRoundResultsState('ready');
+        })
+        .catch((error) => {
+          if (requestId !== roundResultsRequestId) return;
+          console.error('Fout bij laden ronderesultaten:', error);
+          setRoundResultsState('error');
+        });
+    }
+
+    let standingsAutoRefreshInterval = null;
+
+    function startStandingsAutoRefresh() {
+      stopStandingsAutoRefresh();
+      standingsAutoRefreshInterval = window.setInterval(() => {
+        if (!el.sheetView.classList.contains("hidden")) {
+          loadStandings();
+          loadRoundResults();
+        }
+      }, 30000);
+    }
+
+    function stopStandingsAutoRefresh() {
+      if (standingsAutoRefreshInterval) {
+        window.clearInterval(standingsAutoRefreshInterval);
+        standingsAutoRefreshInterval = null;
+      }
+    }
+
+    function setActiveView(view) {
+      const showForm = view === "formulier";
+      el.navFormulier.classList.toggle("active", showForm);
+      el.navStand.classList.toggle("active", !showForm);
+      el.sheetView.classList.toggle("hidden", showForm);
+      el.topSelectorGrid.classList.toggle("hidden", !showForm);
+      el.formView.classList.toggle("hidden", !showForm);
+      el.successView.classList.add("hidden");
+
+      if (showForm) {
+        stopStandingsAutoRefresh();
+      } else {
+        loadStandings();
+        loadRoundResults();
+        startStandingsAutoRefresh();
+      }
+    }
+
     function showStatus(type, title, text) {
       const isSuccess = type === "success";
       el.statusBox.className = isSuccess ? "success-box" : "error-box";
@@ -1402,6 +1880,7 @@
       el.statusText.className = isSuccess ? "success-text" : "error-text";
       el.statusTitle.textContent = title;
       el.statusText.textContent = text;
+      setActiveView("formulier");
       el.formView.classList.add("hidden");
       el.topSelectorGrid.classList.add("hidden");
       el.successView.classList.remove("hidden");
@@ -1414,6 +1893,7 @@
       renderErrors({});
       renderSummary();
       el.infoPopover.classList.remove("open");
+      setActiveView("formulier");
       el.successView.classList.add("hidden");
       el.topSelectorGrid.classList.remove("hidden");
       el.formView.classList.remove("hidden");
@@ -1581,8 +2061,23 @@
       }
     });
 
+
+
+    el.navFormulier.addEventListener("click", () => {
+      setActiveView("formulier");
+    });
+
+    el.navStand.addEventListener("click", () => {
+      setActiveView("stand");
+    });
+
+    el.standingsRefresh.addEventListener("click", () => {
+      loadStandings();
+    });
+
     el.resetButton.addEventListener("click", resetForm);
 
+    setActiveView("formulier");
     syncInputsFromState();
     renderSummary();
   </script>
