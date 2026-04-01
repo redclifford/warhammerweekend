@@ -83,7 +83,7 @@
     }
 
     .card-header {
-      padding: 20px 20px 0;
+      padding: 16px 16px 0;
     }
 
     .card-title {
@@ -93,17 +93,39 @@
     }
 
     .card-body {
-      padding: 20px;
+      padding: 16px;
+    }
+
+    .top-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 14px;
     }
 
     .round-card {
-      margin-bottom: 20px;
+      margin-bottom: 0;
     }
 
-    .top-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
+    .compact-top-card-body {
+      padding: 10px 14px 8px;
+    }
+
+    .compact-field-group {
+      margin-bottom: 0;
+    }
+
+    .compact-field-group .error {
+      min-height: 0;
+      margin-top: 4px;
+    }
+
+    .desktop-only {
+      display: block;
+    }
+
+    .mobile-only {
+      display: none;
     }
 
     .round-label, .label {
@@ -123,6 +145,15 @@
       letter-spacing: 0.06em;
     }
 
+    .compact-field-group > .round-label {
+      margin-bottom: 6px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
     .player-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -130,14 +161,14 @@
     }
 
     .field-group {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .label-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .label-row .label {
@@ -245,82 +276,123 @@
     }
 
     .error {
-      margin-top: 6px;
-      font-size: 0.9rem;
+      margin-top: 4px;
+      font-size: 0.88rem;
       color: var(--error);
-      min-height: 1.2em;
+      min-height: 1em;
     }
 
-    .round-selector {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      width: 100%;
-    }
-
-    .round-button {
-      height: 48px;
-      border-radius: 14px;
+    .round-segmented {
+      display: inline-grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      padding: 3px;
       border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .round-button:hover {
-      border-color: #94a3b8;
-      transform: translateY(-1px);
-    }
-
-    .round-button.active {
-      background: #0f172a;
-      color: #ffffff;
-      border-color: #0f172a;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
-    }
-
-    .matchsize-selector {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+      border-radius: 12px;
+      background: #f8fafc;
       width: 100%;
+      max-width: 420px;
     }
 
-    .matchsize-button {
-      min-height: 48px;
-      border-radius: 14px;
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: var(--text);
+    .round-segment {
+      height: 34px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #334155;
       font-size: 0.95rem;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      transition: all 0.2s ease;
-      padding: 10px 12px;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
     }
 
-    .matchsize-button:hover:not(:disabled) {
+    .round-segment:hover {
+      background: #e2e8f0;
+    }
+
+    .round-segment.active {
+      background: #0f172a;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+    }
+
+    .round-segment:focus-visible,
+    .matchsize-segment:focus-visible,
+    .compact-select:focus-visible {
+      outline: 2px solid #1d4ed8;
+      outline-offset: 2px;
+    }
+
+    .compact-select {
+      width: 100%;
+      max-width: 240px;
+      height: 36px;
+      padding: 0 38px 0 12px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 0.95rem;
+      color: #0f172a;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, #475569 50%), linear-gradient(135deg, #475569 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    .matchsize-segmented {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .matchsize-segment {
+      min-height: 42px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .matchsize-segment:hover:not(:disabled) {
+      background: #f8fafc;
       border-color: #94a3b8;
       transform: translateY(-1px);
     }
 
-    .matchsize-button.active {
+    .matchsize-segment.active {
       background: #0f172a;
       color: #ffffff;
       border-color: #0f172a;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
     }
 
-    .matchsize-button:disabled,
-    .matchsize-button.is-locked {
+    .matchsize-segment:disabled,
+    .matchsize-segment.is-locked {
       background: #f8fafc;
       color: #94a3b8;
       border-color: #e2e8f0;
       cursor: not-allowed;
       opacity: 1;
+    }
+
+    .field-help-text {
+      margin: 8px 0 0;
+      font-size: 0.82rem;
+      color: #64748b;
+      line-height: 1.4;
     }
 
     .toggle-row {
@@ -329,9 +401,10 @@
       align-items: center;
       gap: 12px;
       border: 1px solid var(--border);
-      border-radius: 18px;
+      border-radius: 16px;
       background: #f8fafc;
-      padding: 16px;
+      padding: 12px 14px;
+      min-height: 56px;
     }
 
     .toggle-choice-row {
@@ -642,12 +715,36 @@
 
     .hidden { display: none !important; }
 
+
+    @media (max-width: 1020px) {
+      #matchsize-selector-compact.desktop-only {
+        display: none;
+      }
+
+      #match-size-mobile.mobile-only {
+        display: block;
+        max-width: 100%;
+      }
+
+      .top-selector-grid {
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      }
+    }
+
     @media (max-width: 640px) {
       .actions-bar { align-items: stretch; }
       .button { width: 100%; min-width: 0; }
-      .round-selector { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .matchsize-selector { grid-template-columns: 1fr; }
-      .top-grid { grid-template-columns: 1fr; }
+      .card-header { padding: 14px 14px 0; }
+      .card-body { padding: 14px; }
+      .top-selector-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+      .compact-top-card-body { padding: 8px 12px 6px; }
+      .desktop-only { display: none; }
+      .mobile-only { display: block; }
+      .compact-field-group > .round-label { margin-bottom: 4px; font-size: 1.25rem; }
+      .compact-select { max-width: 100%; height: 36px; }
+      .field-group { margin-bottom: 12px; }
+      .player-grid { gap: 14px; }
+      .toggle-row { padding: 10px 12px; min-height: 52px; }
       .page-meta {
         justify-content: center;
         margin-top: 12px;
@@ -663,34 +760,59 @@
       <p class="subtitle">Vul hieronder de resultaten van beide spelers in.</p>
     </div>
 
-    <div class="card round-card">
-      <div class="card-body">
-        <div class="top-grid">
-          <div class="field-group">
-            <label class="round-label">Ronde</label>
-            <div class="round-selector" id="round-selector" role="group" aria-label="Kies een ronde">
-              <button type="button" class="round-button" data-round="1">Ronde 1</button>
-              <button type="button" class="round-button" data-round="2">Ronde 2</button>
-              <button type="button" class="round-button" data-round="3">Ronde 3</button>
-              <button type="button" class="round-button" data-round="4">Ronde 4</button>
-              <button type="button" class="round-button" data-round="5">Ronde 5</button>
-              <button type="button" class="round-button" data-round="6">Ronde 6</button>
-              <button type="button" class="round-button" data-round="7">Ronde 7</button>
+    <div class="top-selector-grid">
+      <div class="card round-card">
+        <div class="card-header"><h2 class="card-title">Ronde</h2></div>
+        <div class="card-body compact-top-card-body">
+          <div class="field-group compact-field-group">
+            <div class="round-segmented desktop-only" id="round-selector-compact" role="radiogroup" aria-label="Kies een ronde">
+              <button type="button" class="round-segment" data-round="1" role="radio" aria-checked="false">1</button>
+              <button type="button" class="round-segment" data-round="2" role="radio" aria-checked="false">2</button>
+              <button type="button" class="round-segment" data-round="3" role="radio" aria-checked="false">3</button>
+              <button type="button" class="round-segment" data-round="4" role="radio" aria-checked="false">4</button>
+              <button type="button" class="round-segment" data-round="5" role="radio" aria-checked="false">5</button>
+              <button type="button" class="round-segment" data-round="6" role="radio" aria-checked="false">6</button>
+              <button type="button" class="round-segment" data-round="7" role="radio" aria-checked="false">7</button>
             </div>
+
+            <select id="round-select-mobile" class="compact-select mobile-only" aria-label="Kies een ronde">
+              <option value="">Kies ronde</option>
+              <option value="1">Ronde 1</option>
+              <option value="2">Ronde 2</option>
+              <option value="3">Ronde 3</option>
+              <option value="4">Ronde 4</option>
+              <option value="5">Ronde 5</option>
+              <option value="6">Ronde 6</option>
+              <option value="7">Ronde 7</option>
+            </select>
+
             <input id="ronde" type="hidden" />
             <div class="error" id="error-ronde"></div>
           </div>
+        </div>
+      </div>
 
-          <div class="field-group">
-            <label class="round-label">Match Size</label>
-            <div class="matchsize-selector" id="matchsize-selector" role="group" aria-label="Kies een match size">
-              <button type="button" class="matchsize-button active" data-matchsize="Up to 1,000" aria-pressed="true">Up to 1,000</button>
-              <button type="button" class="matchsize-button is-locked" data-matchsize="1,001-1,500" disabled aria-disabled="true">1,001-1,500</button>
-              <button type="button" class="matchsize-button is-locked" data-matchsize="1,501-2,000" disabled aria-disabled="true">1,501-2,000</button>
-              <button type="button" class="matchsize-button is-locked" data-matchsize="2,001-3,000" disabled aria-disabled="true">2,001-3,000</button>
-              <button type="button" class="matchsize-button is-locked" data-matchsize="3,001+" disabled aria-disabled="true">3,001+</button>
+      <div class="card round-card">
+        <div class="card-header"><h2 class="card-title">Match Size</h2></div>
+        <div class="card-body compact-top-card-body">
+          <div class="field-group compact-field-group">
+            <div class="matchsize-segmented desktop-only" id="matchsize-selector-compact" role="group" aria-label="Kies een match size">
+              <button type="button" class="matchsize-segment active" data-matchsize="Up to 1,000" aria-pressed="true">Up to 1,000</button>
+              <button type="button" class="matchsize-segment is-locked" data-matchsize="1,001-1,500" disabled aria-disabled="true" aria-pressed="false">1,001-1,500</button>
+              <button type="button" class="matchsize-segment is-locked" data-matchsize="1,501-2,000" disabled aria-disabled="true" aria-pressed="false">1,501-2,000</button>
+              <button type="button" class="matchsize-segment is-locked" data-matchsize="2,001-3,000" disabled aria-disabled="true" aria-pressed="false">2,001-3,000</button>
+              <button type="button" class="matchsize-segment is-locked" data-matchsize="3,001+" disabled aria-disabled="true" aria-pressed="false">3,001+</button>
             </div>
-            <input id="match-size" type="hidden" />
+
+            <select id="match-size-mobile" class="compact-select mobile-only" aria-label="Kies een match size">
+              <option value="Up to 1,000">Up to 1,000</option>
+              <option value="1,001-1,500" disabled>1,001-1,500</option>
+              <option value="1,501-2,000" disabled>1,501-2,000</option>
+              <option value="2,001-3,000" disabled>2,001-3,000</option>
+              <option value="3,001+" disabled>3,001+</option>
+            </select>
+
+            <input id="match-size" type="hidden" value="Up to 1,000" />
             <div class="error" id="error-matchSize"></div>
           </div>
         </div>
@@ -1022,8 +1144,10 @@
       summarySpeler2Naam: document.getElementById("summary-speler2-naam"),
       summarySpeler2Score: document.getElementById("summary-speler2-score"),
       summarySpeler2Breakdown: document.getElementById("summary-speler2-breakdown"),
-      roundButtons: Array.from(document.querySelectorAll(".round-button")),
-      matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-button")),
+      roundSegments: Array.from(document.querySelectorAll(".round-segment")),
+      roundSelectMobile: document.getElementById("round-select-mobile"),
+      matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-segment")),
+      matchSizeMobile: document.getElementById("match-size-mobile"),
     };
 
     function sanitizeInteger(value) {
@@ -1219,10 +1343,16 @@
     function syncInputsFromState() {
       el.ronde.value = form.ronde;
       el.matchSize.value = form.matchSize;
+      if (el.matchSizeMobile) el.matchSizeMobile.value = form.matchSize;
 
-      el.roundButtons.forEach((button) => {
-        button.classList.toggle("active", button.dataset.round === form.ronde);
-        button.setAttribute("aria-pressed", button.dataset.round === form.ronde ? "true" : "false");
+      if (el.roundSelectMobile) {
+        el.roundSelectMobile.value = form.ronde;
+      }
+
+      el.roundSegments.forEach((button) => {
+        const isActive = button.dataset.round === form.ronde;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-checked", isActive ? "true" : "false");
       });
 
       el.matchSizeButtons.forEach((button) => {
@@ -1329,13 +1459,21 @@
       });
     }
 
-    el.roundButtons.forEach((button) => {
+    el.roundSegments.forEach((button) => {
       button.addEventListener("click", () => {
         form.ronde = button.dataset.round;
         syncInputsFromState();
         renderSummary();
       });
     });
+
+    if (el.roundSelectMobile) {
+      el.roundSelectMobile.addEventListener("change", (e) => {
+        form.ronde = e.target.value;
+        syncInputsFromState();
+        renderSummary();
+      });
+    }
 
     el.matchSizeButtons.forEach((button) => {
       button.addEventListener("click", () => {
@@ -1344,6 +1482,13 @@
         syncInputsFromState();
       });
     });
+
+    if (el.matchSizeMobile) {
+      el.matchSizeMobile.addEventListener("change", (e) => {
+        form.matchSize = e.target.value;
+        syncInputsFromState();
+      });
+    }
 
     el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); });
     el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); });
