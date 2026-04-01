@@ -794,6 +794,86 @@
 
     .hidden { display: none !important; }
 
+    .standings-toolbar {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .standings-refresh {
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .standings-refresh:hover {
+      background: #f8fafc;
+    }
+
+    .standings-loading,
+    .standings-error {
+      margin: 8px 0 0;
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    .standings-error {
+      color: #991b1b;
+    }
+
+    .standings-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 8px;
+    }
+
+    .standings-table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .standings-table th,
+    .standings-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .standings-table th {
+      background: #f8fafc;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .standings-table td.standings-rank,
+    .standings-table td.standings-player {
+      font-weight: 700;
+    }
+
+    .standings-table td.standings-player {
+      text-align: left;
+    }
+
+    .standings-empty {
+      text-align: center;
+      color: #64748b;
+    }
+
+
 
 
     .round-results-section {
@@ -1257,7 +1337,7 @@
         <div class="card-body">
           <div id="status-box" class="success-box">
             <p id="status-title" class="success-title">Resultaat succesvol verzonden</p>
-            <p id="status-text" class="success-text">Je resultaat is goed verzonden. Je kunt hieronder direct nog een resultaat invoeren.</p>
+            <p id="status-text" class="success-text"></p>
           </div>
 
           <div style="margin-top: 20px;">
@@ -1574,23 +1654,7 @@
 
 
 
-    const STANDINGS_GVIZ_URL = "https://docs.google.com/spreadsheets/d/17tMmwqTE3tO9JnGIFXFZ2BIlFEd92N2GOkitUE3LTkg/gviz/tq?gid=1819639186&range=B4:P12&headers=1&tqx=out:json;responseHandler:handleStandingsQuery";
-    const ROUND_RESULTS_GVIZ_BASE_URLS = [
-      "https://docs.google.com/spreadsheets/d/17tMmwqTE3tO9JnGIFXFZ2BIlFEd92N2GOkitUE3LTkg/gviz/tq?gid=67845043&headers=0&tqx=out:json"
-    ];
-    const ROUND_RESULT_RANGE = "A1:G79";
-    const ROUND_RESULT_BLOCKS = [
-      { defaultTitle: "Ronde 1", titleRow: 1, resultsStartRow: 4, nextTitleRow: 10 },
-      { defaultTitle: "Ronde 2", titleRow: 10, resultsStartRow: 13, nextTitleRow: 20 },
-      { defaultTitle: "Ronde 3", titleRow: 20, resultsStartRow: 23, nextTitleRow: 30 },
-      { defaultTitle: "Ronde 4", titleRow: 30, resultsStartRow: 33, nextTitleRow: 40 },
-      { defaultTitle: "Ronde 5", titleRow: 40, resultsStartRow: 43, nextTitleRow: 50 },
-      { defaultTitle: "Ronde 6", titleRow: 50, resultsStartRow: 53, nextTitleRow: 60 },
-      { defaultTitle: "Ronde 7", titleRow: 60, resultsStartRow: 63, nextTitleRow: 70 },
-      { defaultTitle: "Ronde 8", titleRow: 70, resultsStartRow: 73, nextTitleRow: 80 },
-    ];
-    let standingsRequestId = 0;
-    let roundResultsRequestId = 0;
+
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -1601,28 +1665,9 @@
         .replace(/'/g, "&#39;");
     }
 
-    function extractRowsFromGvizResponse(response, includeHeaderRow = true) {
-      const table = response && response.table;
-      const cols = (table && table.cols) || [];
-      const rows = (table && table.rows) || [];
-
-      const headerRow = cols.map((col) => String((col && col.label) || '').trim());
-      const dataRows = rows.map((row) => {
-        const cells = (row && row.c) || [];
-        return cells.map((cell) => {
-          if (!cell) return '';
-          if (cell.f != null && cell.f !== '') return String(cell.f).trim();
-          if (cell.v == null) return '';
-          return String(cell.v).trim();
-        });
-      });
-
-      return includeHeaderRow ? [headerRow, ...dataRows] : dataRows;
-    }
-
     function renderTableFromRows(rows, headEl, bodyEl, wrapEl, emptyMessage, firstColClass = "standings-rank", secondColClass = "standings-player") {
-      const normalizedRows = rows
-        .map((row) => row.map((value) => String(value ?? "").trim()))
+      const normalizedRows = (Array.isArray(rows) ? rows : [])
+        .map((row) => (Array.isArray(row) ? row : []).map((value) => String(value ?? "").trim()))
         .filter((row) => row.some((value) => value !== ""));
 
       if (!normalizedRows.length) {
@@ -1654,25 +1699,36 @@
       wrapEl.classList.remove("hidden");
     }
 
-    function renderStandingsTableFromRows(rows) {
-      renderTableFromRows(rows, el.standingsHead, el.standingsBody, el.standingsTableWrap, "Er zijn nog geen standen beschikbaar.");
+    const LIVE_DATA_URL = `${SHEETS_WEBHOOK_URL}?action=liveData`;
+
+    async function fetchLiveData() {
+      const response = await fetch(`${LIVE_DATA_URL}&_=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store',
+      });
+
+      if (!response.ok) {
+        throw new Error(`Live data request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data || !data.ok) {
+        throw new Error((data && data.error) || 'Live data kon niet worden geladen');
+      }
+
+      return data;
     }
 
-    function getJoinedRowText(cells) {
-      return cells
-        .map((value) => String(value || "").trim())
-        .filter(Boolean)
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim();
+    function renderStandingsTableFromRows(rows) {
+      renderTableFromRows(rows, el.standingsHead, el.standingsBody, el.standingsTableWrap, 'Er zijn nog geen standen beschikbaar.');
     }
 
     function renderRoundResultsCards(roundBlocks) {
       const cardsHtml = roundBlocks.map((block) => {
-        const title = String(block.title || "").trim();
-        const results = (block.results || []).filter(Boolean);
+        const title = String(block.title || '').trim();
+        const results = Array.isArray(block.results) ? block.results.filter(Boolean) : [];
         const itemsHtml = results.length
-          ? `<ul class="round-results-list">${results.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+          ? `<ul class="round-results-list">${results.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
           : `<p class="round-results-empty">Nog geen resultaten.</p>`;
 
         return `
@@ -1681,159 +1737,61 @@
             ${itemsHtml}
           </article>
         `;
-      }).join("");
+      }).join('');
 
       el.roundResultsGrid.innerHTML = cardsHtml;
-      el.roundResultsGrid.classList.remove("hidden");
+      el.roundResultsGrid.classList.remove('hidden');
     }
 
     function setStandingsState(state) {
-      el.standingsLoading.classList.toggle("hidden", state !== "loading");
-      el.standingsError.classList.toggle("hidden", state !== "error");
-      if (state === "loading") {
-        el.standingsTableWrap.classList.add("hidden");
+      el.standingsLoading.classList.toggle('hidden', state !== 'loading');
+      el.standingsError.classList.toggle('hidden', state !== 'error');
+      if (state === 'loading') {
+        el.standingsTableWrap.classList.add('hidden');
       }
     }
 
     function setRoundResultsState(state) {
-      el.roundResultsLoading.classList.toggle("hidden", state !== "loading");
-      el.roundResultsError.classList.toggle("hidden", state !== "error");
-      if (state === "loading") {
-        el.roundResultsGrid.classList.add("hidden");
+      el.roundResultsLoading.classList.toggle('hidden', state !== 'loading');
+      el.roundResultsError.classList.toggle('hidden', state !== 'error');
+      if (state === 'loading') {
+        el.roundResultsGrid.classList.add('hidden');
+      }
+    }
+
+    async function loadLiveStandData() {
+      setStandingsState('loading');
+      setRoundResultsState('loading');
+
+      try {
+        const data = await fetchLiveData();
+
+        if (Array.isArray(data.standen) && data.standen.length) {
+          renderStandingsTableFromRows(data.standen);
+          setStandingsState('ready');
+        } else {
+          setStandingsState('error');
+        }
+
+        if (Array.isArray(data.rondes)) {
+          renderRoundResultsCards(data.rondes);
+          setRoundResultsState('ready');
+        } else {
+          setRoundResultsState('error');
+        }
+      } catch (error) {
+        console.error('Fout bij laden live data:', error);
+        setStandingsState('error');
+        setRoundResultsState('error');
       }
     }
 
     function loadStandings() {
-      setStandingsState("loading");
-      standingsRequestId += 1;
-      const requestId = standingsRequestId;
-
-      document.querySelectorAll('script[data-standings-script="true"]').forEach((node) => node.remove());
-
-      let timeoutId = null;
-
-      window.handleStandingsQuery = function(response) {
-        if (requestId !== standingsRequestId) return;
-        if (timeoutId) window.clearTimeout(timeoutId);
-
-        try {
-          renderStandingsTableFromRows(extractRowsFromGvizResponse(response));
-          setStandingsState('ready');
-        } catch (error) {
-          console.error('Fout bij verwerken stand:', error);
-          setStandingsState('error');
-        }
-      };
-
-      timeoutId = window.setTimeout(() => {
-        if (requestId !== standingsRequestId) return;
-        console.error('Timeout bij laden stand');
-        setStandingsState('error');
-      }, 10000);
-
-      const script = document.createElement('script');
-      script.src = `${STANDINGS_GVIZ_URL}&_=${Date.now()}`;
-      script.async = true;
-      script.dataset.standingsScript = 'true';
-      script.onerror = function() {
-        if (requestId !== standingsRequestId) return;
-        if (timeoutId) window.clearTimeout(timeoutId);
-        console.error('Fout bij laden stand-script');
-        setStandingsState('error');
-      };
-
-      document.body.appendChild(script);
-    }
-
-
-    function loadGvizRangeJsonp(range, requestId, prefix, baseUrl = ROUND_RESULTS_GVIZ_BASE_URL) {
-      return new Promise((resolve, reject) => {
-        const callbackName = `${prefix}_${requestId}_${Math.random().toString(36).slice(2, 10)}`;
-        const script = document.createElement('script');
-        let timeoutId = null;
-
-        window[callbackName] = function(response) {
-          if (timeoutId) window.clearTimeout(timeoutId);
-          script.remove();
-          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
-          resolve(extractRowsFromGvizResponse(response, false));
-        };
-
-        timeoutId = window.setTimeout(() => {
-          script.remove();
-          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
-          reject(new Error(`Timeout bij laden van bereik ${range}`));
-        }, 10000);
-
-        script.async = true;
-        script.dataset.roundResultsScript = 'true';
-        script.onerror = function() {
-          if (timeoutId) window.clearTimeout(timeoutId);
-          script.remove();
-          try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
-          reject(new Error(`Fout bij laden van bereik ${range}`));
-        };
-        script.src = `${baseUrl}&range=${encodeURIComponent(range)}&tqx=${encodeURIComponent(`out:json;responseHandler:${callbackName}`)}&_=${Date.now()}`;
-        document.body.appendChild(script);
-      });
-    }
-
-    function buildRoundResultsFromRoundSheet(rows) {
-      const dataRows = rows;
-      const getCell = (sheetRowNumber, columnIndex) => {
-        const row = dataRows[sheetRowNumber - 1] || [];
-        return String((row && row[columnIndex]) || '').trim();
-      };
-
-      return ROUND_RESULT_BLOCKS.map((block) => {
-        const title = getCell(block.titleRow, 0) || block.defaultTitle;
-        const results = [];
-
-        for (let sheetRow = block.resultsStartRow; sheetRow < block.nextTitleRow; sheetRow += 1) {
-          const value = getCell(sheetRow, 6);
-          if (!value) continue;
-          if (/^Ronde\s+\d+$/i.test(value)) continue;
-          results.push(value);
-        }
-
-        return { title, results };
-      });
+      return loadLiveStandData();
     }
 
     function loadRoundResults() {
-      setRoundResultsState("loading");
-      roundResultsRequestId += 1;
-      const requestId = roundResultsRequestId;
-
-      document.querySelectorAll('script[data-round-results-script="true"]').forEach((node) => node.remove());
-
-      const tryLoad = (baseUrlIndex = 0) => {
-        const baseUrl = ROUND_RESULTS_GVIZ_BASE_URLS[baseUrlIndex];
-        if (!baseUrl) {
-          throw new Error('Geen geldige bron gevonden voor ronderesultaten');
-        }
-
-        return loadGvizRangeJsonp(ROUND_RESULT_RANGE, requestId, 'handleRoundResultsSheet', baseUrl)
-          .catch((error) => {
-            if (baseUrlIndex + 1 < ROUND_RESULTS_GVIZ_BASE_URLS.length) {
-              return tryLoad(baseUrlIndex + 1);
-            }
-            throw error;
-          });
-      };
-
-      tryLoad()
-        .then((rows) => {
-          if (requestId !== roundResultsRequestId) return;
-          const roundBlocks = buildRoundResultsFromRoundSheet(rows);
-          renderRoundResultsCards(roundBlocks);
-          setRoundResultsState('ready');
-        })
-        .catch((error) => {
-          if (requestId !== roundResultsRequestId) return;
-          console.error('Fout bij laden ronderesultaten:', error);
-          setRoundResultsState('error');
-        });
+      return loadLiveStandData();
     }
 
     let standingsAutoRefreshInterval = null;
@@ -1842,8 +1800,7 @@
       stopStandingsAutoRefresh();
       standingsAutoRefreshInterval = window.setInterval(() => {
         if (!el.sheetView.classList.contains("hidden")) {
-          loadStandings();
-          loadRoundResults();
+          loadLiveStandData();
         }
       }, 30000);
     }
@@ -1867,8 +1824,7 @@
       if (showForm) {
         stopStandingsAutoRefresh();
       } else {
-        loadStandings();
-        loadRoundResults();
+        loadLiveStandData();
         startStandingsAutoRefresh();
       }
     }
@@ -2049,7 +2005,7 @@
         showStatus(
           "success",
           "Resultaat succesvol verzonden",
-          "Je resultaat is verzonden. Verschijnt het niet direct in het sheet, ververs het sheet dan even."
+          ""
         );
       } catch (error) {
         console.error("Fout bij verzenden:", error);
@@ -2072,7 +2028,7 @@
     });
 
     el.standingsRefresh.addEventListener("click", () => {
-      loadStandings();
+      loadLiveStandData();
     });
 
     el.resetButton.addEventListener("click", resetForm);
@@ -2080,6 +2036,7 @@
     setActiveView("formulier");
     syncInputsFromState();
     renderSummary();
+    setActiveView("formulier");
   </script>
 </body>
 </html>
