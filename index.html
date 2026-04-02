@@ -110,6 +110,22 @@
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
     }
 
+    .nav-button.is-disabled {
+      background: #e2e8f0;
+      color: #64748b;
+      border-color: #cbd5e1;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .nav-lock-message {
+      margin: -12px 0 20px;
+      text-align: center;
+      color: #991b1b;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
     .sheet-card {
       margin-bottom: 24px;
     }
@@ -699,26 +715,42 @@
       flex: 1 1 280px;
     }
 
-    .button, .secondary-button {
+    .actions-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button, .secondary-button, .danger-button {
       height: 48px;
       border-radius: 14px;
       padding: 0 20px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
+      min-width: 220px;
     }
 
     .button {
       border: none;
       background: #0f172a;
       color: #ffffff;
-      min-width: 220px;
     }
 
     .secondary-button {
       border: 1px solid #cbd5e1;
       background: #ffffff;
       color: #0f172a;
+    }
+
+    .danger-button {
+      border: 1px solid #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    .danger-button:hover {
+      background: #fee2e2;
     }
 
     .success-box {
@@ -794,10 +826,16 @@
 
     .hidden { display: none !important; }
 
-    .standings-toolbar {
+    .sheet-card .card-header {
       display: flex;
-      justify-content: flex-start;
-      margin-bottom: 12px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 8px;
+    }
+
+    .sheet-card .card-body {
+      padding-top: 0;
     }
 
     .standings-refresh {
@@ -810,10 +848,26 @@
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .standings-refresh:hover {
       background: #f8fafc;
+    }
+
+    .standings-refresh:disabled {
+      cursor: default;
+      opacity: 0.9;
+    }
+
+    .standings-refresh.is-loading::before {
+      content: "⏳";
+      font-size: 1rem;
+      line-height: 1;
     }
 
     .standings-loading,
@@ -831,7 +885,7 @@
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
-      margin-top: 8px;
+      margin-top: 0;
     }
 
     .standings-table {
@@ -877,7 +931,7 @@
 
 
     .round-results-section {
-      margin-top: 28px;
+      margin-top: 20px;
     }
 
     .round-results-title {
@@ -948,7 +1002,8 @@
 
     @media (max-width: 640px) {
       .actions-bar { align-items: stretch; }
-      .button { width: 100%; min-width: 0; }
+      .actions-buttons { width: 100%; }
+      .button, .danger-button { width: 100%; min-width: 0; }
       .card-header { padding: 14px 14px 0; }
       .card-body { padding: 14px; }
       .top-selector-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
@@ -996,17 +1051,18 @@
 
     <div class="top-nav" aria-label="Navigatie">
       <button type="button" class="nav-button active" id="nav-formulier">Formulier</button>
-      <button type="button" class="nav-button" id="nav-stand">Stand</button>
+      <button type="button" class="nav-button" id="nav-stand" aria-disabled="false">Stand</button>
     </div>
+    <div id="nav-lock-message" class="nav-lock-message hidden" aria-live="polite">Vul eerst het formulier helemaal in</div>
 
     <div id="sheet-view" class="hidden">
       <div class="card sheet-card">
-        <div class="card-header"><h2 class="card-title">Stand</h2></div>
+        <div class="card-header">
+          <h2 class="card-title">Stand</h2>
+          <button type="button" class="standings-refresh" id="standings-refresh">Ververs stand</button>
+        </div>
         <div class="card-body">
-          <div class="standings-toolbar">
-            <button type="button" class="standings-refresh" id="standings-refresh">Ververs stand</button>
-          </div>
-          <div id="standings-loading" class="standings-loading">Stand wordt geladen...</div>
+          <div id="standings-loading" class="standings-loading hidden" aria-hidden="true">Stand wordt geladen...</div>
           <div id="standings-error" class="standings-error hidden">De stand kon niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
           <div id="standings-table-wrap" class="standings-table-wrap hidden">
             <table class="standings-table" aria-label="Standen">
@@ -1017,7 +1073,7 @@
 
           <div class="round-results-section">
             <h3 class="round-results-title">Resultaten rondes</h3>
-            <div id="round-results-loading" class="standings-loading hidden">Ronderesultaten worden geladen...</div>
+            <div id="round-results-loading" class="standings-loading hidden" aria-hidden="true">Ronderesultaten worden geladen...</div>
             <div id="round-results-error" class="standings-error hidden">De ronderesultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
             <div id="round-results-grid" class="round-results-grid hidden"></div>
           </div>
@@ -1325,7 +1381,10 @@
           <div class="card" style="box-shadow: 0 10px 30px rgba(15, 23, 42, 0.10);">
             <div class="actions-bar">
               <p class="actions-text">Alle velden zijn verplicht. Controleer goed of alles correct is ingevuld.</p>
-              <button type="submit" class="button">Resultaat verzenden</button>
+              <div class="actions-buttons">
+                <button type="button" class="danger-button" id="clear-form-button">Formulier leegmaken</button>
+                <button type="submit" class="button">Resultaat verzenden</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1416,6 +1475,8 @@
       matchSizeMobile: document.getElementById("match-size-mobile"),
       navFormulier: document.getElementById("nav-formulier"),
       navStand: document.getElementById("nav-stand"),
+      navLockMessage: document.getElementById("nav-lock-message"),
+      clearFormButton: document.getElementById("clear-form-button"),
       sheetView: document.getElementById("sheet-view"),
       standingsHead: document.getElementById("standings-head"),
       standingsBody: document.getElementById("standings-body"),
@@ -1613,6 +1674,43 @@
       el.summarySpeler2Breakdown.textContent = `${Number(form.speler2.victoryPoints || 0)} VP · ${Number(form.speler2.bannersCaptured || 0)} Banners · ${form.speler2.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${form.speler2.bonusObjectives ? "Bonus Objective Completed" : "No Bonus Objective"}`;
     }
 
+
+    function hasStartedForm(currentForm) {
+      return Boolean(
+        currentForm.ronde ||
+        currentForm.speler1.naam ||
+        currentForm.speler1.victoryPoints ||
+        currentForm.speler1.bannersCaptured ||
+        currentForm.speler1.enemyGeneralSlain ||
+        currentForm.speler1.bonusObjectives ||
+        currentForm.speler2.naam ||
+        currentForm.speler2.victoryPoints ||
+        currentForm.speler2.bannersCaptured ||
+        currentForm.speler2.enemyGeneralSlain ||
+        currentForm.speler2.bonusObjectives
+      );
+    }
+
+    function canOpenStandView(currentForm) {
+      return !hasStartedForm(currentForm) || Object.keys(validateForm(currentForm)).length === 0;
+    }
+
+    function hideNavLockMessage() {
+      el.navLockMessage.classList.add("hidden");
+    }
+
+    function showNavLockMessage() {
+      el.navLockMessage.textContent = "Vul eerst het formulier helemaal in";
+      el.navLockMessage.classList.remove("hidden");
+    }
+
+    function updateStandNavState() {
+      const isBlocked = !canOpenStandView(form);
+      el.navStand.classList.toggle("is-disabled", isBlocked);
+      el.navStand.setAttribute("aria-disabled", isBlocked ? "true" : "false");
+      if (!isBlocked) hideNavLockMessage();
+    }
+
     function updateToggle(button, checked) {
       button.classList.toggle("active", checked);
       button.setAttribute("aria-pressed", checked ? "true" : "false");
@@ -1743,23 +1841,32 @@
       el.roundResultsGrid.classList.remove('hidden');
     }
 
+    function setRefreshButtonLoading(isLoading) {
+      el.standingsRefresh.classList.toggle('is-loading', isLoading);
+      el.standingsRefresh.disabled = isLoading;
+      el.standingsRefresh.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+    }
+
     function setStandingsState(state) {
-      el.standingsLoading.classList.toggle('hidden', state !== 'loading');
+      const hasRenderedStandings = el.standingsHead.innerHTML.trim() !== "" || el.standingsBody.innerHTML.trim() !== "";
+      el.standingsLoading.classList.add('hidden');
       el.standingsError.classList.toggle('hidden', state !== 'error');
-      if (state === 'loading') {
+      if (state === 'loading' && !hasRenderedStandings) {
         el.standingsTableWrap.classList.add('hidden');
       }
     }
 
     function setRoundResultsState(state) {
-      el.roundResultsLoading.classList.toggle('hidden', state !== 'loading');
+      const hasRenderedRoundResults = el.roundResultsGrid.innerHTML.trim() !== "";
+      el.roundResultsLoading.classList.add('hidden');
       el.roundResultsError.classList.toggle('hidden', state !== 'error');
-      if (state === 'loading') {
+      if (state === 'loading' && !hasRenderedRoundResults) {
         el.roundResultsGrid.classList.add('hidden');
       }
     }
 
     async function loadLiveStandData() {
+      setRefreshButtonLoading(true);
       setStandingsState('loading');
       setRoundResultsState('loading');
 
@@ -1783,6 +1890,8 @@
         console.error('Fout bij laden live data:', error);
         setStandingsState('error');
         setRoundResultsState('error');
+      } finally {
+        setRefreshButtonLoading(false);
       }
     }
 
@@ -1848,6 +1957,8 @@
       syncInputsFromState();
       renderErrors({});
       renderSummary();
+      updateStandNavState();
+      hideNavLockMessage();
       el.infoPopover.classList.remove("open");
       setActiveView("formulier");
       el.successView.classList.add("hidden");
@@ -1860,6 +1971,7 @@
         form[playerKey][field] = max !== undefined ? clampValue(sanitizeInteger(e.target.value), max) : e.target.value;
         e.target.value = form[playerKey][field];
         renderSummary();
+        updateStandNavState();
       });
     }
 
@@ -1874,6 +1986,7 @@
         form[playerKey].victoryPoints = sanitizeVictoryPoints(e.target.value);
         e.target.value = form[playerKey].victoryPoints;
         renderSummary();
+        updateStandNavState();
       });
 
       input.addEventListener("paste", (event) => {
@@ -1886,6 +1999,7 @@
         form[playerKey].victoryPoints = nextValue;
         input.value = nextValue;
         renderSummary();
+        updateStandNavState();
       });
     }
 
@@ -1915,6 +2029,7 @@
         form.ronde = button.dataset.round;
         syncInputsFromState();
         renderSummary();
+        updateStandNavState();
       });
     });
 
@@ -1923,6 +2038,7 @@
         form.ronde = e.target.value;
         syncInputsFromState();
         renderSummary();
+        updateStandNavState();
       });
     }
 
@@ -1941,8 +2057,8 @@
       });
     }
 
-    el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); });
-    el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); });
+    el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); updateStandNavState(); });
+    el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); updateStandNavState(); });
 
     bindVictoryPointsInput(el.speler1.victoryPoints, "speler1");
     bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 9);
@@ -1955,24 +2071,28 @@
       form.speler1.enemyGeneralSlain = !form.speler1.enemyGeneralSlain;
       updateToggle(el.speler1.enemyGeneralSlain, form.speler1.enemyGeneralSlain);
       renderSummary();
+      updateStandNavState();
     });
 
     el.speler2.enemyGeneralSlain.addEventListener("click", () => {
       form.speler2.enemyGeneralSlain = !form.speler2.enemyGeneralSlain;
       updateToggle(el.speler2.enemyGeneralSlain, form.speler2.enemyGeneralSlain);
       renderSummary();
+      updateStandNavState();
     });
 
     el.speler1.bonusObjectives.addEventListener("click", () => {
       form.speler1.bonusObjectives = !form.speler1.bonusObjectives;
       updateToggle(el.speler1.bonusObjectives, form.speler1.bonusObjectives);
       renderSummary();
+      updateStandNavState();
     });
 
     el.speler2.bonusObjectives.addEventListener("click", () => {
       form.speler2.bonusObjectives = !form.speler2.bonusObjectives;
       updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
       renderSummary();
+      updateStandNavState();
     });
 
     el.infoButton.addEventListener("click", () => {
@@ -2024,6 +2144,11 @@
     });
 
     el.navStand.addEventListener("click", () => {
+      if (!canOpenStandView(form)) {
+        showNavLockMessage();
+        return;
+      }
+      hideNavLockMessage();
       setActiveView("stand");
     });
 
@@ -2031,11 +2156,16 @@
       loadLiveStandData();
     });
 
+    el.clearFormButton.addEventListener("click", () => {
+      resetForm();
+    });
+
     el.resetButton.addEventListener("click", resetForm);
 
     setActiveView("formulier");
     syncInputsFromState();
     renderSummary();
+    updateStandNavState();
     setActiveView("formulier");
   </script>
 </body>
