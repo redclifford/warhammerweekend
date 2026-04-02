@@ -2114,25 +2114,36 @@
       const rows = buildRows(form);
 
       try {
-        await fetch(SHEETS_WEBHOOK_URL, {
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
           method: "POST",
-          mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ rows }),
+          redirect: "follow",
         });
 
+        if (!response.ok) {
+          throw new Error(`HTTP fout: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (!result || !result.ok) {
+          throw new Error((result && result.error) || "Onbekende fout bij verzenden");
+        }
+
+        resetForm();
         console.log("Verzonden naar Google Sheets:", rows);
         showStatus(
           "success",
           "Resultaat succesvol verzonden",
-          ""
+          result.message || "Het resultaat is opgeslagen."
         );
       } catch (error) {
         console.error("Fout bij verzenden:", error);
         showStatus(
           "error",
           "Resultaat niet verzonden",
-          "Er ging iets mis bij het verzenden. Probeer het opnieuw via de knop hieronder."
+          error.message || "Er ging iets mis bij het verzenden."
         );
       }
     });
