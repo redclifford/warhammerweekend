@@ -1712,6 +1712,9 @@
       </div>
     </div>
     <div id="speler1-opponent-list" class="opponent-list-empty">Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.</div>
+    <div class="vp-modal-footer">
+      <button type="button" class="button vp-modal-apply-button" id="speler1-apply-vp-modal">Resultaat invoeren</button>
+    </div>
   </div>
 </div>
 
@@ -1730,6 +1733,9 @@
       </div>
     </div>
     <div id="speler2-opponent-list" class="opponent-list-empty">Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.</div>
+    <div class="vp-modal-footer">
+      <button type="button" class="button vp-modal-apply-button" id="speler2-apply-vp-modal">Resultaat invoeren</button>
+    </div>
   </div>
 </div>
 
@@ -1904,12 +1910,14 @@
       speler1OpponentVpBadge: document.getElementById("speler1-opponent-vp-badge"),
       speler1OpponentBannerBadge: document.getElementById("speler1-opponent-banner-badge"),
       speler1OpponentList: document.getElementById("speler1-opponent-list"),
+      speler1ApplyVpModal: document.getElementById("speler1-apply-vp-modal"),
       speler2OpenVpModal: document.getElementById("speler2-open-vp-modal"),
       speler2CloseVpModal: document.getElementById("speler2-close-vp-modal"),
       speler2VpModal: document.getElementById("speler2-vp-modal"),
       speler2OpponentVpBadge: document.getElementById("speler2-opponent-vp-badge"),
       speler2OpponentBannerBadge: document.getElementById("speler2-opponent-banner-badge"),
       speler2OpponentList: document.getElementById("speler2-opponent-list"),
+      speler2ApplyVpModal: document.getElementById("speler2-apply-vp-modal"),
       armyListsLoading: document.getElementById("army-lists-loading"),
       armyListsError: document.getElementById("army-lists-error"),
       armyListsEmpty: document.getElementById("army-lists-empty"),
@@ -3029,6 +3037,18 @@ el.speler1OpenVpModal.addEventListener("click", () => openVpModal("speler1"));
 el.speler2OpenVpModal.addEventListener("click", () => openVpModal("speler2"));
 el.speler1CloseVpModal.addEventListener("click", () => closeVpModal("speler1"));
 el.speler2CloseVpModal.addEventListener("click", () => closeVpModal("speler2"));
+if (el.speler1ApplyVpModal) {
+  el.speler1ApplyVpModal.addEventListener("click", () => {
+    updateVictoryPointsFromSelections("speler1");
+    closeVpModal("speler1");
+  });
+}
+if (el.speler2ApplyVpModal) {
+  el.speler2ApplyVpModal.addEventListener("click", () => {
+    updateVictoryPointsFromSelections("speler2");
+    closeVpModal("speler2");
+  });
+}
 
 document.querySelectorAll("[data-close-modal]").forEach((button) => {
   button.addEventListener("click", () => closeVpModal(button.dataset.closeModal));
