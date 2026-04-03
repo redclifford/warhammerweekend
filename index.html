@@ -992,6 +992,282 @@
       font-size: 0.9rem;
     }
 
+.army-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.army-upload-card {
+  height: 100%;
+}
+
+.army-lists-table-wrap {
+  margin-top: 0;
+  overflow-x: hidden;
+}
+
+.army-lists-table {
+  width: auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.army-lists-table th,
+.army-lists-table td {
+  padding: 10px 10px;
+  text-align: left;
+}
+
+#army-lists-section .card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.vp-calc-button {
+  width: 100%;
+  min-width: 0;
+}
+
+.vp-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.vp-modal.hidden {
+  display: none !important;
+}
+
+.vp-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(3px);
+}
+
+.vp-modal-dialog {
+  position: relative;
+  width: min(980px, calc(100vw - 28px));
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  border-radius: 20px;
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.24);
+  padding: 18px;
+}
+
+.vp-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.vp-modal-eyebrow {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.vp-modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.vp-modal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.vp-modal-close {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.opponent-list-empty {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.5;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.opponent-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.opponent-category-card {
+  border: 1px solid #dbeafe;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 14px;
+}
+
+.opponent-category-title {
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.opponent-category-empty {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.opponent-units {
+  display: grid;
+  gap: 10px;
+}
+
+.opponent-unit {
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #f8fbff;
+  padding: 12px;
+}
+
+.opponent-unit-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.opponent-unit-name {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.opponent-unit-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.opponent-unit-points {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.opponent-unit-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.opponent-unit-controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.opponent-unit-control {
+  display: grid;
+  gap: 6px;
+}
+
+.opponent-unit-control-label {
+  margin: 0;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.opponent-unit-note {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.small-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 36px 0 12px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.92rem;
+  color: #0f172a;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #475569 50%), linear-gradient(135deg, #475569 50%, transparent 50%);
+  background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 42px;
+}
+
+@media (max-width: 860px) {
+  .opponent-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .army-lists-table-wrap {
+    overflow-x: auto;
+  }
+
+  .opponent-unit-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .vp-modal {
+    padding: 10px;
+  }
+
+  .vp-modal-dialog {
+    width: min(100vw - 12px, 980px);
+    max-height: calc(100vh - 20px);
+    padding: 14px;
+  }
+}
+
     @media (max-width: 1020px) {
       #matchsize-selector-compact.desktop-only {
         display: none;
@@ -1061,7 +1337,8 @@
 
 
     <div class="top-nav" aria-label="Navigatie">
-      <button type="button" class="nav-button active" id="nav-formulier">Formulier</button>
+      <button type="button" class="nav-button active" id="nav-army-lists">Army Lists</button>
+      <button type="button" class="nav-button" id="nav-formulier">Formulier</button>
       <button type="button" class="nav-button" id="nav-stand" aria-disabled="false">Stand</button>
     </div>
     <div id="nav-lock-message" class="nav-lock-message hidden" aria-live="polite">Vul eerst het formulier helemaal in</div>
@@ -1087,6 +1364,75 @@
             <div id="round-results-loading" class="standings-loading hidden" aria-hidden="true">Ronderesultaten worden geladen...</div>
             <div id="round-results-error" class="standings-error hidden">De ronderesultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
             <div id="round-results-grid" class="round-results-grid hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="army-lists-view" class="hidden">
+      <div class="card sheet-card">
+        <div class="card-header">
+          <h2 class="card-title stand-title">Army Lists</h2>
+        </div>
+        <div class="card-body">
+          <div class="army-grid">
+            <div class="card army-upload-card">
+              <div class="card-header"><h3 class="card-title">Upload jouw lijst</h3></div>
+              <div class="card-body">
+                <form id="army-upload-form">
+                  <div class="field-group">
+                                        <select id="army-upload-player">
+                      <option value="">Kies een naam</option>
+                      <option value="Bart">Bart</option>
+                      <option value="Dennis">Dennis</option>
+                      <option value="Gijs">Gijs</option>
+                      <option value="Nick">Nick</option>
+                      <option value="Sara">Sara</option>
+                      <option value="Sem">Sem</option>
+                      <option value="Stefan">Stefan</option>
+                      <option value="Twan">Twan</option>
+                    </select>
+                    <div class="error" id="error-army-upload-player"></div>
+                  </div>
+
+                  <div class="field-group">
+                    <label for="army-upload-file" class="label">Old World Builder JSON</label>
+                    <input id="army-upload-file" type="file" accept=".json,application/json" />
+                    <p class="field-help-text">Upload hier je geëxporteerde .json uit Old World Builder. Als je opnieuw uploadt voor dezelfde speler, wordt de vorige lijst overschreven.</p>
+                    <div class="error" id="error-army-upload-file"></div>
+                  </div>
+
+                  <div class="actions-buttons">
+                    <button type="submit" class="button" id="army-upload-submit">Lijst uploaden</button>
+                  </div>
+                </form>
+
+                <div id="army-upload-status" class="hidden" style="margin-top:16px;"></div>
+              </div>
+            </div>
+
+            <div class="card army-upload-card">
+              <div class="card-header"><h3 class="card-title">Opgeslagen lijsten</h3></div>
+              <div class="card-body">
+                <div id="army-lists-loading" class="standings-loading hidden">Army lists worden geladen...</div>
+                <div id="army-lists-error" class="standings-error hidden">De army lists konden niet worden geladen.</div>
+                <div id="army-lists-empty" class="standings-empty hidden">Er zijn nog geen army lists opgeslagen.</div>
+                <div id="army-lists-table-wrap" class="army-lists-table-wrap hidden">
+                  <table class="standings-table army-lists-table" aria-label="Army lists overzicht">
+                    <thead>
+                      <tr>
+                        <th>Naam</th>
+                        <th>Lijst</th>
+                        <th>Army</th>
+                        <th>Punten</th>
+                      </tr>
+                    </thead>
+                    <tbody id="army-lists-body"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1212,6 +1558,10 @@
                 <input id="speler1-vp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler1-victoryPoints"></div>
               </div>
+
+              <div class="field-group">
+                <button type="button" class="secondary-button vp-calc-button" id="speler1-open-vp-modal">Victory Points berekenen</button>
+              </div>
               <div class="field-group">
                 <label for="speler1-banners" class="label">Banners Captured</label>
                 <input id="speler1-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
@@ -1306,6 +1656,10 @@
                 <input id="speler2-vp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="0" />
                 <div class="error" id="error-speler2-victoryPoints"></div>
               </div>
+
+              <div class="field-group">
+                <button type="button" class="secondary-button vp-calc-button" id="speler2-open-vp-modal">Victory Points berekenen</button>
+              </div>
               <div class="field-group">
                 <label for="speler2-banners" class="label">Banners Captured</label>
                 <input id="speler2-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
@@ -1343,7 +1697,43 @@
           </div>
         </div>
 
-        <div class="result-panel">
+<div class="vp-modal hidden" id="speler1-vp-modal" aria-hidden="true">
+  <div class="vp-modal-backdrop" data-close-modal="speler1"></div>
+  <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="speler1-vp-modal-title">
+    <div class="vp-modal-header">
+      <div>
+        <p class="vp-modal-eyebrow">Victory Points</p>
+        <h3 class="vp-modal-title" id="speler1-vp-modal-title">Army List tegenstander</h3>
+      </div>
+      <div class="vp-modal-header-right">
+        <span class="badge" id="speler1-opponent-vp-badge">VP 0</span>
+        <span class="badge" id="speler1-opponent-banner-badge">Banners 0</span>
+        <button type="button" class="vp-modal-close" id="speler1-close-vp-modal" aria-label="Sluit venster">×</button>
+      </div>
+    </div>
+    <div id="speler1-opponent-list" class="opponent-list-empty">Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.</div>
+  </div>
+</div>
+
+<div class="vp-modal hidden" id="speler2-vp-modal" aria-hidden="true">
+  <div class="vp-modal-backdrop" data-close-modal="speler2"></div>
+  <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="speler2-vp-modal-title">
+    <div class="vp-modal-header">
+      <div>
+        <p class="vp-modal-eyebrow">Victory Points</p>
+        <h3 class="vp-modal-title" id="speler2-vp-modal-title">Army List tegenstander</h3>
+      </div>
+      <div class="vp-modal-header-right">
+        <span class="badge" id="speler2-opponent-vp-badge">VP 0</span>
+        <span class="badge" id="speler2-opponent-banner-badge">Banners 0</span>
+        <button type="button" class="vp-modal-close" id="speler2-close-vp-modal" aria-label="Sluit venster">×</button>
+      </div>
+    </div>
+    <div id="speler2-opponent-list" class="opponent-list-empty">Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.</div>
+  </div>
+</div>
+
+<div class="result-panel">
           <div class="result-top-bar">
             <p class="result-title">Resultaat</p>
             <div class="info-wrap" id="info-wrap">
@@ -1418,7 +1808,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 2.0">v2.0</span>
+      <span class="version-badge" aria-label="Versie 3.0">v3.0</span>
     </div>
   </div>
 
@@ -1442,6 +1832,9 @@
 
     let form = structuredClone(initialForm);
     let submittedRows = null;
+    let armyListsByPlayer = {};
+    const vpSelections = { speler1: {}, speler2: {} };
+    const bannerSelections = { speler1: {}, speler2: {} };
 
     const el = {
       ronde: document.getElementById("ronde"),
@@ -1485,6 +1878,7 @@
       matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-segment")),
       matchSizeMobile: document.getElementById("match-size-mobile"),
       navFormulier: document.getElementById("nav-formulier"),
+      navArmyLists: document.getElementById("nav-army-lists"),
       navStand: document.getElementById("nav-stand"),
       navLockMessage: document.getElementById("nav-lock-message"),
       clearFormButton: document.getElementById("clear-form-button"),
@@ -1498,6 +1892,29 @@
       roundResultsLoading: document.getElementById("round-results-loading"),
       roundResultsError: document.getElementById("round-results-error"),
       roundResultsGrid: document.getElementById("round-results-grid"),
+      armyListsView: document.getElementById("army-lists-view"),
+      armyUploadForm: document.getElementById("army-upload-form"),
+      armyUploadPlayer: document.getElementById("army-upload-player"),
+      armyUploadFile: document.getElementById("army-upload-file"),
+      armyUploadSubmit: document.getElementById("army-upload-submit"),
+      armyUploadStatus: document.getElementById("army-upload-status"),
+      speler1OpenVpModal: document.getElementById("speler1-open-vp-modal"),
+      speler1CloseVpModal: document.getElementById("speler1-close-vp-modal"),
+      speler1VpModal: document.getElementById("speler1-vp-modal"),
+      speler1OpponentVpBadge: document.getElementById("speler1-opponent-vp-badge"),
+      speler1OpponentBannerBadge: document.getElementById("speler1-opponent-banner-badge"),
+      speler1OpponentList: document.getElementById("speler1-opponent-list"),
+      speler2OpenVpModal: document.getElementById("speler2-open-vp-modal"),
+      speler2CloseVpModal: document.getElementById("speler2-close-vp-modal"),
+      speler2VpModal: document.getElementById("speler2-vp-modal"),
+      speler2OpponentVpBadge: document.getElementById("speler2-opponent-vp-badge"),
+      speler2OpponentBannerBadge: document.getElementById("speler2-opponent-banner-badge"),
+      speler2OpponentList: document.getElementById("speler2-opponent-list"),
+      armyListsLoading: document.getElementById("army-lists-loading"),
+      armyListsError: document.getElementById("army-lists-error"),
+      armyListsEmpty: document.getElementById("army-lists-empty"),
+      armyListsTableWrap: document.getElementById("army-lists-table-wrap"),
+      armyListsBody: document.getElementById("army-lists-body"),
     };
 
     function sanitizeInteger(value) {
@@ -1818,6 +2235,460 @@
       wrapEl.classList.remove("hidden");
     }
 
+
+    function toTitleCaseArmy(value) {
+      return String(value || "")
+        .split("-")
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    }
+
+    function formatUploadDate(value) {
+      if (!value) return "-";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString("nl-NL");
+    }
+
+    function getActiveNestedOptionPoints(option) {
+      if (!option || !Array.isArray(option.options)) return 0;
+      return option.options
+        .filter((child) => child && child.active)
+        .reduce((sum, child) => sum + Number(child.points || 0), 0);
+    }
+
+    function getActiveCollectionPoints(items, perModelMultiplier = 1) {
+      if (!Array.isArray(items)) return 0;
+      return items.reduce((sum, item) => {
+        if (!item || !item.active) return sum;
+        const points = Number(item.points || 0);
+        const useMultiplier = item.perModel ? perModelMultiplier : 1;
+        return sum + (points * useMultiplier) + getActiveNestedOptionPoints(item);
+      }, 0);
+    }
+
+    function getSelectedItemPoints(items) {
+      if (!Array.isArray(items)) return 0;
+      return items.reduce((sum, itemGroup) => {
+        const selected = Array.isArray(itemGroup && itemGroup.selected) ? itemGroup.selected : [];
+        return sum + selected.reduce((inner, selectedItem) => inner + Number((selectedItem && selectedItem.points) || 0), 0);
+      }, 0);
+    }
+
+    function getEntryModelCount(entry) {
+      const strength = Number(entry && entry.strength);
+      const minimum = Number(entry && entry.minimum);
+      const maximum = Number(entry && entry.maximum);
+      if (Number.isFinite(strength) && strength > 0) return strength;
+      if (Number.isFinite(minimum) && minimum > 0) return minimum;
+      if (Number.isFinite(maximum) && maximum > 0) return maximum;
+      return 1;
+    }
+
+    function entryHasStandardBearer(entry) {
+      return Array.isArray(entry && entry.command) && entry.command.some((commandItem) => {
+        const name = String(commandItem?.name_en || commandItem?.name || "").toLowerCase();
+        return commandItem?.active && name.includes("standard bearer");
+      });
+    }
+
+    function calculateEntryTotalPoints(entry) {
+      const modelCount = getEntryModelCount(entry);
+      const basePoints = Number(entry?.points || 0) * modelCount;
+      const commandPoints = getActiveCollectionPoints(entry?.command, 1);
+      const equipmentPoints = getActiveCollectionPoints(entry?.equipment, modelCount);
+      const armorPoints = getActiveCollectionPoints(entry?.armor, modelCount);
+      const optionsPoints = getActiveCollectionPoints(entry?.options, modelCount);
+      const mountPoints = getActiveCollectionPoints(entry?.mounts, 1);
+      const itemPoints = getSelectedItemPoints(entry?.items);
+
+      return basePoints + commandPoints + equipmentPoints + armorPoints + optionsPoints + mountPoints + itemPoints;
+    }
+
+    function normalizeArmyEntries(rawList) {
+      const sections = ["characters", "core", "special", "rare", "mercenaries"];
+      const entries = [];
+
+      sections.forEach((section) => {
+        const list = Array.isArray(rawList?.[section]) ? rawList[section] : [];
+        list.forEach((entry) => {
+          const modelCount = getEntryModelCount(entry);
+          const totalPoints = calculateEntryTotalPoints(entry);
+          entries.push({
+            id: String(entry?.id || `${section}-${entry?.name_en || "entry"}-${entries.length}`),
+            category: section,
+            name: String(entry?.name_en || entry?.name || "Unnamed entry"),
+            quantity: modelCount,
+            totalPoints,
+            hasStandardBearer: entryHasStandardBearer(entry),
+          });
+        });
+      });
+
+      return entries;
+    }
+
+    function buildNormalizedArmyList(rawList) {
+      const entries = normalizeArmyEntries(rawList);
+      return {
+        listName: String(rawList?.name || "Unnamed list"),
+        army: String(rawList?.army || ""),
+        game: String(rawList?.game || ""),
+        points: Number(rawList?.points || 0),
+        sourceUrl: String(rawList?.url || rawList?.link || ""),
+        entries,
+      };
+    }
+
+    function renderUploadStatus(type, title, text) {
+      el.armyUploadStatus.classList.remove("hidden");
+      el.armyUploadStatus.className = type === "success" ? "success-box" : "error-box";
+      el.armyUploadStatus.innerHTML = `<p class="${type === "success" ? "success-title" : "error-title"}">${escapeHtml(title)}</p><p class="${type === "success" ? "success-text" : "error-text"}">${escapeHtml(text)}</p>`;
+    }
+
+    function setArmyListsState(state) {
+      el.armyListsLoading.classList.toggle("hidden", state !== "loading");
+      el.armyListsError.classList.toggle("hidden", state !== "error");
+    }
+
+    function getPercentageLabel(value) {
+      const labels = {
+        "0": ">50% remaining",
+        "25": "<50% remaining",
+        "50": "Fleeing",
+        "75": ">50% remaining + fleeing",
+        "100": "Destroyed",
+      };
+      return labels[String(value)] || ">50% remaining";
+    }
+
+    function calculateSelectionPoints(unitPoints, percentage) {
+      return Math.ceil(Number(unitPoints || 0) * (Number(percentage || 0) / 100));
+    }
+
+    function renderArmyListsTable() {
+      const lists = Object.values(armyListsByPlayer || {});
+      if (!lists.length) {
+        el.armyListsBody.innerHTML = "";
+        el.armyListsTableWrap.classList.add("hidden");
+        el.armyListsEmpty.classList.remove("hidden");
+        return;
+      }
+
+      el.armyListsEmpty.classList.add("hidden");
+      el.armyListsTableWrap.classList.remove("hidden");
+
+      el.armyListsBody.innerHTML = lists
+        .sort((a, b) => String(a.playerName).localeCompare(String(b.playerName)))
+        .map((item) => {
+          return `
+            <tr>
+              <td class="standings-player">${escapeHtml(item.playerName || "")}</td>
+              <td>${escapeHtml(item.listName || "-")}</td>
+              <td>${escapeHtml(toTitleCaseArmy(item.army || ""))}</td>
+              <td>${escapeHtml(item.points || 0)}</td>
+            </tr>
+          `;
+        }).join("");
+    }
+
+function getOpponentListForPlayer(playerKey) {
+  const playerName = playerKey === "speler1" ? form.speler1.naam : form.speler2.naam;
+  const opponentName = playerKey === "speler1" ? form.speler2.naam : form.speler1.naam;
+  return {
+    playerName,
+    opponentName,
+    list: armyListsByPlayer[normalizeName(opponentName)] || null,
+  };
+}
+
+function updateVictoryPointsFromSelections(playerKey) {
+  const listInfo = getOpponentListForPlayer(playerKey);
+  const badge = playerKey === "speler1" ? el.speler1OpponentVpBadge : el.speler2OpponentVpBadge;
+  const bannerBadge = playerKey === "speler1" ? el.speler1OpponentBannerBadge : el.speler2OpponentBannerBadge;
+
+  if (!listInfo.list) {
+    el[playerKey].bannersCaptured.readOnly = false;
+    badge.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
+    bannerBadge.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
+    return;
+  }
+
+  const totalVp = (listInfo.list.entries || []).reduce((sum, entry) => {
+    const percentage = Number(vpSelections[playerKey][entry.id] || 0);
+    return sum + calculateSelectionPoints(entry.totalPoints, percentage);
+  }, 0);
+
+  const totalBanners = (listInfo.list.entries || []).reduce((sum, entry) => {
+    if (!entry.hasStandardBearer) return sum;
+    const selected = String(bannerSelections[playerKey][entry.id] || "nee").toLowerCase();
+    return sum + (selected === "ja" ? 1 : 0);
+  }, 0);
+
+  form[playerKey].victoryPoints = String(totalVp);
+  form[playerKey].bannersCaptured = String(totalBanners);
+
+  el[playerKey].victoryPoints.value = form[playerKey].victoryPoints;
+  el[playerKey].bannersCaptured.value = form[playerKey].bannersCaptured;
+  el[playerKey].bannersCaptured.readOnly = true;
+
+  badge.textContent = `VP ${totalVp}`;
+  bannerBadge.textContent = `Banners ${totalBanners}`;
+
+  renderSummary();
+  updateStandNavState();
+}
+
+function getCategoryKey(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (normalized === "characters") return "characters";
+  if (normalized === "core") return "core";
+  if (normalized === "special") return "special";
+  if (normalized === "rare") return "rare";
+  return "special";
+}
+
+function buildSingleOpponentUnitHtml(playerKey, entry) {
+  const currentValue = String(vpSelections[playerKey][entry.id] || 0);
+  const currentBanner = String(bannerSelections[playerKey][entry.id] || "nee").toLowerCase();
+  const unitLabel = entry.quantity > 1 ? `${entry.quantity} ${entry.name}` : entry.name;
+  const bannerControl = entry.hasStandardBearer
+    ? `<div class="opponent-unit-control">
+        <p class="opponent-unit-control-label">Banner Captured</p>
+        <select class="small-select banner-unit-select" data-player="${playerKey}" data-entry-id="${escapeHtml(entry.id)}">
+          <option value="nee" ${currentBanner === "nee" ? "selected" : ""}>Nee</option>
+          <option value="ja" ${currentBanner === "ja" ? "selected" : ""}>Ja</option>
+        </select>
+      </div>`
+    : "";
+
+  return `
+    <div class="opponent-unit">
+      <div class="opponent-unit-top">
+        <div>
+          <p class="opponent-unit-name">${escapeHtml(unitLabel)}</p>
+        </div>
+        <div class="opponent-unit-right">
+          <p class="opponent-unit-points">${escapeHtml(entry.totalPoints)} pts</p>
+        </div>
+      </div>
+      <div class="opponent-unit-controls">
+        <div class="opponent-unit-control">
+          <p class="opponent-unit-control-label">Destroyed</p>
+          <select class="small-select vp-unit-select" data-player="${playerKey}" data-entry-id="${escapeHtml(entry.id)}">
+            <option value="0" ${currentValue === "0" ? "selected" : ""}>&gt;50% remaining = 0%</option>
+            <option value="25" ${currentValue === "25" ? "selected" : ""}>&lt;50% remaining = 25%</option>
+            <option value="50" ${currentValue === "50" ? "selected" : ""}>Fleeing = 50%</option>
+            <option value="75" ${currentValue === "75" ? "selected" : ""}>&gt;50% remaining + fleeing = 75%</option>
+            <option value="100" ${currentValue === "100" ? "selected" : ""}>Destroyed = 100%</option>
+          </select>
+        </div>
+        ${bannerControl}
+        <div class="opponent-unit-note">${escapeHtml(getPercentageLabel(currentValue))} = ${escapeHtml(calculateSelectionPoints(entry.totalPoints, currentValue))} VP</div>
+      </div>
+    </div>
+  `;
+}
+
+function buildOpponentUnitsHtml(playerKey, armyList) {
+  const grouped = {
+    characters: [],
+    core: [],
+    special: [],
+    rare: [],
+  };
+
+  (armyList.entries || []).forEach((entry) => {
+    grouped[getCategoryKey(entry.category)].push(entry);
+  });
+
+  const sections = [
+    { key: "characters", title: "Characters" },
+    { key: "core", title: "Core" },
+    { key: "special", title: "Special" },
+    { key: "rare", title: "Rare" },
+  ];
+
+  const groupedHtml = sections.map((section) => {
+    const entries = grouped[section.key];
+    const content = entries.length
+      ? `<div class="opponent-units">${entries.map((entry) => buildSingleOpponentUnitHtml(playerKey, entry)).join("")}</div>`
+      : `<p class="opponent-category-empty">Geen units in deze categorie.</p>`;
+
+    return `
+      <section class="opponent-category-card">
+        <h4 class="opponent-category-title">${section.title}</h4>
+        ${content}
+      </section>
+    `;
+  }).join("");
+
+  return `<div class="opponent-category-grid">${groupedHtml}</div>`;
+}
+
+function attachOpponentSelectListeners(container) {
+  container.querySelectorAll(".vp-unit-select").forEach((select) => {
+    select.addEventListener("change", (event) => {
+      const playerKey = event.target.dataset.player;
+      const entryId = event.target.dataset.entryId;
+      vpSelections[playerKey][entryId] = event.target.value;
+      updateVictoryPointsFromSelections(playerKey);
+      renderOpponentArmyPanel(playerKey);
+    });
+  });
+
+  container.querySelectorAll(".banner-unit-select").forEach((select) => {
+    select.addEventListener("change", (event) => {
+      const playerKey = event.target.dataset.player;
+      const entryId = event.target.dataset.entryId;
+      bannerSelections[playerKey][entryId] = event.target.value;
+      updateVictoryPointsFromSelections(playerKey);
+      renderOpponentArmyPanel(playerKey);
+    });
+  });
+}
+
+function renderOpponentArmyPanel(playerKey) {
+  const listEl = playerKey === "speler1" ? el.speler1OpponentList : el.speler2OpponentList;
+  const badgeEl = playerKey === "speler1" ? el.speler1OpponentVpBadge : el.speler2OpponentVpBadge;
+  const bannerBadgeEl = playerKey === "speler1" ? el.speler1OpponentBannerBadge : el.speler2OpponentBannerBadge;
+  const info = getOpponentListForPlayer(playerKey);
+
+  if (!info.playerName || !info.opponentName) {
+    el[playerKey].bannersCaptured.readOnly = false;
+    listEl.innerHTML = "Kies eerst beide spelersnamen. Daarna kun je hier de lijst van je tegenstander gebruiken om Victory Points te berekenen.";
+    listEl.className = "opponent-list-empty";
+    badgeEl.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
+    bannerBadgeEl.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
+    return;
+  }
+
+  if (!info.list) {
+    el[playerKey].bannersCaptured.readOnly = false;
+    listEl.innerHTML = "Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.";
+    listEl.className = "opponent-list-empty";
+    badgeEl.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
+    bannerBadgeEl.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
+    return;
+  }
+
+  listEl.className = "";
+  listEl.innerHTML = buildOpponentUnitsHtml(playerKey, info.list);
+  attachOpponentSelectListeners(listEl);
+  updateVictoryPointsFromSelections(playerKey);
+}
+
+function renderOpponentArmyPanels() {
+  renderOpponentArmyPanel("speler1");
+  renderOpponentArmyPanel("speler2");
+}
+
+    async function fetchArmyLists() {
+      const response = await fetch(`${SHEETS_WEBHOOK_URL}?action=armyLists&_=${Date.now()}`, {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Army list request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data || !data.ok) {
+        throw new Error((data && data.error) || "Army lists konden niet worden geladen");
+      }
+
+      const records = Array.isArray(data.lists) ? data.lists : [];
+      armyListsByPlayer = {};
+      records.forEach((record) => {
+        if (record && record.playerName) {
+          armyListsByPlayer[normalizeName(record.playerName)] = record;
+        }
+      });
+
+      renderArmyListsTable();
+      renderOpponentArmyPanels();
+    }
+
+    async function loadArmyLists() {
+      setArmyListsState("loading");
+      try {
+        await fetchArmyLists();
+        setArmyListsState("ready");
+      } catch (error) {
+        console.error("Fout bij laden army lists:", error);
+        setArmyListsState("error");
+      }
+    }
+
+    async function handleArmyUpload(event) {
+      event.preventDefault();
+      setError("army-upload-player", "");
+      setError("army-upload-file", "");
+      el.armyUploadStatus.classList.add("hidden");
+
+      const playerName = el.armyUploadPlayer.value.trim();
+      const file = el.armyUploadFile.files && el.armyUploadFile.files[0];
+
+      let hasError = false;
+      if (!playerName) {
+        setError("army-upload-player", "Kies eerst een speler.");
+        hasError = true;
+      }
+      if (!file) {
+        setError("army-upload-file", "Kies een .json bestand.");
+        hasError = true;
+      }
+      if (hasError) return;
+
+      el.armyUploadSubmit.disabled = true;
+      el.armyUploadSubmit.textContent = "Bezig met uploaden...";
+
+      try {
+        const rawText = await file.text();
+        const rawJson = JSON.parse(rawText);
+        const normalizedList = buildNormalizedArmyList(rawJson);
+
+        const payload = {
+          action: "saveArmyList",
+          playerName,
+          listName: normalizedList.listName,
+          army: normalizedList.army,
+          points: normalizedList.points,
+          sourceUrl: normalizedList.sourceUrl,
+          entries: normalizedList.entries,
+          rawJson,
+        };
+
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload),
+          redirect: "follow",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP fout: ${response.status}`);
+        }
+
+        const result = await response.json();
+        if (!result || !result.ok) {
+          throw new Error((result && result.error) || "Onbekende fout bij uploaden");
+        }
+
+        renderUploadStatus("success", "Army list opgeslagen", result.message || `De lijst van ${playerName} is opgeslagen.`);
+        el.armyUploadForm.reset();
+        await loadArmyLists();
+      } catch (error) {
+        console.error("Fout bij uploaden army list:", error);
+        renderUploadStatus("error", "Army list niet opgeslagen", error.message || "Er ging iets mis bij het uploaden.");
+      } finally {
+        el.armyUploadSubmit.disabled = false;
+        el.armyUploadSubmit.textContent = "Lijst uploaden";
+      }
+    }
+
     const LIVE_DATA_URL = `${SHEETS_WEBHOOK_URL}?action=liveData`;
 
     async function fetchLiveData() {
@@ -1944,18 +2815,30 @@
 
     function setActiveView(view) {
       const showForm = view === "formulier";
+      const showArmyLists = view === "army-lists";
+      const showStand = view === "stand";
+
       el.navFormulier.classList.toggle("active", showForm);
-      el.navStand.classList.toggle("active", !showForm);
-      el.sheetView.classList.toggle("hidden", showForm);
+      el.navArmyLists.classList.toggle("active", showArmyLists);
+      el.navStand.classList.toggle("active", showStand);
+
+      el.sheetView.classList.toggle("hidden", !showStand);
+      el.armyListsView.classList.toggle("hidden", !showArmyLists);
       el.topSelectorGrid.classList.toggle("hidden", !showForm);
       el.formView.classList.toggle("hidden", !showForm);
       el.successView.classList.add("hidden");
 
-      if (showForm) {
-        stopStandingsAutoRefresh();
-      } else {
+      if (showStand) {
         loadLiveStandData();
         startStandingsAutoRefresh();
+      } else {
+        stopStandingsAutoRefresh();
+      }
+
+      el.armyUploadStatus.classList.add("hidden");
+
+      if (showArmyLists) {
+        loadArmyLists();
       }
     }
 
@@ -1981,10 +2864,13 @@
       updateStandNavState();
       hideNavLockMessage();
       el.infoPopover.classList.remove("open");
+      closeVpModal("speler1");
+      closeVpModal("speler2");
       setActiveView("formulier");
       el.successView.classList.add("hidden");
       el.topSelectorGrid.classList.remove("hidden");
       el.formView.classList.remove("hidden");
+      renderOpponentArmyPanels();
     }
 
     function bindTextInput(input, playerKey, field, max) {
@@ -2078,8 +2964,8 @@
       });
     }
 
-    el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); updateStandNavState(); });
-    el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); updateStandNavState(); });
+    el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
+    el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
 
     bindVictoryPointsInput(el.speler1.victoryPoints, "speler1");
     bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 9);
@@ -2125,6 +3011,35 @@
         el.infoPopover.classList.remove("open");
       }
     });
+
+function openVpModal(playerKey) {
+  const modal = playerKey === "speler1" ? el.speler1VpModal : el.speler2VpModal;
+  renderOpponentArmyPanel(playerKey);
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeVpModal(playerKey) {
+  const modal = playerKey === "speler1" ? el.speler1VpModal : el.speler2VpModal;
+  modal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+el.speler1OpenVpModal.addEventListener("click", () => openVpModal("speler1"));
+el.speler2OpenVpModal.addEventListener("click", () => openVpModal("speler2"));
+el.speler1CloseVpModal.addEventListener("click", () => closeVpModal("speler1"));
+el.speler2CloseVpModal.addEventListener("click", () => closeVpModal("speler2"));
+
+document.querySelectorAll("[data-close-modal]").forEach((button) => {
+  button.addEventListener("click", () => closeVpModal(button.dataset.closeModal));
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeVpModal("speler1");
+    closeVpModal("speler2");
+  }
+});
 
     el.scoreForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -2175,6 +3090,11 @@
       setActiveView("formulier");
     });
 
+    el.navArmyLists.addEventListener("click", () => {
+      hideNavLockMessage();
+      setActiveView("army-lists");
+    });
+
     el.navStand.addEventListener("click", () => {
       if (!canOpenStandView(form)) {
         showNavLockMessage();
@@ -2188,17 +3108,19 @@
       loadLiveStandData();
     });
 
+    el.armyUploadForm.addEventListener("submit", handleArmyUpload);
+
     el.clearFormButton.addEventListener("click", () => {
       resetForm();
     });
 
     el.resetButton.addEventListener("click", resetForm);
 
-    setActiveView("formulier");
+    setActiveView("army-lists");
     syncInputsFromState();
     renderSummary();
     updateStandNavState();
-    setActiveView("formulier");
+    renderOpponentArmyPanels();
   </script>
 </body>
 </html>
