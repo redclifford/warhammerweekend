@@ -1326,6 +1326,143 @@
       }
 
     }
+  
+    .army-view-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .army-view-button:hover {
+      background: #f8fafc;
+    }
+
+    .list-summary-modal .vp-modal-dialog {
+      max-width: 980px;
+    }
+
+    .list-summary-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .list-summary-meta-item {
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      background: #f8fbff;
+      padding: 12px 14px;
+    }
+
+    .list-summary-meta-label {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .list-summary-meta-value {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+    }
+
+    .list-summary-category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .list-summary-category-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: #f8fafc;
+      padding: 14px;
+    }
+
+    .list-summary-category-title {
+      margin: 0 0 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .list-summary-entry + .list-summary-entry {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .list-summary-entry-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .list-summary-entry-name, .list-summary-entry-points {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .list-summary-stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+      color: #1e293b;
+    }
+
+    .list-summary-stats-table th,
+    .list-summary-stats-table td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .list-summary-stats-table th:first-child,
+    .list-summary-stats-table td:first-child {
+      text-align: left;
+    }
+
+    .list-summary-line {
+      margin: 4px 0 0;
+      font-size: 0.88rem;
+      color: #334155;
+      line-height: 1.45;
+    }
+
+    .list-summary-line strong {
+      color: #0f172a;
+    }
+
+    .list-summary-empty {
+      margin: 0;
+      color: #64748b;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 900px) {
+      .list-summary-category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1426,6 +1563,7 @@
                         <th>Lijst</th>
                         <th>Army</th>
                         <th>Punten</th>
+                        <th>Bekijk</th>
                       </tr>
                     </thead>
                     <tbody id="army-lists-body"></tbody>
@@ -1798,6 +1936,22 @@
       </form>
     </div>
 
+
+<div class="vp-modal list-summary-modal hidden" id="army-list-summary-modal" aria-hidden="true">
+  <div class="vp-modal-backdrop" id="army-list-summary-backdrop"></div>
+  <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-label="Army list samenvatting">
+    <div class="vp-modal-header">
+      <div>
+        <h3 class="vp-modal-title">Army List samenvatting</h3>
+      </div>
+      <div class="vp-modal-header-right">
+        <button type="button" class="vp-modal-close" id="army-list-summary-close" aria-label="Sluit venster">×</button>
+      </div>
+    </div>
+    <div id="army-list-summary-content"></div>
+  </div>
+</div>
+
     <div id="success-view" class="hidden">
       <div class="card">
         <div class="card-body">
@@ -1923,6 +2077,10 @@
       armyListsEmpty: document.getElementById("army-lists-empty"),
       armyListsTableWrap: document.getElementById("army-lists-table-wrap"),
       armyListsBody: document.getElementById("army-lists-body"),
+      armyListSummaryModal: document.getElementById("army-list-summary-modal"),
+      armyListSummaryContent: document.getElementById("army-list-summary-content"),
+      armyListSummaryClose: document.getElementById("army-list-summary-close"),
+      armyListSummaryBackdrop: document.getElementById("army-list-summary-backdrop"),
     };
 
     function sanitizeInteger(value) {
@@ -2301,6 +2459,117 @@
       });
     }
 
+    function getActiveNames(items, perModelMultiplier = 1) {
+      if (!Array.isArray(items)) return [];
+      return items.flatMap((item) => {
+        if (!item || !item.active) return [];
+        const label = String(item.name_en || item.name || "").trim();
+        if (!label) return [];
+        const nested = Array.isArray(item.options)
+          ? item.options.filter((child) => child && child.active).map((child) => String(child.name_en || child.name || "").trim()).filter(Boolean)
+          : [];
+        return nested.length ? [label, ...nested] : [label];
+      });
+    }
+
+    function getSelectedSecretLabels(entry) {
+      const selected = [];
+      if (Array.isArray(entry?.items)) {
+        entry.items.forEach((group) => {
+          (Array.isArray(group?.selected) ? group.selected : []).forEach((item) => {
+            const label = String(item?.name_en || item?.name || "").trim();
+            if (label) selected.push(label);
+          });
+        });
+      }
+      if (Array.isArray(entry?.magic?.items)) {
+        entry.magic.items.forEach((item) => {
+          const label = String(item?.name_en || item?.name || "").trim();
+          if (label) selected.push(label);
+        });
+      }
+      return selected;
+    }
+
+    function sanitizeVisibleLabels(labels, entry) {
+      const hiddenLabels = getSelectedSecretLabels(entry).map((value) => value.toLowerCase());
+      return Array.from(new Set((labels || []).filter(Boolean))).filter((label) => {
+        const normalized = String(label).toLowerCase();
+        if (!normalized) return false;
+        if (hiddenLabels.some((hidden) => hidden && normalized.includes(hidden))) return false;
+        if (normalized.includes("magic item")) return false;
+        if (normalized.includes("arcane")) return false;
+        if (normalized.includes("enchanted")) return false;
+        if (normalized.includes("talisman")) return false;
+        if (normalized.includes("magic standard")) return false;
+        if (normalized.includes("magic weapon")) return false;
+        if (normalized.includes("magic armor")) return false;
+        if (normalized.includes("vampiric power")) return false;
+        if (normalized.includes("vampiric powers")) return false;
+        return true;
+      });
+    }
+
+    function getCommandSummary(entry) {
+      const commandItems = Array.isArray(entry?.command) ? entry.command.filter((item) => item && item.active) : [];
+      if (!commandItems.length) return "";
+      const labels = commandItems.map((item) => String(item.name_en || item.name || "").trim()).filter(Boolean);
+      const normalized = labels.map((value) => value.toLowerCase());
+      const hasChampion = normalized.some((value) => value.includes("champion") || value.includes("seneschal"));
+      const hasStandard = normalized.some((value) => value.includes("standard bearer"));
+      const hasMusician = normalized.some((value) => value.includes("musician"));
+      if (hasChampion && hasStandard && hasMusician && labels.length === 3) {
+        return "Full Command";
+      }
+      return labels.join(", ");
+    }
+
+    function getEntryCharacteristics(entry) {
+      const candidateProfiles = [];
+      if (Array.isArray(entry?.profiles)) candidateProfiles.push(...entry.profiles);
+      if (Array.isArray(entry?.stats)) candidateProfiles.push(...entry.stats);
+      if (entry?.profile && typeof entry.profile === "object") candidateProfiles.push(entry.profile);
+      if (entry?.characteristics && typeof entry.characteristics === "object") candidateProfiles.push(entry.characteristics);
+      if (entry?.stats && !Array.isArray(entry.stats) && typeof entry.stats === "object") candidateProfiles.push(entry.stats);
+
+      const findValue = (obj, keys) => {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== "") return String(obj[key]);
+        }
+        return "";
+      };
+
+      const mapped = candidateProfiles.map((profile) => ({
+        model: findValue(profile, ["name_en", "name", "model", "modelName"]),
+        M: findValue(profile, ["M", "m"]),
+        WS: findValue(profile, ["WS", "ws"]),
+        BS: findValue(profile, ["BS", "bs"]),
+        S: findValue(profile, ["S", "s"]),
+        T: findValue(profile, ["T", "t"]),
+        W: findValue(profile, ["W", "w"]),
+        I: findValue(profile, ["I", "i"]),
+        A: findValue(profile, ["A", "a"]),
+        Ld: findValue(profile, ["Ld", "ld", "leadership"]),
+      })).filter((row) => Object.values(row).some((value) => value));
+
+      if (mapped.length) return mapped;
+
+      const direct = {
+        model: String(entry?.name_en || entry?.name || ""),
+        M: entry?.M ?? entry?.m ?? "",
+        WS: entry?.WS ?? entry?.ws ?? "",
+        BS: entry?.BS ?? entry?.bs ?? "",
+        S: entry?.S ?? entry?.s ?? "",
+        T: entry?.T ?? entry?.t ?? "",
+        W: entry?.W ?? entry?.w ?? "",
+        I: entry?.I ?? entry?.i ?? "",
+        A: entry?.A ?? entry?.a ?? "",
+        Ld: entry?.Ld ?? entry?.ld ?? "",
+      };
+      if (Object.values(direct).some((value) => String(value).trim() !== "")) return [Object.fromEntries(Object.entries(direct).map(([k,v]) => [k, String(v)]))];
+      return [];
+    }
+
     function calculateEntryTotalPoints(entry) {
       const modelCount = getEntryModelCount(entry);
       const basePoints = Number(entry?.points || 0) * modelCount;
@@ -2323,6 +2592,11 @@
         list.forEach((entry) => {
           const modelCount = getEntryModelCount(entry);
           const totalPoints = calculateEntryTotalPoints(entry);
+          const equipmentLabels = sanitizeVisibleLabels(getActiveNames(entry?.equipment, modelCount), entry);
+          const armorLabels = sanitizeVisibleLabels(getActiveNames(entry?.armor, modelCount), entry);
+          const optionLabels = sanitizeVisibleLabels(getActiveNames(entry?.options, modelCount), entry);
+          const mountLabels = sanitizeVisibleLabels(getActiveNames(entry?.mounts, 1).filter((label) => !/on foot/i.test(label)), entry);
+          const specialRules = sanitizeVisibleLabels(String(entry?.specialRules?.name_en || entry?.specialRules?.name || "").split(",").map((value) => value.trim()).filter(Boolean), entry);
           entries.push({
             id: String(entry?.id || `${section}-${entry?.name_en || "entry"}-${entries.length}`),
             category: section,
@@ -2330,6 +2604,10 @@
             quantity: modelCount,
             totalPoints,
             hasStandardBearer: entryHasStandardBearer(entry),
+            commandSummary: getCommandSummary(entry),
+            equipmentSummary: [...equipmentLabels, ...armorLabels, ...optionLabels, ...mountLabels].join(", "),
+            specialRulesSummary: specialRules.join(", "),
+            characteristics: getEntryCharacteristics(entry),
           });
         });
       });
@@ -2396,9 +2674,14 @@
               <td>${escapeHtml(item.listName || "-")}</td>
               <td>${escapeHtml(toTitleCaseArmy(item.army || ""))}</td>
               <td>${escapeHtml(item.points || 0)}</td>
+              <td><button type="button" class="army-view-button" data-view-army-player="${escapeHtml(item.playerName || "")}" aria-label="Bekijk army list">👁</button></td>
             </tr>
           `;
         }).join("");
+
+      el.armyListsBody.querySelectorAll("[data-view-army-player]").forEach((button) => {
+        button.addEventListener("click", () => openArmyListSummary(button.dataset.viewArmyPlayer));
+      });
     }
 
 function getOpponentListForPlayer(playerKey) {
@@ -2592,6 +2875,141 @@ function renderOpponentArmyPanels() {
   renderOpponentArmyPanel("speler2");
 }
 
+function buildCharacteristicsTable(characteristics) {
+  if (!Array.isArray(characteristics) || !characteristics.length) return "";
+  const rows = characteristics.map((row) => `
+    <tr>
+      <td>${escapeHtml(row.model || "Model")}</td>
+      <td>${escapeHtml(row.M || "-")}</td>
+      <td>${escapeHtml(row.WS || "-")}</td>
+      <td>${escapeHtml(row.BS || "-")}</td>
+      <td>${escapeHtml(row.S || "-")}</td>
+      <td>${escapeHtml(row.T || "-")}</td>
+      <td>${escapeHtml(row.W || "-")}</td>
+      <td>${escapeHtml(row.I || "-")}</td>
+      <td>${escapeHtml(row.A || "-")}</td>
+      <td>${escapeHtml(row.Ld || "-")}</td>
+    </tr>
+  `).join("");
+  return `
+    <table class="list-summary-stats-table" aria-label="Characteristics">
+      <thead>
+        <tr>
+          <th>Model</th><th>M</th><th>WS</th><th>BS</th><th>S</th><th>T</th><th>W</th><th>I</th><th>A</th><th>Ld</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function buildListSummaryEntryHtml(entry) {
+  const unitLabel = entry.quantity > 1 ? `${entry.quantity} ${entry.name}` : entry.name;
+  const characteristicsHtml = buildCharacteristicsTable(entry.characteristics);
+  const lines = [];
+  if (entry.quantity > 1) lines.push(`<p class="list-summary-line"><strong>Unit Size:</strong> ${escapeHtml(entry.quantity)}</p>`);
+  if (entry.commandSummary) lines.push(`<p class="list-summary-line"><strong>Command:</strong> ${escapeHtml(entry.commandSummary)}</p>`);
+  if (entry.equipmentSummary) lines.push(`<p class="list-summary-line"><strong>Equipment:</strong> ${escapeHtml(entry.equipmentSummary)}</p>`);
+  if (entry.specialRulesSummary) lines.push(`<p class="list-summary-line"><strong>Special Rules:</strong> ${escapeHtml(entry.specialRulesSummary)}</p>`);
+  return `
+    <div class="list-summary-entry">
+      <div class="list-summary-entry-top">
+        <p class="list-summary-entry-name">${escapeHtml(unitLabel)}</p>
+        <p class="list-summary-entry-points">${escapeHtml(entry.totalPoints)} pts</p>
+      </div>
+      ${characteristicsHtml}
+      ${lines.join("")}
+    </div>
+  `;
+}
+
+function buildArmyListSummaryHtml(armyList, playerName) {
+  const grouped = { characters: [], core: [], special: [], rare: [] };
+  (armyList.entries || []).forEach((entry) => {
+    const key = getCategoryKey(entry.category);
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(entry);
+  });
+  const categories = [
+    ["characters", "Characters"],
+    ["core", "Core"],
+    ["special", "Special"],
+    ["rare", "Rare"],
+  ];
+  const categoryHtml = categories.map(([key, title]) => {
+    const entries = grouped[key] || [];
+    return `
+      <section class="list-summary-category-card">
+        <h4 class="list-summary-category-title">${title}</h4>
+        ${entries.length ? entries.map(buildListSummaryEntryHtml).join("") : '<p class="list-summary-empty">Geen units in deze categorie.</p>'}
+      </section>
+    `;
+  }).join("");
+  return `
+    <div class="list-summary-meta">
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Speler</p><p class="list-summary-meta-value">${escapeHtml(playerName || "-")}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Lijst</p><p class="list-summary-meta-value">${escapeHtml(armyList.listName || "-")}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Army</p><p class="list-summary-meta-value">${escapeHtml(toTitleCaseArmy(armyList.army || ""))}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Punten</p><p class="list-summary-meta-value">${escapeHtml(armyList.points || 0)} pts</p></div>
+    </div>
+    <div class="list-summary-category-grid">${categoryHtml}</div>
+  `;
+}
+
+function parseTowCharacteristicsFromHtml(html) {
+  try {
+    const doc = new DOMParser().parseFromString(String(html || ""), "text/html");
+    const text = String(doc.body ? doc.body.textContent : html || "").replace(/ /g, " ");
+    const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const headerIndex = lines.findIndex((line) => /^M\s+WS\s+BS\s+S\s+T\s+W\s+I\s+A\s+Ld$/i.test(line));
+    if (headerIndex === -1) return [];
+
+    const rows = [];
+    for (let i = headerIndex + 1; i < lines.length; i++) {
+      const line = lines[i];
+      if (/^(Cost:|Unit Category:|Troop Type:|Base Size:|Unit Size:|Armour Value:)/i.test(line)) break;
+      const tokens = line.split(/\s+/).filter(Boolean);
+      if (tokens.length < 10) continue;
+      const statTokens = tokens.slice(-9);
+      const model = tokens.slice(0, -9).join(" ").trim();
+      if (!model) continue;
+      if (!statTokens.some((value) => /[0-9D-]/i.test(value))) continue;
+      rows.push({
+        model,
+        M: statTokens[0] || "-",
+        WS: statTokens[1] || "-",
+        BS: statTokens[2] || "-",
+        S: statTokens[3] || "-",
+        T: statTokens[4] || "-",
+        W: statTokens[5] || "-",
+        I: statTokens[6] || "-",
+        A: statTokens[7] || "-",
+        Ld: statTokens[8] || "-",
+      });
+    }
+
+    return rows;
+  } catch (error) {
+    console.warn("Kon TOW-characteristics niet parsen:", error);
+    return [];
+  }
+}
+
+function openArmyListSummary(playerName) {
+  const normalizedPlayerName = normalizeName(playerName);
+  const record = armyListsByPlayer[normalizedPlayerName];
+  if (!record) return;
+
+  el.armyListSummaryContent.innerHTML = buildArmyListSummaryHtml(record, playerName);
+  el.armyListSummaryModal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function closeArmyListSummary() {
+  el.armyListSummaryModal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
     async function fetchArmyLists() {
       const response = await fetch(`${SHEETS_WEBHOOK_URL}?action=armyLists&_=${Date.now()}`, {
         method: "GET",
@@ -2611,7 +3029,7 @@ function renderOpponentArmyPanels() {
       armyListsByPlayer = {};
       records.forEach((record) => {
         if (record && record.playerName) {
-          armyListsByPlayer[normalizeName(record.playerName)] = record;
+          armyListsByPlayer[normalizeName(record.playerName)] = { ...record };
         }
       });
 
@@ -3053,11 +3471,18 @@ if (el.speler2ApplyVpModal) {
 document.querySelectorAll("[data-close-modal]").forEach((button) => {
   button.addEventListener("click", () => closeVpModal(button.dataset.closeModal));
 });
+if (el.armyListSummaryClose) {
+  el.armyListSummaryClose.addEventListener("click", closeArmyListSummary);
+}
+if (el.armyListSummaryBackdrop) {
+  el.armyListSummaryBackdrop.addEventListener("click", closeArmyListSummary);
+}
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeVpModal("speler1");
     closeVpModal("speler2");
+    closeArmyListSummary();
   }
 });
 
