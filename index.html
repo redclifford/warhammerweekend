@@ -1844,8 +1844,6 @@
         <h3 class="vp-modal-title" id="speler1-vp-modal-title">Army List tegenstander</h3>
       </div>
       <div class="vp-modal-header-right">
-        <span class="badge" id="speler1-opponent-vp-badge">VP 0</span>
-        <span class="badge" id="speler1-opponent-banner-badge">Banners 0</span>
         <button type="button" class="vp-modal-close" id="speler1-close-vp-modal" aria-label="Sluit venster">×</button>
       </div>
     </div>
@@ -1865,8 +1863,6 @@
         <h3 class="vp-modal-title" id="speler2-vp-modal-title">Army List tegenstander</h3>
       </div>
       <div class="vp-modal-header-right">
-        <span class="badge" id="speler2-opponent-vp-badge">VP 0</span>
-        <span class="badge" id="speler2-opponent-banner-badge">Banners 0</span>
         <button type="button" class="vp-modal-close" id="speler2-close-vp-modal" aria-label="Sluit venster">×</button>
       </div>
     </div>
@@ -1968,7 +1964,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 3.0">v3.0</span>
+      <span class="version-badge" aria-label="Versie 4.1">v4.1</span>
     </div>
   </div>
 
@@ -2061,15 +2057,11 @@
       speler1OpenVpModal: document.getElementById("speler1-open-vp-modal"),
       speler1CloseVpModal: document.getElementById("speler1-close-vp-modal"),
       speler1VpModal: document.getElementById("speler1-vp-modal"),
-      speler1OpponentVpBadge: document.getElementById("speler1-opponent-vp-badge"),
-      speler1OpponentBannerBadge: document.getElementById("speler1-opponent-banner-badge"),
       speler1OpponentList: document.getElementById("speler1-opponent-list"),
       speler1ApplyVpModal: document.getElementById("speler1-apply-vp-modal"),
       speler2OpenVpModal: document.getElementById("speler2-open-vp-modal"),
       speler2CloseVpModal: document.getElementById("speler2-close-vp-modal"),
       speler2VpModal: document.getElementById("speler2-vp-modal"),
-      speler2OpponentVpBadge: document.getElementById("speler2-opponent-vp-badge"),
-      speler2OpponentBannerBadge: document.getElementById("speler2-opponent-banner-badge"),
       speler2OpponentList: document.getElementById("speler2-opponent-list"),
       speler2ApplyVpModal: document.getElementById("speler2-apply-vp-modal"),
       armyListsLoading: document.getElementById("army-lists-loading"),
@@ -2696,13 +2688,9 @@ function getOpponentListForPlayer(playerKey) {
 
 function updateVictoryPointsFromSelections(playerKey) {
   const listInfo = getOpponentListForPlayer(playerKey);
-  const badge = playerKey === "speler1" ? el.speler1OpponentVpBadge : el.speler2OpponentVpBadge;
-  const bannerBadge = playerKey === "speler1" ? el.speler1OpponentBannerBadge : el.speler2OpponentBannerBadge;
 
   if (!listInfo.list) {
     el[playerKey].bannersCaptured.readOnly = false;
-    badge.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
-    bannerBadge.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
     return;
   }
 
@@ -2723,9 +2711,6 @@ function updateVictoryPointsFromSelections(playerKey) {
   el[playerKey].victoryPoints.value = form[playerKey].victoryPoints;
   el[playerKey].bannersCaptured.value = form[playerKey].bannersCaptured;
   el[playerKey].bannersCaptured.readOnly = true;
-
-  badge.textContent = `VP ${totalVp}`;
-  bannerBadge.textContent = `Banners ${totalBanners}`;
 
   renderSummary();
   updateStandNavState();
@@ -2759,9 +2744,6 @@ function buildSingleOpponentUnitHtml(playerKey, entry) {
       <div class="opponent-unit-top">
         <div>
           <p class="opponent-unit-name">${escapeHtml(unitLabel)}</p>
-        </div>
-        <div class="opponent-unit-right">
-          <p class="opponent-unit-points">${escapeHtml(entry.totalPoints)} pts</p>
         </div>
       </div>
       <div class="opponent-unit-controls">
@@ -2842,16 +2824,12 @@ function attachOpponentSelectListeners(container) {
 
 function renderOpponentArmyPanel(playerKey) {
   const listEl = playerKey === "speler1" ? el.speler1OpponentList : el.speler2OpponentList;
-  const badgeEl = playerKey === "speler1" ? el.speler1OpponentVpBadge : el.speler2OpponentVpBadge;
-  const bannerBadgeEl = playerKey === "speler1" ? el.speler1OpponentBannerBadge : el.speler2OpponentBannerBadge;
   const info = getOpponentListForPlayer(playerKey);
 
   if (!info.playerName || !info.opponentName) {
     el[playerKey].bannersCaptured.readOnly = false;
     listEl.innerHTML = "Kies eerst beide spelersnamen. Daarna kun je hier de lijst van je tegenstander gebruiken om Victory Points te berekenen.";
     listEl.className = "opponent-list-empty";
-    badgeEl.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
-    bannerBadgeEl.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
     return;
   }
 
@@ -2859,8 +2837,6 @@ function renderOpponentArmyPanel(playerKey) {
     el[playerKey].bannersCaptured.readOnly = false;
     listEl.innerHTML = "Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.";
     listEl.className = "opponent-list-empty";
-    badgeEl.textContent = `VP ${Number(form[playerKey].victoryPoints || 0)}`;
-    bannerBadgeEl.textContent = `Banners ${Number(form[playerKey].bannersCaptured || 0)}`;
     return;
   }
 
@@ -2915,7 +2891,6 @@ function buildListSummaryEntryHtml(entry) {
     <div class="list-summary-entry">
       <div class="list-summary-entry-top">
         <p class="list-summary-entry-name">${escapeHtml(unitLabel)}</p>
-        <p class="list-summary-entry-points">${escapeHtml(entry.totalPoints)} pts</p>
       </div>
       ${characteristicsHtml}
       ${lines.join("")}
@@ -3284,6 +3259,10 @@ function closeArmyListSummary() {
     function resetForm() {
       form = structuredClone(initialForm);
       submittedRows = null;
+      vpSelections.speler1 = {};
+      vpSelections.speler2 = {};
+      bannerSelections.speler1 = {};
+      bannerSelections.speler2 = {};
       syncInputsFromState();
       renderErrors({});
       renderSummary();
