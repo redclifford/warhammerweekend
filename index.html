@@ -994,22 +994,26 @@
 
 .army-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
   gap: 24px;
+  align-items: start;
 }
 
 .army-upload-card {
   height: 100%;
+  min-width: 0;
 }
 
 .army-lists-table-wrap {
+  width: 100%;
   margin-top: 0;
-  overflow-x: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .army-lists-table {
-  width: auto;
-  min-width: 0;
+  width: max-content;
+  min-width: 100%;
   margin: 0;
 }
 
@@ -1249,8 +1253,8 @@
     grid-template-columns: 1fr;
   }
 
-  .army-lists-table-wrap {
-    overflow-x: auto;
+  .army-grid {
+    grid-template-columns: 1fr;
   }
 
   .opponent-unit-controls {
@@ -1420,6 +1424,7 @@
 
     .list-summary-stats-table {
       width: 100%;
+      table-layout: auto;
       border-collapse: collapse;
       margin-bottom: 10px;
       font-size: 0.88rem;
@@ -1437,6 +1442,15 @@
     .list-summary-stats-table th:first-child,
     .list-summary-stats-table td:first-child {
       text-align: left;
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+
+    .list-summary-stats-table th:not(:first-child),
+    .list-summary-stats-table td:not(:first-child) {
+      width: 1%;
     }
 
     .list-summary-line {
@@ -2502,6 +2516,15 @@
       });
     }
 
+    function formatDisplayText(value) {
+      return String(value || "")
+        .replace(/\s*\{\s*renegade\s*\}\s*/gi, " ")
+        .replace(/\{/g, "(")
+        .replace(/\}/g, ")")
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
+
     function getCommandSummary(entry) {
       const commandItems = Array.isArray(entry?.command) ? entry.command.filter((item) => item && item.active) : [];
       if (!commandItems.length) return "";
@@ -2663,8 +2686,8 @@
           return `
             <tr>
               <td class="standings-player">${escapeHtml(item.playerName || "")}</td>
-              <td>${escapeHtml(item.listName || "-")}</td>
-              <td>${escapeHtml(toTitleCaseArmy(item.army || ""))}</td>
+              <td>${escapeHtml(formatDisplayText(item.listName || "-"))}</td>
+              <td>${escapeHtml(formatDisplayText(toTitleCaseArmy(item.army || "")))}</td>
               <td>${escapeHtml(item.points || 0)}</td>
               <td><button type="button" class="army-view-button" data-view-army-player="${escapeHtml(item.playerName || "")}" aria-label="Bekijk army list">👁</button></td>
             </tr>
@@ -2743,7 +2766,7 @@ function buildSingleOpponentUnitHtml(playerKey, entry) {
     <div class="opponent-unit">
       <div class="opponent-unit-top">
         <div>
-          <p class="opponent-unit-name">${escapeHtml(unitLabel)}</p>
+          <p class="opponent-unit-name">${escapeHtml(formatDisplayText(unitLabel))}</p>
         </div>
       </div>
       <div class="opponent-unit-controls">
@@ -2758,7 +2781,6 @@ function buildSingleOpponentUnitHtml(playerKey, entry) {
           </select>
         </div>
         ${bannerControl}
-        <div class="opponent-unit-note">${escapeHtml(getPercentageLabel(currentValue))} = ${escapeHtml(calculateSelectionPoints(entry.totalPoints, currentValue))} VP</div>
       </div>
     </div>
   `;
@@ -2855,7 +2877,7 @@ function buildCharacteristicsTable(characteristics) {
   if (!Array.isArray(characteristics) || !characteristics.length) return "";
   const rows = characteristics.map((row) => `
     <tr>
-      <td>${escapeHtml(row.model || "Model")}</td>
+      <td>${escapeHtml(formatDisplayText(row.model || "Model"))}</td>
       <td>${escapeHtml(row.M || "-")}</td>
       <td>${escapeHtml(row.WS || "-")}</td>
       <td>${escapeHtml(row.BS || "-")}</td>
@@ -2884,13 +2906,13 @@ function buildListSummaryEntryHtml(entry) {
   const characteristicsHtml = buildCharacteristicsTable(entry.characteristics);
   const lines = [];
   if (entry.quantity > 1) lines.push(`<p class="list-summary-line"><strong>Unit Size:</strong> ${escapeHtml(entry.quantity)}</p>`);
-  if (entry.commandSummary) lines.push(`<p class="list-summary-line"><strong>Command:</strong> ${escapeHtml(entry.commandSummary)}</p>`);
-  if (entry.equipmentSummary) lines.push(`<p class="list-summary-line"><strong>Equipment:</strong> ${escapeHtml(entry.equipmentSummary)}</p>`);
-  if (entry.specialRulesSummary) lines.push(`<p class="list-summary-line"><strong>Special Rules:</strong> ${escapeHtml(entry.specialRulesSummary)}</p>`);
+  if (entry.commandSummary) lines.push(`<p class="list-summary-line"><strong>Command:</strong> ${escapeHtml(formatDisplayText(entry.commandSummary))}</p>`);
+  if (entry.equipmentSummary) lines.push(`<p class="list-summary-line"><strong>Equipment:</strong> ${escapeHtml(formatDisplayText(entry.equipmentSummary))}</p>`);
+  if (entry.specialRulesSummary) lines.push(`<p class="list-summary-line"><strong>Special Rules:</strong> ${escapeHtml(formatDisplayText(entry.specialRulesSummary))}</p>`);
   return `
     <div class="list-summary-entry">
       <div class="list-summary-entry-top">
-        <p class="list-summary-entry-name">${escapeHtml(unitLabel)}</p>
+        <p class="list-summary-entry-name">${escapeHtml(formatDisplayText(unitLabel))}</p>
       </div>
       ${characteristicsHtml}
       ${lines.join("")}
@@ -2922,9 +2944,9 @@ function buildArmyListSummaryHtml(armyList, playerName) {
   }).join("");
   return `
     <div class="list-summary-meta">
-      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Speler</p><p class="list-summary-meta-value">${escapeHtml(playerName || "-")}</p></div>
-      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Lijst</p><p class="list-summary-meta-value">${escapeHtml(armyList.listName || "-")}</p></div>
-      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Army</p><p class="list-summary-meta-value">${escapeHtml(toTitleCaseArmy(armyList.army || ""))}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Speler</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(playerName || "-"))}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Lijst</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(armyList.listName || "-"))}</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Army</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(toTitleCaseArmy(armyList.army || "")))}</p></div>
       <div class="list-summary-meta-item"><p class="list-summary-meta-label">Punten</p><p class="list-summary-meta-value">${escapeHtml(armyList.points || 0)} pts</p></div>
     </div>
     <div class="list-summary-category-grid">${categoryHtml}</div>
@@ -3116,7 +3138,7 @@ function closeArmyListSummary() {
 
     function renderRoundResultsCards(roundBlocks) {
       const cardsHtml = roundBlocks.map((block) => {
-        const title = String(block.title || '').trim();
+        const title = String(block.title || '').trim().replace(/^Round\s+/i, 'Ronde ');
         const results = Array.isArray(block.results) ? block.results.filter(Boolean) : [];
         const itemsHtml = results.length
           ? `<ul class="round-results-list">${results.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
