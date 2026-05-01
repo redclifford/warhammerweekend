@@ -2154,7 +2154,8 @@
       const matchKey = buildMatchKey(currentForm);
       const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
       const speler2Totaal = calculatePlayerTotal(currentForm.speler2);
-      const resultDifference = Math.abs(speler1Totaal - speler2Totaal);
+      const resultDifference1 = Math.abs(speler1Totaal - speler2Totaal);
+      const resultDifference2 = Math.abs(speler2Totaal - speler1Totaal);
 
       return [
         {
@@ -2167,7 +2168,7 @@
           enemyGeneralSlain: currentForm.speler1.enemyGeneralSlain ? 1 : 0,
           bonusObjectives: currentForm.speler1.bonusObjectives ? 1 : 0,
           totalScore: speler1Totaal,
-          resultDifference,
+          resultDifference = resultDifference1 < 0 ? 0 : resultDifference1,
           tegenstander: currentForm.speler2.naam.trim(),
         },
         {
@@ -2180,7 +2181,7 @@
           enemyGeneralSlain: currentForm.speler2.enemyGeneralSlain ? 1 : 0,
           bonusObjectives: currentForm.speler2.bonusObjectives ? 1 : 0,
           totalScore: speler2Totaal,
-          resultDifference,
+          resultDifference = resultDifference2 < 0 ? 0 : resultDifference2,
           tegenstander: currentForm.speler1.naam.trim(),
         },
       ];
