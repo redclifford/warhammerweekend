@@ -2168,7 +2168,7 @@
           enemyGeneralSlain: currentForm.speler1.enemyGeneralSlain ? 1 : 0,
           bonusObjectives: currentForm.speler1.bonusObjectives ? 1 : 0,
           totalScore: speler1Totaal,
-          resultDifference = resultDifference1 < 0 ? 0 : resultDifference1,
+          resultDifference: resultDifference1 < 0 ? 0 : resultDifference1,
           tegenstander: currentForm.speler2.naam.trim(),
         },
         {
@@ -2181,7 +2181,7 @@
           enemyGeneralSlain: currentForm.speler2.enemyGeneralSlain ? 1 : 0,
           bonusObjectives: currentForm.speler2.bonusObjectives ? 1 : 0,
           totalScore: speler2Totaal,
-          resultDifference = resultDifference2 < 0 ? 0 : resultDifference2,
+          resultDifference: resultDifference2 < 0 ? 0 : resultDifference2,
           tegenstander: currentForm.speler1.naam.trim(),
         },
       ];
