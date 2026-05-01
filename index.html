@@ -2163,8 +2163,6 @@
       console.log(resultDifference1);
       console.log(resultDifference2);
 
-      return;
-
       return [
         {
           matchKey,
@@ -3503,9 +3501,6 @@ document.addEventListener("keydown", (event) => {
       if (Object.keys(validationErrors).length > 0) return;
 
       const rows = buildRows(form);
-
-      console.log(rows);
-      return;
 
       try {
         const response = await fetch(SHEETS_WEBHOOK_URL, {
