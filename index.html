@@ -3496,6 +3496,9 @@ document.addEventListener("keydown", (event) => {
 
       const rows = buildRows(form);
 
+      console.log(rows);
+      return;
+
       try {
         const response = await fetch(SHEETS_WEBHOOK_URL, {
           method: "POST",
