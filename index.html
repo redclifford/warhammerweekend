@@ -2154,8 +2154,8 @@
       const matchKey = buildMatchKey(currentForm);
       const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
       const speler2Totaal = calculatePlayerTotal(currentForm.speler2);
-      const resultDifference1 = Math.abs(speler1Totaal - speler2Totaal);
-      const resultDifference2 = Math.abs(speler2Totaal - speler1Totaal);
+      const resultDifference1 = speler1Totaal - speler2Totaal;
+      const resultDifference2 = speler2Totaal - speler1Totaal;
 
       console.log(speler1Totaal);
       console.log(speler2Totaal);
