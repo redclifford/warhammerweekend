@@ -391,6 +391,15 @@
       box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
     }
 
+    .round-segment:disabled,
+    .round-segment.is-disabled {
+      background: #f8fafc;
+      color: #94a3b8;
+      border-color: #e2e8f0;
+      cursor: not-allowed;
+      opacity: 1;
+    }
+
     .round-segment:focus-visible,
     .matchsize-segment:focus-visible,
     .compact-select:focus-visible {
@@ -1510,7 +1519,7 @@
             </table>
           </div>
 
-          <div class="round-results-section">
+          <div class="round-results-section hidden" aria-hidden="true">
             <h3 class="round-results-title">Resultaten rondes</h3>
             <div id="round-results-loading" class="standings-loading hidden" aria-hidden="true">Ronderesultaten worden geladen...</div>
             <div id="round-results-error" class="standings-error hidden">De ronderesultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
@@ -1536,6 +1545,7 @@
                                         <select id="army-upload-player">
                       <option value="">Kies een naam</option>
                       <option value="Bart">Bart</option>
+                      <option value="Calvin">Calvin</option>
                       <option value="Dennis">Dennis</option>
                       <option value="Gijs">Gijs</option>
                       <option value="Nick">Nick</option>
@@ -1596,16 +1606,16 @@
         <div class="card-body compact-top-card-body">
           <div class="field-group compact-field-group">
             <div class="round-segmented desktop-only" id="round-selector-compact" role="radiogroup" aria-label="Kies een ronde">
-              <button type="button" class="round-segment" data-round="1" role="radio" aria-checked="false">1</button>
-              <button type="button" class="round-segment" data-round="2" role="radio" aria-checked="false">2</button>
-              <button type="button" class="round-segment" data-round="3" role="radio" aria-checked="false">3</button>
-              <button type="button" class="round-segment" data-round="4" role="radio" aria-checked="false">4</button>
-              <button type="button" class="round-segment" data-round="5" role="radio" aria-checked="false">5</button>
-              <button type="button" class="round-segment" data-round="6" role="radio" aria-checked="false">6</button>
-              <button type="button" class="round-segment" data-round="7" role="radio" aria-checked="false">7</button>
+              <button type="button" class="round-segment is-disabled" data-round="1" role="radio" aria-checked="false" aria-disabled="true" disabled>1</button>
+              <button type="button" class="round-segment is-disabled" data-round="2" role="radio" aria-checked="false" aria-disabled="true" disabled>2</button>
+              <button type="button" class="round-segment is-disabled" data-round="3" role="radio" aria-checked="false" aria-disabled="true" disabled>3</button>
+              <button type="button" class="round-segment is-disabled" data-round="4" role="radio" aria-checked="false" aria-disabled="true" disabled>4</button>
+              <button type="button" class="round-segment is-disabled" data-round="5" role="radio" aria-checked="false" aria-disabled="true" disabled>5</button>
+              <button type="button" class="round-segment is-disabled" data-round="6" role="radio" aria-checked="false" aria-disabled="true" disabled>6</button>
+              <button type="button" class="round-segment is-disabled" data-round="7" role="radio" aria-checked="false" aria-disabled="true" disabled>7</button>
             </div>
 
-            <select id="round-select-mobile" class="compact-select mobile-only" aria-label="Kies een ronde">
+            <select id="round-select-mobile" class="compact-select mobile-only" aria-label="Kies een ronde" disabled aria-disabled="true">
               <option value="">Kies ronde</option>
               <option value="1">Ronde 1</option>
               <option value="2">Ronde 2</option>
@@ -1627,22 +1637,23 @@
         <div class="card-body compact-top-card-body">
           <div class="field-group compact-field-group">
             <div class="matchsize-segmented desktop-only" id="matchsize-selector-compact" role="group" aria-label="Kies een match size">
-              <button type="button" class="matchsize-segment active" data-matchsize="Up to 1,000" aria-pressed="true">Up to 1,000</button>
-              <button type="button" class="matchsize-segment active" data-matchsize="1,001-1,500" disabled aria-disabled="true" aria-pressed="false">1,001-1,500</button>
-              <button type="button" class="matchsize-segment active" data-matchsize="1,501-2,000" disabled aria-disabled="true" aria-pressed="false">1,501-2,000</button>
-              <button type="button" class="matchsize-segment active" data-matchsize="2,001-3,000" disabled aria-disabled="true" aria-pressed="false">2,001-3,000</button>
-              <button type="button" class="matchsize-segment active" data-matchsize="3,001+" disabled aria-disabled="true" aria-pressed="false">3,001+</button>
+              <button type="button" class="matchsize-segment" data-matchsize="Up to 1,000" aria-pressed="false">Up to 1,000</button>
+              <button type="button" class="matchsize-segment" data-matchsize="1,001-1,500" aria-pressed="false">1,001-1,500</button>
+              <button type="button" class="matchsize-segment" data-matchsize="1,501-2,000" aria-pressed="false">1,501-2,000</button>
+              <button type="button" class="matchsize-segment" data-matchsize="2,001-3,000" aria-pressed="false">2,001-3,000</button>
+              <button type="button" class="matchsize-segment" data-matchsize="3,001+" aria-pressed="false">3,001+</button>
             </div>
 
             <select id="match-size-mobile" class="compact-select mobile-only" aria-label="Kies een match size">
+              <option value="">Kies match size</option>
               <option value="Up to 1,000">Up to 1,000</option>
-              <option value="1,001-1,500" disabled>1,001-1,500</option>
-              <option value="1,501-2,000" disabled>1,501-2,000</option>
-              <option value="2,001-3,000" disabled>2,001-3,000</option>
-              <option value="3,001+" disabled>3,001+</option>
+              <option value="1,001-1,500">1,001-1,500</option>
+              <option value="1,501-2,000">1,501-2,000</option>
+              <option value="2,001-3,000">2,001-3,000</option>
+              <option value="3,001+">3,001+</option>
             </select>
 
-            <input id="match-size" type="hidden" value="Up to 1,000" />
+            <input id="match-size" type="hidden" />
             <div class="error" id="error-matchSize"></div>
           </div>
         </div>
@@ -1660,6 +1671,7 @@
                 <select id="speler1-naam">
                   <option value="">Kies een naam</option>
                   <option value="Bart">Bart</option>
+                  <option value="Calvin">Calvin</option>
                   <option value="Dennis">Dennis</option>
                   <option value="Gijs">Gijs</option>
                   <option value="Nick">Nick</option>
@@ -1758,6 +1770,7 @@
                 <select id="speler2-naam">
                   <option value="">Kies een naam</option>
                   <option value="Bart">Bart</option>
+                  <option value="Calvin">Calvin</option>
                   <option value="Dennis">Dennis</option>
                   <option value="Gijs">Gijs</option>
                   <option value="Nick">Nick</option>
@@ -1978,7 +1991,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 4.1">v4.1</span>
+      <span class="version-badge" aria-label="Versie 4.4">v4.4</span>
     </div>
   </div>
 
@@ -1995,7 +2008,7 @@
 
     const initialForm = {
       ronde: "",
-      matchSize: "Up to 1,000",
+      matchSize: "",
       speler1: { ...initialPlayer },
       speler2: { ...initialPlayer },
     };
@@ -2123,11 +2136,43 @@
       );
     }
 
-    function getResultLabel(verschil) {
-      if (verschil <= 100) return "Draw";
-      if (verschil <= 300) return "Marginal Victory";
-      if (verschil <= 750) return "Resounding Victory";
-      return "Crushing Victory";
+    const resultThresholdsByMatchSize = {
+      "Up to 1,000": [
+        { max: 100, label: "Draw" },
+        { max: 300, label: "Marginal Victory" },
+        { max: 750, label: "Resounding Victory" },
+        { max: Infinity, label: "Crushing Victory" },
+      ],
+      "1,001-1,500": [
+        { max: 250, label: "Draw" },
+        { max: 750, label: "Marginal Victory" },
+        { max: 1250, label: "Resounding Victory" },
+        { max: Infinity, label: "Crushing Victory" },
+      ],
+      "1,501-2,000": [
+        { max: 300, label: "Draw" },
+        { max: 900, label: "Marginal Victory" },
+        { max: 1500, label: "Resounding Victory" },
+        { max: Infinity, label: "Crushing Victory" },
+      ],
+      "2,001-3,000": [
+        { max: 100, label: "Draw" },
+        { max: 300, label: "Marginal Victory" },
+        { max: 750, label: "Resounding Victory" },
+        { max: Infinity, label: "Crushing Victory" },
+      ],
+      "3,001+": [
+        { max: 100, label: "Draw" },
+        { max: 300, label: "Marginal Victory" },
+        { max: 750, label: "Resounding Victory" },
+        { max: Infinity, label: "Crushing Victory" },
+      ],
+    };
+
+    function getResultLabel(verschil, matchSize) {
+      const thresholds = resultThresholdsByMatchSize[matchSize] || resultThresholdsByMatchSize["Up to 1,000"];
+      const match = thresholds.find((threshold) => verschil <= threshold.max);
+      return match ? match.label : "Crushing Victory";
     }
 
     function buildResultSummary(currentForm) {
@@ -2136,7 +2181,7 @@
       const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
       const speler2Totaal = calculatePlayerTotal(currentForm.speler2);
       const verschil = Math.abs(speler1Totaal - speler2Totaal);
-      const resultLabel = getResultLabel(verschil);
+      const resultLabel = getResultLabel(verschil, currentForm.matchSize);
 
       let headlineTekst = `${speler1Naam} tied with ${speler2Naam}`;
       if (speler1Totaal > speler2Totaal) {
@@ -2159,7 +2204,6 @@
       return [
         {
           matchKey,
-          ronde: Number(currentForm.ronde),
           matchSize: currentForm.matchSize,
           naam: currentForm.speler1.naam.trim(),
           victoryPoints: Number(currentForm.speler1.victoryPoints),
@@ -2172,7 +2216,6 @@
         },
         {
           matchKey,
-          ronde: Number(currentForm.ronde),
           matchSize: currentForm.matchSize,
           naam: currentForm.speler2.naam.trim(),
           victoryPoints: Number(currentForm.speler2.victoryPoints),
@@ -2188,15 +2231,6 @@
 
     function validateForm(currentForm) {
       const errors = {};
-
-      if (!currentForm.ronde) {
-        errors.ronde = "Ronde is verplicht.";
-      } else {
-        const ronde = Number(currentForm.ronde);
-        if (!Number.isInteger(ronde) || ronde < 1 || ronde > 7) {
-          errors.ronde = "Ronde moet tussen 1 en 7 zijn.";
-        }
-      }
 
       const allowedMatchSizes = [
         "Up to 1,000",
@@ -2277,7 +2311,6 @@
 
     function hasStartedForm(currentForm) {
       return Boolean(
-        currentForm.ronde ||
         currentForm.speler1.naam ||
         currentForm.speler1.victoryPoints ||
         currentForm.speler1.bannersCaptured ||
@@ -3360,6 +3393,7 @@ function closeArmyListSummary() {
 
     el.roundSegments.forEach((button) => {
       button.addEventListener("click", () => {
+        if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
         form.ronde = button.dataset.round;
         syncInputsFromState();
         renderSummary();
@@ -3369,6 +3403,7 @@ function closeArmyListSummary() {
 
     if (el.roundSelectMobile) {
       el.roundSelectMobile.addEventListener("change", (e) => {
+        if (el.roundSelectMobile.disabled) return;
         form.ronde = e.target.value;
         syncInputsFromState();
         renderSummary();
@@ -3381,6 +3416,7 @@ function closeArmyListSummary() {
         if (button.disabled) return;
         form.matchSize = button.dataset.matchsize;
         syncInputsFromState();
+        renderSummary();
       });
     });
 
@@ -3388,6 +3424,7 @@ function closeArmyListSummary() {
       el.matchSizeMobile.addEventListener("change", (e) => {
         form.matchSize = e.target.value;
         syncInputsFromState();
+        renderSummary();
       });
     }
 
