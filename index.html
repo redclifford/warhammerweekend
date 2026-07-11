@@ -1641,7 +1641,7 @@
               <button type="button" class="matchsize-segment" data-matchsize="1,001-1,500" aria-pressed="false">1,001-1,500</button>
               <button type="button" class="matchsize-segment" data-matchsize="1,501-2,000" aria-pressed="false">1,501-2,000</button>
               <button type="button" class="matchsize-segment" data-matchsize="2,001-3,000" aria-pressed="false">2,001-3,000</button>
-              <button type="button" class="matchsize-segment" data-matchsize="3,001+" aria-pressed="false">3,001+</button>
+              <button type="button" class="matchsize-segment" data-matchsize="3,001-4,000" aria-pressed="false">3,001-4,000</button>
             </div>
 
             <select id="match-size-mobile" class="compact-select mobile-only" aria-label="Kies een match size">
@@ -1650,7 +1650,7 @@
               <option value="1,001-1,500">1,001-1,500</option>
               <option value="1,501-2,000">1,501-2,000</option>
               <option value="2,001-3,000">2,001-3,000</option>
-              <option value="3,001+">3,001+</option>
+              <option value="3,001-4,000">3,001-4,000</option>
             </select>
 
             <input id="match-size" type="hidden" />
@@ -1991,7 +1991,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 4.4">v4.4</span>
+      <span class="version-badge" aria-label="Versie 4.5">v4.5</span>
     </div>
   </div>
 
@@ -2138,15 +2138,15 @@
 
     const resultThresholdsByMatchSize = {
       "Up to 1,000": [
-        { max: 100, label: "Draw" },
-        { max: 300, label: "Marginal Victory" },
+        { max: 150, label: "Draw" },
+        { max: 450, label: "Marginal Victory" },
         { max: 750, label: "Resounding Victory" },
         { max: Infinity, label: "Crushing Victory" },
       ],
       "1,001-1,500": [
         { max: 250, label: "Draw" },
-        { max: 750, label: "Marginal Victory" },
-        { max: 1250, label: "Resounding Victory" },
+        { max: 700, label: "Marginal Victory" },
+        { max: 1150, label: "Resounding Victory" },
         { max: Infinity, label: "Crushing Victory" },
       ],
       "1,501-2,000": [
@@ -2156,15 +2156,15 @@
         { max: Infinity, label: "Crushing Victory" },
       ],
       "2,001-3,000": [
-        { max: 100, label: "Draw" },
-        { max: 300, label: "Marginal Victory" },
-        { max: 750, label: "Resounding Victory" },
+        { max: 450, label: "Draw" },
+        { max: 1350, label: "Marginal Victory" },
+        { max: 2250, label: "Resounding Victory" },
         { max: Infinity, label: "Crushing Victory" },
       ],
-      "3,001+": [
-        { max: 100, label: "Draw" },
-        { max: 300, label: "Marginal Victory" },
-        { max: 750, label: "Resounding Victory" },
+      "3,001-4,000": [
+        { max: 600, label: "Draw" },
+        { max: 1800, label: "Marginal Victory" },
+        { max: 3000, label: "Resounding Victory" },
         { max: Infinity, label: "Crushing Victory" },
       ],
     };
@@ -2237,7 +2237,7 @@
         "1,001-1,500",
         "1,501-2,000",
         "2,001-3,000",
-        "3,001+",
+        "3,001-4,000",
       ];
 
       if (!currentForm.matchSize) {
