@@ -1257,6 +1257,46 @@
   padding-right: 42px;
 }
 
+
+.army-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.army-status-icon.is-valid {
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.army-status-icon.is-invalid {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.invalid-list-warning {
+  margin: 7px 2px 0;
+  color: #b91c1c;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.vp-calc-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
 @media (max-width: 860px) {
   .opponent-category-grid {
     grid-template-columns: 1fr;
@@ -1587,6 +1627,7 @@
                         <th>Lijst</th>
                         <th>Army</th>
                         <th>Punten</th>
+                        <th>Status</th>
                         <th>Bekijk</th>
                       </tr>
                     </thead>
@@ -1725,6 +1766,7 @@
 
               <div class="field-group">
                 <button type="button" class="secondary-button vp-calc-button" id="speler1-open-vp-modal">Victory Points berekenen</button>
+                <p class="invalid-list-warning hidden" id="speler1-vp-list-warning">Deze Army List is incorrect. Upload een geldige lijst.</p>
               </div>
               <div class="field-group">
                 <label for="speler1-banners" class="label">Banners Captured</label>
@@ -1824,6 +1866,7 @@
 
               <div class="field-group">
                 <button type="button" class="secondary-button vp-calc-button" id="speler2-open-vp-modal">Victory Points berekenen</button>
+                <p class="invalid-list-warning hidden" id="speler2-vp-list-warning">Deze Army List is incorrect. Upload een geldige lijst.</p>
               </div>
               <div class="field-group">
                 <label for="speler2-banners" class="label">Banners Captured</label>
@@ -1991,7 +2034,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 4.5">v4.5</span>
+      <span class="version-badge" aria-label="Versie 4.6">v4.6</span>
     </div>
   </div>
 
@@ -2059,6 +2102,7 @@
       roundSegments: Array.from(document.querySelectorAll(".round-segment")),
       roundSelectMobile: document.getElementById("round-select-mobile"),
       matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-segment")),
+      matchSizeDesktopContainer: document.getElementById("matchsize-selector-compact"),
       matchSizeMobile: document.getElementById("match-size-mobile"),
       navFormulier: document.getElementById("nav-formulier"),
       navArmyLists: document.getElementById("nav-army-lists"),
@@ -2086,11 +2130,13 @@
       speler1VpModal: document.getElementById("speler1-vp-modal"),
       speler1OpponentList: document.getElementById("speler1-opponent-list"),
       speler1ApplyVpModal: document.getElementById("speler1-apply-vp-modal"),
+      speler1VpListWarning: document.getElementById("speler1-vp-list-warning"),
       speler2OpenVpModal: document.getElementById("speler2-open-vp-modal"),
       speler2CloseVpModal: document.getElementById("speler2-close-vp-modal"),
       speler2VpModal: document.getElementById("speler2-vp-modal"),
       speler2OpponentList: document.getElementById("speler2-opponent-list"),
       speler2ApplyVpModal: document.getElementById("speler2-apply-vp-modal"),
+      speler2VpListWarning: document.getElementById("speler2-vp-list-warning"),
       armyListsLoading: document.getElementById("army-lists-loading"),
       armyListsError: document.getElementById("army-lists-error"),
       armyListsEmpty: document.getElementById("army-lists-empty"),
@@ -2136,7 +2182,7 @@
       );
     }
 
-    const resultThresholdsByMatchSize = {
+    let resultThresholdsByMatchSize = {
       "Up to 1,000": [
         { max: 150, label: "Draw" },
         { max: 450, label: "Marginal Victory" },
@@ -2168,6 +2214,8 @@
         { max: Infinity, label: "Crushing Victory" },
       ],
     };
+
+    let allowedMatchSizes = Object.keys(resultThresholdsByMatchSize);
 
     function getResultLabel(verschil, matchSize) {
       const thresholds = resultThresholdsByMatchSize[matchSize] || resultThresholdsByMatchSize["Up to 1,000"];
@@ -2204,6 +2252,7 @@
       return [
         {
           matchKey,
+          ronde: currentForm.ronde,
           matchSize: currentForm.matchSize,
           naam: currentForm.speler1.naam.trim(),
           victoryPoints: Number(currentForm.speler1.victoryPoints),
@@ -2216,6 +2265,7 @@
         },
         {
           matchKey,
+          ronde: currentForm.ronde,
           matchSize: currentForm.matchSize,
           naam: currentForm.speler2.naam.trim(),
           victoryPoints: Number(currentForm.speler2.victoryPoints),
@@ -2231,14 +2281,6 @@
 
     function validateForm(currentForm) {
       const errors = {};
-
-      const allowedMatchSizes = [
-        "Up to 1,000",
-        "1,001-1,500",
-        "1,501-2,000",
-        "2,001-3,000",
-        "3,001-4,000",
-      ];
 
       if (!currentForm.matchSize) {
         errors.matchSize = "Match Size is verplicht.";
@@ -2701,6 +2743,29 @@
       return Math.ceil(Number(unitPoints || 0) * (Number(percentage || 0) / 100));
     }
 
+    function isArmyListValid(list) {
+      return String(list && list.validationStatus || "").toLowerCase() === "valid";
+    }
+
+    function getArmyPointsText(item) {
+      const used = Number.isFinite(Number(item && item.usedPoints))
+        ? Number(item.usedPoints)
+        : (item && Array.isArray(item.entries)
+          ? item.entries.reduce((sum, entry) => sum + Number(entry && entry.totalPoints || 0), 0)
+          : 0);
+      const maximum = Number.isFinite(Number(item && item.maximumPoints))
+        ? Number(item.maximumPoints)
+        : Number(item && item.points || 0);
+      return `${used} / ${maximum}`;
+    }
+
+    function buildArmyStatusIcon(item) {
+      const valid = isArmyListValid(item);
+      return valid
+        ? '<span class="army-status-icon is-valid" title="Geldig" aria-label="Geldige army list">✓</span>'
+        : '<span class="army-status-icon is-invalid" title="Incorrect" aria-label="Incorrecte army list">✕</span>';
+    }
+
     function renderArmyListsTable() {
       const lists = Object.values(armyListsByPlayer || {});
       if (!lists.length) {
@@ -2715,17 +2780,16 @@
 
       el.armyListsBody.innerHTML = lists
         .sort((a, b) => String(a.playerName).localeCompare(String(b.playerName)))
-        .map((item) => {
-          return `
-            <tr>
-              <td class="standings-player">${escapeHtml(item.playerName || "")}</td>
-              <td>${escapeHtml(formatDisplayText(item.listName || "-"))}</td>
-              <td>${escapeHtml(formatDisplayText(toTitleCaseArmy(item.army || "")))}</td>
-              <td>${escapeHtml(item.points || 0)}</td>
-              <td><button type="button" class="army-view-button" data-view-army-player="${escapeHtml(item.playerName || "")}" aria-label="Bekijk army list">👁</button></td>
-            </tr>
-          `;
-        }).join("");
+        .map((item) => `
+          <tr>
+            <td class="standings-player">${escapeHtml(item.playerName || "")}</td>
+            <td>${escapeHtml(formatDisplayText(item.listName || "-"))}</td>
+            <td>${escapeHtml(formatDisplayText(toTitleCaseArmy(item.army || "")))}</td>
+            <td>${escapeHtml(getArmyPointsText(item))}</td>
+            <td>${buildArmyStatusIcon(item)}</td>
+            <td><button type="button" class="army-view-button" data-view-army-player="${escapeHtml(item.playerName || "")}" aria-label="Bekijk army list">👁</button></td>
+          </tr>
+        `).join("");
 
       el.armyListsBody.querySelectorAll("[data-view-army-player]").forEach((button) => {
         button.addEventListener("click", () => openArmyListSummary(button.dataset.viewArmyPlayer));
@@ -2742,10 +2806,23 @@ function getOpponentListForPlayer(playerKey) {
   };
 }
 
+function updateVpCalculatorAvailability(playerKey) {
+  const listInfo = getOpponentListForPlayer(playerKey);
+  const button = playerKey === "speler1" ? el.speler1OpenVpModal : el.speler2OpenVpModal;
+  const warning = playerKey === "speler1" ? el.speler1VpListWarning : el.speler2VpListWarning;
+  const isInvalid = !!listInfo.list && !isArmyListValid(listInfo.list);
+
+  button.disabled = isInvalid;
+  button.setAttribute("aria-disabled", isInvalid ? "true" : "false");
+  warning.classList.toggle("hidden", !isInvalid);
+
+  return !isInvalid;
+}
+
 function updateVictoryPointsFromSelections(playerKey) {
   const listInfo = getOpponentListForPlayer(playerKey);
 
-  if (!listInfo.list) {
+  if (!listInfo.list || !isArmyListValid(listInfo.list)) {
     el[playerKey].bannersCaptured.readOnly = false;
     return;
   }
@@ -2880,6 +2957,7 @@ function attachOpponentSelectListeners(container) {
 function renderOpponentArmyPanel(playerKey) {
   const listEl = playerKey === "speler1" ? el.speler1OpponentList : el.speler2OpponentList;
   const info = getOpponentListForPlayer(playerKey);
+  updateVpCalculatorAvailability(playerKey);
 
   if (!info.playerName || !info.opponentName) {
     el[playerKey].bannersCaptured.readOnly = false;
@@ -2891,6 +2969,13 @@ function renderOpponentArmyPanel(playerKey) {
   if (!info.list) {
     el[playerKey].bannersCaptured.readOnly = false;
     listEl.innerHTML = "Geen lijst beschikbaar. Je kunt Victory Points handmatig invullen.";
+    listEl.className = "opponent-list-empty";
+    return;
+  }
+
+  if (!isArmyListValid(info.list)) {
+    el[playerKey].bannersCaptured.readOnly = false;
+    listEl.innerHTML = "Deze Army List is incorrect. Upload een geldige lijst.";
     listEl.className = "opponent-list-empty";
     return;
   }
@@ -2980,7 +3065,8 @@ function buildArmyListSummaryHtml(armyList, playerName) {
       <div class="list-summary-meta-item"><p class="list-summary-meta-label">Speler</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(playerName || "-"))}</p></div>
       <div class="list-summary-meta-item"><p class="list-summary-meta-label">Lijst</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(armyList.listName || "-"))}</p></div>
       <div class="list-summary-meta-item"><p class="list-summary-meta-label">Army</p><p class="list-summary-meta-value">${escapeHtml(formatDisplayText(toTitleCaseArmy(armyList.army || "")))}</p></div>
-      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Punten</p><p class="list-summary-meta-value">${escapeHtml(armyList.points || 0)} pts</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Punten</p><p class="list-summary-meta-value">${escapeHtml(getArmyPointsText(armyList))} ptn</p></div>
+      <div class="list-summary-meta-item"><p class="list-summary-meta-label">Status</p><p class="list-summary-meta-value">${buildArmyStatusIcon(armyList)}</p></div>
     </div>
     <div class="list-summary-category-grid">${categoryHtml}</div>
   `;
@@ -3104,16 +3190,12 @@ function closeArmyListSummary() {
       try {
         const rawText = await file.text();
         const rawJson = JSON.parse(rawText);
-        const normalizedList = buildNormalizedArmyList(rawJson);
 
+        // Alleen het originele bestand en de gekozen speler worden verstuurd.
+        // Alle normalisatie en puntentelling gebeurt betrouwbaar op de server.
         const payload = {
           action: "saveArmyList",
           playerName,
-          listName: normalizedList.listName,
-          army: normalizedList.army,
-          points: normalizedList.points,
-          sourceUrl: normalizedList.sourceUrl,
-          entries: normalizedList.entries,
           rawJson,
         };
 
@@ -3130,18 +3212,121 @@ function closeArmyListSummary() {
 
         const result = await response.json();
         if (!result || !result.ok) {
+          if (result && result.errorCode === "INVALID_ARMY_LIST") {
+            renderUploadStatus("error", "Incorrecte lijst", "De lijst is niet opgeslagen.");
+            return;
+          }
           throw new Error((result && result.error) || "Onbekende fout bij uploaden");
         }
 
-        renderUploadStatus("success", "Army list opgeslagen", result.message || `De lijst van ${playerName} is opgeslagen.`);
+        renderUploadStatus(
+          "success",
+          `Army list van ${playerName} opgeslagen.`,
+          `${Number(result.usedPoints || 0)}/${Number(result.maximumPoints || 0)} ptn ✓`
+        );
         el.armyUploadForm.reset();
         await loadArmyLists();
       } catch (error) {
         console.error("Fout bij uploaden army list:", error);
-        renderUploadStatus("error", "Army list niet opgeslagen", error.message || "Er ging iets mis bij het uploaden.");
+        renderUploadStatus("error", "Upload mislukt", error.message || "De lijst is niet opgeslagen.");
       } finally {
         el.armyUploadSubmit.disabled = false;
         el.armyUploadSubmit.textContent = "Lijst uploaden";
+      }
+    }
+
+
+    const MATCH_CONFIG_URL = `${SHEETS_WEBHOOK_URL}?action=matchConfig`;
+
+    function buildThresholdsFromBands(bands) {
+      const sorted = (Array.isArray(bands) ? bands : [])
+        .map((band) => ({
+          min: Number(band && band.min),
+          label: String(band && band.label || ""),
+        }))
+        .filter((band) => Number.isInteger(band.min) && band.min >= 0 && band.label)
+        .sort((a, b) => a.min - b.min);
+
+      return sorted.map((band, index) => ({
+        max: index < sorted.length - 1 ? sorted[index + 1].min - 1 : Infinity,
+        label: band.label,
+      }));
+    }
+
+    function bindMatchSizeControls() {
+      el.matchSizeButtons = Array.from(document.querySelectorAll(".matchsize-segment"));
+      el.matchSizeMobile = document.getElementById("match-size-mobile");
+
+      el.matchSizeButtons.forEach((button) => {
+        button.onclick = () => {
+          if (button.disabled) return;
+          form.matchSize = button.dataset.matchsize;
+          syncInputsFromState();
+          renderSummary();
+        };
+      });
+
+      if (el.matchSizeMobile) {
+        el.matchSizeMobile.onchange = (event) => {
+          form.matchSize = event.target.value;
+          syncInputsFromState();
+          renderSummary();
+        };
+      }
+    }
+
+    function applyMatchConfiguration(matchSizes) {
+      const validItems = (Array.isArray(matchSizes) ? matchSizes : [])
+        .filter((item) => item && String(item.name || "").trim() && Array.isArray(item.bands));
+      if (!validItems.length) return;
+
+      const nextThresholds = {};
+      validItems.forEach((item) => {
+        nextThresholds[String(item.name)] = buildThresholdsFromBands(item.bands);
+      });
+
+      const names = Object.keys(nextThresholds).filter((name) => nextThresholds[name].length);
+      if (!names.length) return;
+
+      resultThresholdsByMatchSize = nextThresholds;
+      allowedMatchSizes = names;
+
+      el.matchSizeDesktopContainer.innerHTML = names.map((name) => `
+        <button type="button" class="matchsize-segment" data-matchsize="${escapeHtml(name)}" aria-pressed="false">${escapeHtml(name)}</button>
+      `).join("");
+
+      el.matchSizeMobile.innerHTML = `
+        <option value="">Kies match size</option>
+        ${names.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join("")}
+      `;
+
+      if (form.matchSize && !allowedMatchSizes.includes(form.matchSize)) {
+        form.matchSize = "";
+      }
+
+      bindMatchSizeControls();
+      syncInputsFromState();
+      renderSummary();
+    }
+
+    async function loadMatchConfiguration() {
+      try {
+        const response = await fetch(`${MATCH_CONFIG_URL}&_=${Date.now()}`, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        if (!data || !data.ok || !Array.isArray(data.matchSizes)) {
+          throw new Error((data && data.error) || "Ongeldige matchconfiguratie");
+        }
+
+        applyMatchConfiguration(data.matchSizes);
+        if (data.warning) console.warn("Matchconfiguratie gebruikt fallback:", data.warning);
+      } catch (error) {
+        // De vaste waarden in de HTML blijven als veilige fallback beschikbaar.
+        console.warn("Matchconfiguratie kon niet worden geladen; fallback blijft actief:", error);
       }
     }
 
@@ -3411,22 +3596,7 @@ function closeArmyListSummary() {
       });
     }
 
-    el.matchSizeButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (button.disabled) return;
-        form.matchSize = button.dataset.matchsize;
-        syncInputsFromState();
-        renderSummary();
-      });
-    });
-
-    if (el.matchSizeMobile) {
-      el.matchSizeMobile.addEventListener("change", (e) => {
-        form.matchSize = e.target.value;
-        syncInputsFromState();
-        renderSummary();
-      });
-    }
+    bindMatchSizeControls();
 
     el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
     el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
@@ -3477,6 +3647,7 @@ function closeArmyListSummary() {
     });
 
 function openVpModal(playerKey) {
+  if (!updateVpCalculatorAvailability(playerKey)) return;
   const modal = playerKey === "speler1" ? el.speler1VpModal : el.speler2VpModal;
   renderOpponentArmyPanel(playerKey);
   modal.classList.remove("hidden");
@@ -3600,6 +3771,7 @@ document.addEventListener("keydown", (event) => {
     el.resetButton.addEventListener("click", resetForm);
 
     setActiveView("army-lists");
+    loadMatchConfiguration();
     syncInputsFromState();
     renderSummary();
     updateStandNavState();
