@@ -2034,7 +2034,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 5.0">v5.0</span>
+      <span class="version-badge" aria-label="Versie 4.6">v4.6</span>
     </div>
   </div>
 
@@ -2498,11 +2498,15 @@
       return date.toLocaleString("nl-NL");
     }
 
-    function getActiveNestedOptionPoints(option) {
+    function getActiveNestedOptionPoints(option, perModelMultiplier = 1) {
       if (!option || !Array.isArray(option.options)) return 0;
       return option.options
         .filter((child) => child && child.active)
-        .reduce((sum, child) => sum + Number(child.points || 0), 0);
+        .reduce((sum, child) => {
+          const points = Number(child.points || 0);
+          const useMultiplier = child.perModel ? perModelMultiplier : 1;
+          return sum + (points * useMultiplier) + getActiveNestedOptionPoints(child, perModelMultiplier);
+        }, 0);
     }
 
     function getActiveCollectionPoints(items, perModelMultiplier = 1) {
@@ -2511,15 +2515,29 @@
         if (!item || !item.active) return sum;
         const points = Number(item.points || 0);
         const useMultiplier = item.perModel ? perModelMultiplier : 1;
-        return sum + (points * useMultiplier) + getActiveNestedOptionPoints(item);
+        return sum + (points * useMultiplier) + getActiveNestedOptionPoints(item, perModelMultiplier);
       }, 0);
     }
 
-    function getSelectedItemPoints(items) {
+    function getSelectedItemPoints(items, perModelMultiplier = 1) {
       if (!Array.isArray(items)) return 0;
       return items.reduce((sum, itemGroup) => {
         const selected = Array.isArray(itemGroup && itemGroup.selected) ? itemGroup.selected : [];
-        return sum + selected.reduce((inner, selectedItem) => inner + Number((selectedItem && selectedItem.points) || 0), 0);
+        return sum + selected.reduce((inner, selectedItem) => {
+          if (!selectedItem) return inner;
+          if (selectedItem.perModel && Number.isFinite(Number(selectedItem.perModelPoints))) {
+            return inner + (Number(selectedItem.perModelPoints) * perModelMultiplier);
+          }
+          return inner + Number(selectedItem.points || 0);
+        }, 0);
+      }, 0);
+    }
+
+    function getActiveCommandMagicPoints(commandItems) {
+      if (!Array.isArray(commandItems)) return 0;
+      return commandItems.reduce((sum, commandItem) => {
+        if (!commandItem || !commandItem.active) return sum;
+        return sum + getSelectedItemPoints([commandItem.magic], 1);
       }, 0);
     }
 
@@ -2664,13 +2682,14 @@
       const modelCount = getEntryModelCount(entry);
       const basePoints = Number(entry?.points || 0) * modelCount;
       const commandPoints = getActiveCollectionPoints(entry?.command, 1);
+      const commandMagicPoints = getActiveCommandMagicPoints(entry?.command);
       const equipmentPoints = getActiveCollectionPoints(entry?.equipment, modelCount);
       const armorPoints = getActiveCollectionPoints(entry?.armor, modelCount);
       const optionsPoints = getActiveCollectionPoints(entry?.options, modelCount);
       const mountPoints = getActiveCollectionPoints(entry?.mounts, 1);
-      const itemPoints = getSelectedItemPoints(entry?.items);
+      const itemPoints = getSelectedItemPoints(entry?.items, modelCount);
 
-      return basePoints + commandPoints + equipmentPoints + armorPoints + optionsPoints + mountPoints + itemPoints;
+      return basePoints + commandPoints + commandMagicPoints + equipmentPoints + armorPoints + optionsPoints + mountPoints + itemPoints;
     }
 
     function normalizeArmyEntries(rawList) {
