@@ -2693,7 +2693,8 @@
     }
 
     function normalizeArmyEntries(rawList) {
-      const sections = ["characters", "core", "special", "rare", "mercenaries"];
+      // v5.0: Allies are read as a separate army-list category.
+      const sections = ["characters", "core", "special", "rare", "mercenaries", "allies"];
       const entries = [];
 
       sections.forEach((section) => {
@@ -2874,6 +2875,7 @@ function getCategoryKey(value) {
   if (normalized === "core") return "core";
   if (normalized === "special") return "special";
   if (normalized === "rare") return "rare";
+  if (normalized === "allies") return "allies";
   return "special";
 }
 
@@ -2921,6 +2923,7 @@ function buildOpponentUnitsHtml(playerKey, armyList) {
     core: [],
     special: [],
     rare: [],
+    allies: [],
   };
 
   (armyList.entries || []).forEach((entry) => {
@@ -2932,6 +2935,7 @@ function buildOpponentUnitsHtml(playerKey, armyList) {
     { key: "core", title: "Core" },
     { key: "special", title: "Special" },
     { key: "rare", title: "Rare" },
+    ...(grouped.allies.length ? [{ key: "allies", title: "Allies" }] : []),
   ];
 
   const groupedHtml = sections.map((section) => {
@@ -3058,7 +3062,7 @@ function buildListSummaryEntryHtml(entry) {
 }
 
 function buildArmyListSummaryHtml(armyList, playerName) {
-  const grouped = { characters: [], core: [], special: [], rare: [] };
+  const grouped = { characters: [], core: [], special: [], rare: [], allies: [] };
   (armyList.entries || []).forEach((entry) => {
     const key = getCategoryKey(entry.category);
     if (!grouped[key]) grouped[key] = [];
@@ -3069,6 +3073,8 @@ function buildArmyListSummaryHtml(armyList, playerName) {
     ["core", "Core"],
     ["special", "Special"],
     ["rare", "Rare"],
+    // v5.0: Only show the Allies heading when allied units exist.
+    ...(grouped.allies.length ? [["allies", "Allies"]] : []),
   ];
   const categoryHtml = categories.map(([key, title]) => {
     const entries = grouped[key] || [];
