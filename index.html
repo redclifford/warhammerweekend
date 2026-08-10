@@ -428,13 +428,15 @@
     }
 
     .matchsize-segmented {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
     }
 
     .matchsize-segment {
-      min-height: 42px;
+      min-height: 48px;
+      width: 100%;
       padding: 0 12px;
       border-radius: 12px;
       border: 1px solid #cbd5e1;
@@ -580,6 +582,31 @@
       cursor: pointer;
     }
 
+    .result-download-button {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid var(--blue-border);
+      background: #ffffff;
+      color: var(--blue);
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .result-download-button:hover {
+      background: #eff6ff;
+    }
+
+    .result-download-button svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
     .info-popover {
       display: none;
       position: absolute;
@@ -640,7 +667,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 7px 10px;
+      padding: 7px 13px;
       border-radius: 999px;
       border: 1px solid var(--blue-border);
       background: #ffffff;
@@ -648,6 +675,8 @@
       font-size: 0.82rem;
       font-weight: 800;
       letter-spacing: 0.01em;
+      white-space: nowrap;
+      flex: 0 0 auto;
     }
 
     .result-grid {
@@ -950,55 +979,67 @@
 
 
 
-    .round-results-section {
+    .results-history-section {
       margin-top: 20px;
-    }
-
-    .round-results-title {
-      margin: 0 0 16px 6px;
-      font-size: 1.25rem;
-      font-weight: 800;
-    }
-
-    .round-results-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      align-items: start;
-    }
-
-    .round-result-card {
       border: 1px solid var(--border);
-      border-radius: 16px;
-      background: #f8fafc;
-      padding: 14px;
-      min-height: 132px;
+      border-radius: 18px;
+      background: #ffffff;
+      overflow: hidden;
     }
 
-    .round-result-card-title {
-      margin: 0 0 10px;
-      font-size: 0.98rem;
+    .results-history-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .results-history-title {
+      margin: 0;
+      font-size: 1.1rem;
       font-weight: 800;
       color: var(--text);
     }
 
-    .round-results-list {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.9rem;
+    .results-history-list {
+      display: grid;
     }
 
-    .round-results-list li + li {
-      margin-top: 6px;
+    .results-history-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .round-results-empty {
+    .results-history-item:last-child {
+      border-bottom: 0;
+    }
+
+    .results-history-text {
       margin: 0;
+      min-width: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.4;
+    }
+
+    .results-history-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .results-history-empty {
+      margin: 0;
+      padding: 16px;
       color: #64748b;
       line-height: 1.45;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
 
 .army-grid {
@@ -1322,22 +1363,10 @@
 }
 
     @media (max-width: 1020px) {
-      #matchsize-selector-compact.desktop-only {
-        display: none;
-      }
-
-      #match-size-mobile.mobile-only {
-        display: block;
-        max-width: 100%;
-      }
-
       .top-selector-grid {
         grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
       }
 
-      .round-results-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
     }
 
     @media (max-width: 640px) {
@@ -1355,8 +1384,8 @@
       .field-group { margin-bottom: 12px; }
       .player-grid { gap: 14px; }
       .toggle-row { padding: 10px 12px; min-height: 52px; }
-      .round-results-grid { grid-template-columns: 1fr; }
-      .round-result-card { min-height: 0; }
+      .results-history-item { align-items: flex-start; flex-direction: column; gap: 9px; }
+      .results-history-badges { justify-content: flex-start; }
       .page-meta {
         justify-content: center;
         margin-top: 12px;
@@ -1559,12 +1588,14 @@
             </table>
           </div>
 
-          <div class="round-results-section hidden" aria-hidden="true">
-            <h3 class="round-results-title">Resultaten rondes</h3>
-            <div id="round-results-loading" class="standings-loading hidden" aria-hidden="true">Ronderesultaten worden geladen...</div>
-            <div id="round-results-error" class="standings-error hidden">De ronderesultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
-            <div id="round-results-grid" class="round-results-grid hidden"></div>
-          </div>
+          <section class="results-history-section" aria-label="Recente resultaten">
+            <div class="results-history-header">
+              <h3 class="results-history-title">Resultaten</h3>
+            </div>
+            <div id="results-history-loading" class="standings-loading hidden" aria-hidden="true" style="padding: 0 16px 14px;">Resultaten worden geladen...</div>
+            <div id="results-history-error" class="standings-error hidden" style="padding: 0 16px 14px;">De resultaten konden niet worden geladen. Probeer het opnieuw via ‘Ververs stand’.</div>
+            <div id="results-history-list" class="results-history-list"></div>
+          </section>
         </div>
       </div>
     </div>
@@ -1642,37 +1673,6 @@
     </div>
 
     <div id="top-selector-grid" class="top-selector-grid">
-      <div class="card round-card">
-        <div class="card-header"><h2 class="card-title">Ronde</h2></div>
-        <div class="card-body compact-top-card-body">
-          <div class="field-group compact-field-group">
-            <div class="round-segmented desktop-only" id="round-selector-compact" role="radiogroup" aria-label="Kies een ronde">
-              <button type="button" class="round-segment is-disabled" data-round="1" role="radio" aria-checked="false" aria-disabled="true" disabled>1</button>
-              <button type="button" class="round-segment is-disabled" data-round="2" role="radio" aria-checked="false" aria-disabled="true" disabled>2</button>
-              <button type="button" class="round-segment is-disabled" data-round="3" role="radio" aria-checked="false" aria-disabled="true" disabled>3</button>
-              <button type="button" class="round-segment is-disabled" data-round="4" role="radio" aria-checked="false" aria-disabled="true" disabled>4</button>
-              <button type="button" class="round-segment is-disabled" data-round="5" role="radio" aria-checked="false" aria-disabled="true" disabled>5</button>
-              <button type="button" class="round-segment is-disabled" data-round="6" role="radio" aria-checked="false" aria-disabled="true" disabled>6</button>
-              <button type="button" class="round-segment is-disabled" data-round="7" role="radio" aria-checked="false" aria-disabled="true" disabled>7</button>
-            </div>
-
-            <select id="round-select-mobile" class="compact-select mobile-only" aria-label="Kies een ronde" disabled aria-disabled="true">
-              <option value="">Kies ronde</option>
-              <option value="1">Ronde 1</option>
-              <option value="2">Ronde 2</option>
-              <option value="3">Ronde 3</option>
-              <option value="4">Ronde 4</option>
-              <option value="5">Ronde 5</option>
-              <option value="6">Ronde 6</option>
-              <option value="7">Ronde 7</option>
-            </select>
-
-            <input id="ronde" type="hidden" />
-            <div class="error" id="error-ronde"></div>
-          </div>
-        </div>
-      </div>
-
       <div class="card round-card">
         <div class="card-header"><h2 class="card-title">Match Size</h2></div>
         <div class="card-body compact-top-card-body">
@@ -1757,6 +1757,12 @@
                           </tr>
                         </tbody>
                       </table>
+                      <p class="field-info-text" style="margin-bottom:0;">
+                        <strong>Extra Victory Points</strong><br />
+                        50 VP per Banner Captured<br />
+                        100 VP Enemy General Slain<br />
+                        100 VP per Bonus Objective
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1857,6 +1863,12 @@
                           </tr>
                         </tbody>
                       </table>
+                      <p class="field-info-text" style="margin-bottom:0;">
+                        <strong>Extra Victory Points</strong><br />
+                        50 VP per Banner Captured<br />
+                        100 VP Enemy General Slain<br />
+                        100 VP per Bonus Objective
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1943,27 +1955,22 @@
   </div>
 </div>
 
-<div class="result-panel">
+<div class="result-panel" id="result-panel">
           <div class="result-top-bar">
             <p class="result-title">Resultaat</p>
-            <div class="info-wrap" id="info-wrap">
-              <button type="button" class="info-button" id="info-button" aria-label="Toon puntentelling">?</button>
-              <div class="info-popover" id="info-popover">
-                <p class="info-popover-title">Puntentelling</p>
-                <p class="info-popover-text">
-                  50 VP per Banner Captured<br />
-                  100 VP Enemy General Slain<br />
-                  100 VP per Bonus Objective
-                </p>
-              </div>
-            </div>
+            <button type="button" class="result-download-button" id="result-download-button" data-export-ignore aria-label="Download resultaat als afbeelding" title="Download resultaat als PNG">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 3v11m0 0 4-4m-4 4-4-4M5 17v3h14v-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </button>
           </div>
 
           <div class="result-headline-row">
             <p class="result-headline-text" id="headline-text">Speler 1 tied with Speler 2</p>
             <div class="result-badge-row">
               <span class="badge" id="result-label">Draw</span>
-              <span class="badge" id="result-difference">+0</span>
+              <span class="badge" id="result-difference">+0 VP</span>
+              <span class="badge" id="result-match-size">Kies match size</span>
             </div>
           </div>
 
@@ -2034,7 +2041,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 5.0">v5.0</span>
+      <span class="version-badge" aria-label="Versie 6.0">v6.0</span>
     </div>
   </div>
 
@@ -2050,7 +2057,6 @@
     };
 
     const initialForm = {
-      ronde: "",
       matchSize: "",
       speler1: { ...initialPlayer },
       speler2: { ...initialPlayer },
@@ -2063,7 +2069,6 @@
     const bannerSelections = { speler1: {}, speler2: {} };
 
     const el = {
-      ronde: document.getElementById("ronde"),
       matchSize: document.getElementById("match-size"),
       speler1: {
         naam: document.getElementById("speler1-naam"),
@@ -2087,20 +2092,18 @@
       statusTitle: document.getElementById("status-title"),
       statusText: document.getElementById("status-text"),
       resetButton: document.getElementById("reset-button"),
-      infoButton: document.getElementById("info-button"),
-      infoPopover: document.getElementById("info-popover"),
-      infoWrap: document.getElementById("info-wrap"),
+      resultPanel: document.getElementById("result-panel"),
+      resultDownloadButton: document.getElementById("result-download-button"),
       headlineText: document.getElementById("headline-text"),
       resultLabel: document.getElementById("result-label"),
       resultDifference: document.getElementById("result-difference"),
+      resultMatchSize: document.getElementById("result-match-size"),
       summarySpeler1Naam: document.getElementById("summary-speler1-naam"),
       summarySpeler1Score: document.getElementById("summary-speler1-score"),
       summarySpeler1Breakdown: document.getElementById("summary-speler1-breakdown"),
       summarySpeler2Naam: document.getElementById("summary-speler2-naam"),
       summarySpeler2Score: document.getElementById("summary-speler2-score"),
       summarySpeler2Breakdown: document.getElementById("summary-speler2-breakdown"),
-      roundSegments: Array.from(document.querySelectorAll(".round-segment")),
-      roundSelectMobile: document.getElementById("round-select-mobile"),
       matchSizeButtons: Array.from(document.querySelectorAll(".matchsize-segment")),
       matchSizeDesktopContainer: document.getElementById("matchsize-selector-compact"),
       matchSizeMobile: document.getElementById("match-size-mobile"),
@@ -2116,9 +2119,9 @@
       standingsError: document.getElementById("standings-error"),
       standingsTableWrap: document.getElementById("standings-table-wrap"),
       standingsRefresh: document.getElementById("standings-refresh"),
-      roundResultsLoading: document.getElementById("round-results-loading"),
-      roundResultsError: document.getElementById("round-results-error"),
-      roundResultsGrid: document.getElementById("round-results-grid"),
+      resultsHistoryLoading: document.getElementById("results-history-loading"),
+      resultsHistoryError: document.getElementById("results-history-error"),
+      resultsHistoryList: document.getElementById("results-history-list"),
       armyListsView: document.getElementById("army-lists-view"),
       armyUploadForm: document.getElementById("army-upload-form"),
       armyUploadPlayer: document.getElementById("army-upload-player"),
@@ -2170,7 +2173,10 @@
 
     function buildMatchKey(currentForm) {
       const names = [normalizeName(currentForm.speler1.naam), normalizeName(currentForm.speler2.naam)].sort();
-      return `${currentForm.ronde}__${names[0]}__${names[1]}`;
+      // Bewust twee underscores vooraan: dit is hetzelfde formaat als de bestaande
+      // wedstrijden waarbij de (uitgeschakelde) ronde leeg was. Zo blijven die records
+      // bij een nieuwe invoer netjes overschreven worden.
+      return `__${names[0]}__${names[1]}`;
     }
 
     function calculatePlayerTotal(player) {
@@ -2252,7 +2258,6 @@
       return [
         {
           matchKey,
-          ronde: currentForm.ronde,
           matchSize: currentForm.matchSize,
           naam: currentForm.speler1.naam.trim(),
           victoryPoints: Number(currentForm.speler1.victoryPoints),
@@ -2265,7 +2270,6 @@
         },
         {
           matchKey,
-          ronde: currentForm.ronde,
           matchSize: currentForm.matchSize,
           naam: currentForm.speler2.naam.trim(),
           victoryPoints: Number(currentForm.speler2.victoryPoints),
@@ -2322,7 +2326,6 @@
 
     function renderErrors(errors) {
       [
-        "ronde",
         "matchSize",
         "speler1-naam",
         "speler1-victoryPoints",
@@ -2341,7 +2344,8 @@
       const s = buildResultSummary(form);
       el.headlineText.textContent = s.headlineTekst;
       el.resultLabel.textContent = s.resultLabel;
-      el.resultDifference.textContent = `+${s.verschil}`;
+      el.resultDifference.textContent = `+${s.verschil} VP`;
+      el.resultMatchSize.textContent = form.matchSize || "Kies match size";
       el.summarySpeler1Naam.textContent = s.speler1Naam;
       el.summarySpeler1Score.textContent = s.speler1Totaal;
       el.summarySpeler1Breakdown.textContent = `${Number(form.speler1.victoryPoints || 0)} VP · ${Number(form.speler1.bannersCaptured || 0)} Banners · ${form.speler1.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${form.speler1.bonusObjectives ? "Bonus Objective Completed" : "No Bonus Objective"}`;
@@ -2350,6 +2354,93 @@
       el.summarySpeler2Breakdown.textContent = `${Number(form.speler2.victoryPoints || 0)} VP · ${Number(form.speler2.bannersCaptured || 0)} Banners · ${form.speler2.enemyGeneralSlain ? "General Killed" : "No General Killed"} · ${form.speler2.bonusObjectives ? "Bonus Objective Completed" : "No Bonus Objective"}`;
     }
 
+
+    function copyComputedStylesForExport(sourceRoot, cloneRoot) {
+      const sourceNodes = [sourceRoot, ...sourceRoot.querySelectorAll('*')];
+      const cloneNodes = [cloneRoot, ...cloneRoot.querySelectorAll('*')];
+
+      sourceNodes.forEach((sourceNode, index) => {
+        const cloneNode = cloneNodes[index];
+        if (!cloneNode) return;
+        const computed = window.getComputedStyle(sourceNode);
+        Array.from(computed).forEach((property) => {
+          cloneNode.style.setProperty(
+            property,
+            computed.getPropertyValue(property),
+            computed.getPropertyPriority(property)
+          );
+        });
+      });
+    }
+
+    async function downloadResultAsPng() {
+      const panel = el.resultPanel;
+      const rect = panel.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      const clone = panel.cloneNode(true);
+      copyComputedStylesForExport(panel, clone);
+      clone.querySelectorAll('[data-export-ignore]').forEach((node) => node.remove());
+      clone.style.margin = '0';
+      clone.style.width = `${rect.width}px`;
+      clone.style.height = `${rect.height}px`;
+
+      const wrapper = document.createElement('div');
+      wrapper.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+      wrapper.style.width = `${rect.width}px`;
+      wrapper.style.height = `${rect.height}px`;
+      wrapper.appendChild(clone);
+
+      const serialized = new XMLSerializer().serializeToString(wrapper);
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${rect.width}" height="${rect.height}" viewBox="0 0 ${rect.width} ${rect.height}">
+          <foreignObject width="100%" height="100%">${serialized}</foreignObject>
+        </svg>
+      `;
+
+      const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+      const svgUrl = URL.createObjectURL(svgBlob);
+
+      try {
+        const image = await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = svgUrl;
+        });
+
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.ceil(rect.width * scale);
+        canvas.height = Math.ceil(rect.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+        ctx.drawImage(image, 0, 0, rect.width, rect.height);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+        if (!blob) throw new Error('PNG kon niet worden gemaakt.');
+
+        const summary = buildResultSummary(form);
+        const safeName = `${summary.speler1Naam}-vs-${summary.speler2Naam}`
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'resultaat';
+
+        const downloadUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `warhammer-${safeName}.png`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+      } catch (error) {
+        console.error('Resultaat exporteren mislukt:', error);
+        alert('Het resultaat kon niet als afbeelding worden opgeslagen. Probeer het opnieuw.');
+      } finally {
+        URL.revokeObjectURL(svgUrl);
+      }
+    }
 
     function hasStartedForm(currentForm) {
       return Boolean(
@@ -2392,19 +2483,8 @@
     }
 
     function syncInputsFromState() {
-      el.ronde.value = form.ronde;
       el.matchSize.value = form.matchSize;
       if (el.matchSizeMobile) el.matchSizeMobile.value = form.matchSize;
-
-      if (el.roundSelectMobile) {
-        el.roundSelectMobile.value = form.ronde;
-      }
-
-      el.roundSegments.forEach((button) => {
-        const isActive = button.dataset.round === form.ronde;
-        button.classList.toggle("active", isActive);
-        button.setAttribute("aria-checked", isActive ? "true" : "false");
-      });
 
       el.matchSizeButtons.forEach((button) => {
         const isActive = button.dataset.matchsize === form.matchSize;
@@ -3379,24 +3459,28 @@ function closeArmyListSummary() {
       renderTableFromRows(rows, el.standingsHead, el.standingsBody, el.standingsTableWrap, 'Er zijn nog geen standen beschikbaar.');
     }
 
-    function renderRoundResultsCards(roundBlocks) {
-      const cardsHtml = roundBlocks.map((block) => {
-        const title = String(block.title || '').trim().replace(/^Round\s+/i, 'Ronde ');
-        const results = Array.isArray(block.results) ? block.results.filter(Boolean) : [];
-        const itemsHtml = results.length
-          ? `<ul class="round-results-list">${results.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
-          : `<p class="round-results-empty">Nog geen resultaten.</p>`;
+    function renderResultsHistory(results) {
+      const items = Array.isArray(results) ? results : [];
 
+      if (!items.length) {
+        el.resultsHistoryList.innerHTML = '<p class="results-history-empty">Er zijn nog geen resultaten opgeslagen.</p>';
+        return;
+      }
+
+      el.resultsHistoryList.innerHTML = items.map((item) => {
+        const text = String(item && item.text || '').trim();
+        const resultType = String(item && item.resultType || '').trim();
+        const difference = Number(item && item.vpDifference || 0);
         return `
-          <article class="round-result-card">
-            <h4 class="round-result-card-title">${escapeHtml(title)}</h4>
-            ${itemsHtml}
-          </article>
+          <div class="results-history-item">
+            <p class="results-history-text">${escapeHtml(text)}</p>
+            <div class="results-history-badges">
+              ${resultType ? `<span class="badge">${escapeHtml(resultType)}</span>` : ''}
+              <span class="badge">+${Number.isFinite(difference) ? difference : 0} VP</span>
+            </div>
+          </div>
         `;
       }).join('');
-
-      el.roundResultsGrid.innerHTML = cardsHtml;
-      el.roundResultsGrid.classList.remove('hidden');
     }
 
     function setRefreshButtonLoading(isLoading) {
@@ -3414,19 +3498,16 @@ function closeArmyListSummary() {
       }
     }
 
-    function setRoundResultsState(state) {
-      const hasRenderedRoundResults = el.roundResultsGrid.innerHTML.trim() !== "";
-      el.roundResultsLoading.classList.add('hidden');
-      el.roundResultsError.classList.toggle('hidden', state !== 'error');
-      if (state === 'loading' && !hasRenderedRoundResults) {
-        el.roundResultsGrid.classList.add('hidden');
-      }
+    function setResultsHistoryState(state) {
+      const hasRenderedResults = el.resultsHistoryList.innerHTML.trim() !== "";
+      el.resultsHistoryLoading.classList.toggle('hidden', state !== 'loading' || hasRenderedResults);
+      el.resultsHistoryError.classList.toggle('hidden', state !== 'error');
     }
 
     async function loadLiveStandData() {
       setRefreshButtonLoading(true);
       setStandingsState('loading');
-      setRoundResultsState('loading');
+      setResultsHistoryState('loading');
 
       try {
         const data = await fetchLiveData();
@@ -3438,26 +3519,22 @@ function closeArmyListSummary() {
           setStandingsState('error');
         }
 
-        if (Array.isArray(data.rondes)) {
-          renderRoundResultsCards(data.rondes);
-          setRoundResultsState('ready');
+        if (Array.isArray(data.resultaten)) {
+          renderResultsHistory(data.resultaten);
+          setResultsHistoryState('ready');
         } else {
-          setRoundResultsState('error');
+          setResultsHistoryState('error');
         }
       } catch (error) {
         console.error('Fout bij laden live data:', error);
         setStandingsState('error');
-        setRoundResultsState('error');
+        setResultsHistoryState('error');
       } finally {
         setRefreshButtonLoading(false);
       }
     }
 
     function loadStandings() {
-      return loadLiveStandData();
-    }
-
-    function loadRoundResults() {
       return loadLiveStandData();
     }
 
@@ -3533,7 +3610,6 @@ function closeArmyListSummary() {
       renderSummary();
       updateStandNavState();
       hideNavLockMessage();
-      el.infoPopover.classList.remove("open");
       closeVpModal("speler1");
       closeVpModal("speler2");
       setActiveView("formulier");
@@ -3601,26 +3677,6 @@ function closeArmyListSummary() {
       });
     }
 
-    el.roundSegments.forEach((button) => {
-      button.addEventListener("click", () => {
-        if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
-        form.ronde = button.dataset.round;
-        syncInputsFromState();
-        renderSummary();
-        updateStandNavState();
-      });
-    });
-
-    if (el.roundSelectMobile) {
-      el.roundSelectMobile.addEventListener("change", (e) => {
-        if (el.roundSelectMobile.disabled) return;
-        form.ronde = e.target.value;
-        syncInputsFromState();
-        renderSummary();
-        updateStandNavState();
-      });
-    }
-
     bindMatchSizeControls();
 
     el.speler1.naam.addEventListener("change", (e) => { form.speler1.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
@@ -3632,6 +3688,8 @@ function closeArmyListSummary() {
     bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 9);
 
     setupFieldInfoPopovers();
+
+    el.resultDownloadButton.addEventListener("click", downloadResultAsPng);
 
     el.speler1.enemyGeneralSlain.addEventListener("click", () => {
       form.speler1.enemyGeneralSlain = !form.speler1.enemyGeneralSlain;
@@ -3659,16 +3717,6 @@ function closeArmyListSummary() {
       updateToggle(el.speler2.bonusObjectives, form.speler2.bonusObjectives);
       renderSummary();
       updateStandNavState();
-    });
-
-    el.infoButton.addEventListener("click", () => {
-      el.infoPopover.classList.toggle("open");
-    });
-
-    document.addEventListener("mousedown", (event) => {
-      if (!el.infoWrap.contains(event.target)) {
-        el.infoPopover.classList.remove("open");
-      }
     });
 
 function openVpModal(playerKey) {
