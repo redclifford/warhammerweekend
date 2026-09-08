@@ -1663,7 +1663,22 @@
       }
     }
 
-  </style>
+  
+    .result-status-button {
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .result-status-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.10);
+    }
+    .result-status-button:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+</style>
 </head>
 <body>
   <div class="container">
@@ -2203,8 +2218,9 @@
             <p id="status-text" class="success-text"></p>
           </div>
 
-          <div style="margin-top: 20px;">
+          <div style="margin-top: 20px; display:flex; gap:10px; flex-wrap:wrap;">
             <button type="button" class="secondary-button" id="reset-button">Nog een resultaat invoeren</button>
+            <button type="button" class="button hidden" id="go-to-confirmation-button">Ga naar bevestigen</button>
           </div>
         </div>
       </div>
@@ -2242,6 +2258,7 @@
     let activePinAction = null;
     let pendingArmyDeletePlayer = "";
     let pendingArmyUpload = null;
+    let lastSubmittedMatchKey = "";
 
     const el = {
       matchSize: document.getElementById("match-size"),
@@ -2267,6 +2284,7 @@
       statusTitle: document.getElementById("status-title"),
       statusText: document.getElementById("status-text"),
       resetButton: document.getElementById("reset-button"),
+      goToConfirmationButton: document.getElementById("go-to-confirmation-button"),
       resultPanel: document.getElementById("result-panel"),
       resultDownloadButton: document.getElementById("result-download-button"),
       headlineText: document.getElementById("headline-text"),
@@ -3879,10 +3897,13 @@ function closeArmyListSummary() {
           <div class="results-history-item">
             <p class="results-history-text">${escapeHtml(text)}</p>
             <div class="results-history-badges">
-              <span class="badge result-status-badge ${status.cls}">${escapeHtml(status.label)}</span>
+              <button type="button"
+                class="badge result-status-badge result-status-button ${status.cls}"
+                data-result-details="${escapeHtml(item.matchKey || '')}"
+                aria-label="Bekijk resultaatdetails"
+                title="Bekijk details">${escapeHtml(status.label)}</button>
               ${resultType ? `<span class="badge">${escapeHtml(resultType)}</span>` : ''}
               <span class="badge">+${Number.isFinite(difference) ? difference : 0} VP</span>
-              <button type="button" class="result-details-button" data-result-details="${escapeHtml(item.matchKey || '')}" aria-label="Bekijk resultaatdetails" title="Bekijk details">👁</button>
             </div>
           </div>
         `;
@@ -4172,10 +4193,44 @@ function closeArmyListSummary() {
       el.statusText.className = isSuccess ? "success-text" : "error-text";
       el.statusTitle.textContent = title;
       el.statusText.textContent = text;
+
+      if (el.goToConfirmationButton) {
+        el.goToConfirmationButton.classList.toggle(
+          "hidden",
+          !isSuccess || !lastSubmittedMatchKey
+        );
+      }
+
       setActiveView("formulier");
       el.formView.classList.add("hidden");
       el.topSelectorGrid.classList.add("hidden");
       el.successView.classList.remove("hidden");
+    }
+
+    async function goToLastSubmittedConfirmation() {
+      if (!lastSubmittedMatchKey) return;
+
+      const matchKey = lastSubmittedMatchKey;
+
+      /*
+       * Open Stand rechtstreeks. Daarna halen we bewust de nieuwste live data
+       * op voordat we de detailpopup openen, zodat de zojuist opgeslagen match
+       * zeker in resultsByMatchKey aanwezig is.
+       */
+      hideNavLockMessage();
+      setActiveView("stand");
+
+      try {
+        await loadLiveStandData();
+
+        if (resultsByMatchKey[matchKey]) {
+          openResultDetails(matchKey);
+        } else {
+          console.warn("Zojuist opgeslagen match nog niet gevonden in live data:", matchKey);
+        }
+      } catch (error) {
+        console.error("Kon resultaat niet direct openen voor bevestiging:", error);
+      }
     }
 
     function resetForm() {
@@ -4396,6 +4451,12 @@ document.addEventListener("keydown", (event) => {
           throw new Error((result && result.error) || "Onbekende fout bij verzenden");
         }
 
+        lastSubmittedMatchKey = String(
+          (rows[0] && rows[0].matchKey) ||
+          (rows[1] && rows[1].matchKey) ||
+          ""
+        ).trim();
+
         resetForm();
         console.log("Verzonden naar Google Sheets:", rows);
         showStatus(
@@ -4405,6 +4466,7 @@ document.addEventListener("keydown", (event) => {
         );
       } catch (error) {
         console.error("Fout bij verzenden:", error);
+        lastSubmittedMatchKey = "";
         showStatus(
           "error",
           "Resultaat niet verzonden",
@@ -4460,6 +4522,7 @@ document.addEventListener("keydown", (event) => {
     });
 
     el.resetButton.addEventListener("click", resetForm);
+    if (el.goToConfirmationButton) el.goToConfirmationButton.addEventListener("click", goToLastSubmittedConfirmation);
 
     setActiveView("army-lists");
     loadMatchConfiguration();
