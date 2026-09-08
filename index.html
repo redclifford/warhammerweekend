@@ -4033,19 +4033,49 @@ function closeArmyListSummary() {
       el.standingsRefresh.setAttribute('aria-busy', isLoading ? 'true' : 'false');
     }
 
+    function hasRenderedStandingsData() {
+      return (
+        el.standingsHead.innerHTML.trim() !== "" ||
+        el.standingsBody.innerHTML.trim() !== ""
+      );
+    }
+
+    function hasRenderedResultsData() {
+      return el.resultsHistoryList.innerHTML.trim() !== "";
+    }
+
     function setStandingsState(state) {
-      const hasRenderedStandings = el.standingsHead.innerHTML.trim() !== "" || el.standingsBody.innerHTML.trim() !== "";
+      const hasRenderedStandings = hasRenderedStandingsData();
+
       el.standingsLoading.classList.add('hidden');
-      el.standingsError.classList.toggle('hidden', state !== 'error');
+
+      /*
+       * Een tijdelijke mislukte auto-refresh mag een reeds succesvol geladen
+       * stand niet als fout presenteren. Toon de rode melding alleen wanneer
+       * er nog helemaal geen standdata beschikbaar is.
+       */
+      const showError = state === 'error' && !hasRenderedStandings;
+      el.standingsError.classList.toggle('hidden', !showError);
+
       if (state === 'loading' && !hasRenderedStandings) {
         el.standingsTableWrap.classList.add('hidden');
       }
     }
 
     function setResultsHistoryState(state) {
-      const hasRenderedResults = el.resultsHistoryList.innerHTML.trim() !== "";
-      el.resultsHistoryLoading.classList.toggle('hidden', state !== 'loading' || hasRenderedResults);
-      el.resultsHistoryError.classList.toggle('hidden', state !== 'error');
+      const hasRenderedResults = hasRenderedResultsData();
+
+      el.resultsHistoryLoading.classList.toggle(
+        'hidden',
+        state !== 'loading' || hasRenderedResults
+      );
+
+      /*
+       * Zelfde gedrag voor Resultaten: bestaande data blijft staan zonder
+       * grote rode waarschuwing wanneer één refresh tijdelijk faalt.
+       */
+      const showError = state === 'error' && !hasRenderedResults;
+      el.resultsHistoryError.classList.toggle('hidden', !showError);
     }
 
     async function loadLiveStandData() {
@@ -4071,6 +4101,12 @@ function closeArmyListSummary() {
         }
       } catch (error) {
         console.error('Fout bij laden live data:', error);
+
+        /*
+         * Als er al data in beeld staat, houden we die gewoon vast en
+         * verbergen we de grote foutmelding. Bij een eerste load zonder data
+         * blijft de normale rode foutmelding wel zichtbaar.
+         */
         setStandingsState('error');
         setResultsHistoryState('error');
       } finally {
