@@ -831,6 +831,34 @@
       line-height: 1.5;
     }
 
+    .upload-status-details {
+      margin-top: 9px;
+      font-size: 0.82rem;
+    }
+
+    .upload-status-details summary {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid currentColor;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 800;
+      user-select: none;
+    }
+
+    .upload-status-details summary::marker { display: none; }
+    .upload-status-details summary::-webkit-details-marker { display: none; }
+
+    .upload-status-details-text {
+      margin: 9px 0 0;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.68);
+      line-height: 1.45;
+    }
+
     .results-list {
       margin-top: 20px;
       display: grid;
@@ -1040,6 +1068,53 @@
       color: #64748b;
       line-height: 1.45;
       font-size: 0.92rem;
+    }
+
+    .result-details-button {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .result-details-button:hover { background: #f8fafc; }
+
+    .result-status-badge.pending { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .result-status-badge.confirmed { background: #ecfdf5; color: #166534; border-color: #bbf7d0; }
+    .result-status-badge.disputed { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+    .result-detail-modal .vp-modal-dialog { max-width: 720px; }
+    .result-detail-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .result-detail-player { border: 1px solid var(--border); border-radius: 14px; padding: 13px; background: #fff; }
+    .result-detail-player-name { margin: 0 0 4px; font-weight: 900; font-size: 1rem; }
+    .result-detail-score { margin: 0 0 8px; font-size: 1.6rem; line-height: 1; font-weight: 900; }
+    .result-detail-breakdown { margin: 0; color: #475569; font-size: .88rem; line-height: 1.45; }
+    .result-confirmation-line { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .result-confirmation-state { font-size: .82rem; font-weight: 800; }
+    .result-action-button { border: 1px solid var(--border); background: #fff; border-radius: 10px; padding: 7px 10px; font-weight: 800; cursor: pointer; }
+    .result-action-button.is-danger { color: #991b1b; border-color: #fecaca; }
+    .result-pin-panel { margin-top: 12px; padding: 12px; border-radius: 12px; background: #f8fafc; border: 1px solid var(--border); }
+    .result-pin-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .result-pin-input { width: 110px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 9px; font: inherit; letter-spacing: .18em; }
+    .result-pin-message { margin: 8px 0 0; font-size: .84rem; color: #64748b; }
+    .result-unit-section, .result-history-section { margin-top: 16px; }
+    .result-detail-subtitle { margin: 0 0 8px; font-size: .95rem; font-weight: 900; }
+    .result-unit-list { display: grid; gap: 6px; }
+    .result-unit-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 10px; background: #f8fafc; font-size: .84rem; }
+    .result-history-mini { margin: 0; padding-left: 20px; color: #64748b; font-size: .82rem; line-height: 1.5; }
+
+    @media (max-width: 640px) {
+      .result-detail-summary-grid { grid-template-columns: 1fr; }
+      .result-detail-modal .vp-modal-dialog { width: min(94vw, 720px); }
+      .result-unit-row { align-items: flex-start; }
     }
 
 .army-grid {
@@ -1424,6 +1499,39 @@
       background: #f8fafc;
     }
 
+    .army-delete-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid #fecaca;
+      background: #ffffff;
+      color: #991b1b;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .army-delete-button:hover {
+      background: #fef2f2;
+    }
+
+    .army-delete-modal .vp-modal-dialog {
+      max-width: 440px;
+    }
+
+    .army-delete-copy {
+      margin: 0 0 14px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .army-delete-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
     .list-summary-modal .vp-modal-dialog {
       max-width: 980px;
     }
@@ -1600,6 +1708,20 @@
       </div>
     </div>
 
+    <div class="vp-modal result-detail-modal hidden" id="result-detail-modal" aria-hidden="true">
+      <div class="vp-modal-backdrop" id="result-detail-backdrop"></div>
+      <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="result-detail-title">
+        <div class="vp-modal-header">
+          <div>
+            <p class="vp-modal-eyebrow">Wedstrijdresultaat</p>
+            <h3 class="vp-modal-title" id="result-detail-title">Resultaatdetails</h3>
+          </div>
+          <button type="button" class="vp-modal-close" id="result-detail-close" aria-label="Sluit venster">×</button>
+        </div>
+        <div id="result-detail-content"></div>
+      </div>
+    </div>
+
 
     <div id="army-lists-view" class="hidden">
       <div class="card sheet-card">
@@ -1627,8 +1749,7 @@
                     </select>
                     <div class="error" id="error-army-upload-player"></div>
                   </div>
-
-                  <div class="field-group">
+<div class="field-group">
                     <label for="army-upload-file" class="label">Old World Builder JSON</label>
                     <input id="army-upload-file" type="file" accept=".json,application/json" />
                     <p class="field-help-text">Upload hier je geëxporteerde .json uit Old World Builder. Als je opnieuw uploadt voor dezelfde speler, wordt de vorige lijst overschreven.</p>
@@ -1658,8 +1779,9 @@
                         <th>Lijst</th>
                         <th>Army</th>
                         <th>Punten</th>
-                        <th>Status</th>
                         <th>Bekijk</th>
+                        <th>Status</th>
+                        <th>Verwijder</th>
                       </tr>
                     </thead>
                     <tbody id="army-lists-body"></tbody>
@@ -2025,6 +2147,54 @@
   </div>
 </div>
 
+<div class="vp-modal army-delete-modal hidden" id="army-upload-pin-modal" aria-hidden="true">
+  <div class="vp-modal-backdrop" id="army-upload-pin-backdrop"></div>
+  <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="army-upload-pin-title">
+    <div class="vp-modal-header">
+      <div>
+        <h3 class="vp-modal-title" id="army-upload-pin-title">Army list uploaden</h3>
+      </div>
+      <div class="vp-modal-header-right">
+        <button type="button" class="vp-modal-close" id="army-upload-pin-close" aria-label="Sluit venster">×</button>
+      </div>
+    </div>
+    <p class="army-delete-copy" id="army-upload-pin-copy"></p>
+    <div class="field-group" style="margin-bottom:0;">
+      <label for="army-upload-pin-popup" class="label">PIN</label>
+      <input id="army-upload-pin-popup" type="password" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]{4}" placeholder="4 cijfers" />
+      <div class="error" id="army-upload-pin-error"></div>
+    </div>
+    <div class="army-delete-actions">
+      <button type="button" class="secondary-button" id="army-upload-pin-cancel">Annuleren</button>
+      <button type="button" class="button" id="army-upload-pin-confirm">Upload bevestigen</button>
+    </div>
+  </div>
+</div>
+
+<div class="vp-modal army-delete-modal hidden" id="army-delete-modal" aria-hidden="true">
+  <div class="vp-modal-backdrop" id="army-delete-backdrop"></div>
+  <div class="vp-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="army-delete-title">
+    <div class="vp-modal-header">
+      <div>
+        <h3 class="vp-modal-title" id="army-delete-title">Army list verwijderen</h3>
+      </div>
+      <div class="vp-modal-header-right">
+        <button type="button" class="vp-modal-close" id="army-delete-close" aria-label="Sluit venster">×</button>
+      </div>
+    </div>
+    <p class="army-delete-copy" id="army-delete-copy"></p>
+    <div class="field-group" style="margin-bottom:0;">
+      <label for="army-delete-pin" class="label">PIN</label>
+      <input id="army-delete-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]{4}" placeholder="4 cijfers" />
+      <div class="error" id="army-delete-error"></div>
+    </div>
+    <div class="army-delete-actions">
+      <button type="button" class="secondary-button" id="army-delete-cancel">Annuleren</button>
+      <button type="button" class="danger-button" id="army-delete-confirm">Lijst verwijderen</button>
+    </div>
+  </div>
+</div>
+
     <div id="success-view" class="hidden">
       <div class="card">
         <div class="card-body">
@@ -2041,7 +2211,7 @@
     </div>
 
     <div class="page-meta">
-      <span class="version-badge" aria-label="Versie 6.0">v6.0</span>
+      <span class="version-badge" aria-label="Versie 7.0">v7.0</span>
     </div>
   </div>
 
@@ -2067,6 +2237,11 @@
     let armyListsByPlayer = {};
     const vpSelections = { speler1: {}, speler2: {} };
     const bannerSelections = { speler1: {}, speler2: {} };
+    let resultsByMatchKey = {};
+    let activeResultMatchKey = "";
+    let activePinAction = null;
+    let pendingArmyDeletePlayer = "";
+    let pendingArmyUpload = null;
 
     const el = {
       matchSize: document.getElementById("match-size"),
@@ -2122,6 +2297,11 @@
       resultsHistoryLoading: document.getElementById("results-history-loading"),
       resultsHistoryError: document.getElementById("results-history-error"),
       resultsHistoryList: document.getElementById("results-history-list"),
+      resultDetailModal: document.getElementById("result-detail-modal"),
+      resultDetailBackdrop: document.getElementById("result-detail-backdrop"),
+      resultDetailClose: document.getElementById("result-detail-close"),
+      resultDetailTitle: document.getElementById("result-detail-title"),
+      resultDetailContent: document.getElementById("result-detail-content"),
       armyListsView: document.getElementById("army-lists-view"),
       armyUploadForm: document.getElementById("army-upload-form"),
       armyUploadPlayer: document.getElementById("army-upload-player"),
@@ -2149,6 +2329,22 @@
       armyListSummaryContent: document.getElementById("army-list-summary-content"),
       armyListSummaryClose: document.getElementById("army-list-summary-close"),
       armyListSummaryBackdrop: document.getElementById("army-list-summary-backdrop"),
+      armyUploadPinModal: document.getElementById("army-upload-pin-modal"),
+      armyUploadPinBackdrop: document.getElementById("army-upload-pin-backdrop"),
+      armyUploadPinClose: document.getElementById("army-upload-pin-close"),
+      armyUploadPinCancel: document.getElementById("army-upload-pin-cancel"),
+      armyUploadPinConfirm: document.getElementById("army-upload-pin-confirm"),
+      armyUploadPinCopy: document.getElementById("army-upload-pin-copy"),
+      armyUploadPinPopup: document.getElementById("army-upload-pin-popup"),
+      armyUploadPinError: document.getElementById("army-upload-pin-error"),
+      armyDeleteModal: document.getElementById("army-delete-modal"),
+      armyDeleteBackdrop: document.getElementById("army-delete-backdrop"),
+      armyDeleteClose: document.getElementById("army-delete-close"),
+      armyDeleteCancel: document.getElementById("army-delete-cancel"),
+      armyDeleteConfirm: document.getElementById("army-delete-confirm"),
+      armyDeleteCopy: document.getElementById("army-delete-copy"),
+      armyDeletePin: document.getElementById("army-delete-pin"),
+      armyDeleteError: document.getElementById("army-delete-error"),
     };
 
     function sanitizeInteger(value) {
@@ -2249,6 +2445,33 @@
       return { speler1Naam, speler2Naam, speler1Totaal, speler2Totaal, verschil, resultLabel, headlineTekst };
     }
 
+    function buildUnitSnapshotForPlayer(playerKey) {
+      const listInfo = getOpponentListForPlayer(playerKey);
+      if (!listInfo.list || !Array.isArray(listInfo.list.entries)) return [];
+
+      return listInfo.list.entries.map((entry) => ({
+        id: String(entry.id || ""),
+        name: String(entry.name || "Unnamed unit"),
+        quantity: Number(entry.quantity || 1),
+        totalPoints: Number(entry.totalPoints || 0),
+        destroyedPercent: Number(vpSelections[playerKey][entry.id] || 0),
+        bannerCaptured: String(bannerSelections[playerKey][entry.id] || "nee").toLowerCase() === "ja",
+      }));
+    }
+
+    function buildStoredDetails(player, opponentName, totalScore, resultDifference, matchSize) {
+      return {
+        matchSize,
+        victoryPoints: Number(player.victoryPoints || 0),
+        bannersCaptured: Number(player.bannersCaptured || 0),
+        enemyGeneralSlain: player.enemyGeneralSlain ? 1 : 0,
+        bonusObjectives: player.bonusObjectives ? 1 : 0,
+        totalScore,
+        resultDifference,
+        opponent: opponentName,
+      };
+    }
+
     function buildRows(currentForm) {
       const matchKey = buildMatchKey(currentForm);
       const speler1Totaal = calculatePlayerTotal(currentForm.speler1);
@@ -2267,6 +2490,8 @@
           totalScore: speler1Totaal,
           resultDifference,
           tegenstander: currentForm.speler2.naam.trim(),
+          details: buildStoredDetails(currentForm.speler1, currentForm.speler2.naam.trim(), speler1Totaal, resultDifference, currentForm.matchSize),
+          units: buildUnitSnapshotForPlayer("speler1"),
         },
         {
           matchKey,
@@ -2279,6 +2504,8 @@
           totalScore: speler2Totaal,
           resultDifference,
           tegenstander: currentForm.speler1.naam.trim(),
+          details: buildStoredDetails(currentForm.speler2, currentForm.speler1.naam.trim(), speler2Totaal, resultDifference, currentForm.matchSize),
+          units: buildUnitSnapshotForPlayer("speler2"),
         },
       ];
     }
@@ -2817,10 +3044,21 @@
       };
     }
 
-    function renderUploadStatus(type, title, text) {
+    function renderUploadStatus(type, title, text, details = "") {
       el.armyUploadStatus.classList.remove("hidden");
       el.armyUploadStatus.className = type === "success" ? "success-box" : "error-box";
-      el.armyUploadStatus.innerHTML = `<p class="${type === "success" ? "success-title" : "error-title"}">${escapeHtml(title)}</p><p class="${type === "success" ? "success-text" : "error-text"}">${escapeHtml(text)}</p>`;
+
+      const detailsHtml = details
+        ? `<details class="upload-status-details">
+             <summary>Details</summary>
+             <p class="upload-status-details-text">${escapeHtml(details)}</p>
+           </details>`
+        : "";
+
+      el.armyUploadStatus.innerHTML =
+        `<p class="${type === "success" ? "success-title" : "error-title"}">${escapeHtml(title)}</p>` +
+        `<p class="${type === "success" ? "success-text" : "error-text"}">${escapeHtml(text)}</p>` +
+        detailsHtml;
     }
 
     function setArmyListsState(state) {
@@ -2886,13 +3124,18 @@
             <td>${escapeHtml(formatDisplayText(item.listName || "-"))}</td>
             <td>${escapeHtml(formatDisplayText(toTitleCaseArmy(item.army || "")))}</td>
             <td>${escapeHtml(getArmyPointsText(item))}</td>
-            <td>${buildArmyStatusIcon(item)}</td>
             <td><button type="button" class="army-view-button" data-view-army-player="${escapeHtml(item.playerName || "")}" aria-label="Bekijk army list">👁</button></td>
+            <td>${buildArmyStatusIcon(item)}</td>
+            <td><button type="button" class="army-delete-button" data-delete-army-player="${escapeHtml(item.playerName || "")}" aria-label="Verwijder army list" title="Verwijder lijst">🗑</button></td>
           </tr>
         `).join("");
 
       el.armyListsBody.querySelectorAll("[data-view-army-player]").forEach((button) => {
         button.addEventListener("click", () => openArmyListSummary(button.dataset.viewArmyPlayer));
+      });
+
+      el.armyListsBody.querySelectorAll("[data-delete-army-player]").forEach((button) => {
+        button.addEventListener("click", () => openArmyDeleteModal(button.dataset.deleteArmyPlayer));
       });
     }
 
@@ -3279,64 +3522,216 @@ function closeArmyListSummary() {
       const file = el.armyUploadFile.files && el.armyUploadFile.files[0];
 
       let hasError = false;
+
       if (!playerName) {
         setError("army-upload-player", "Kies eerst een speler.");
         hasError = true;
       }
+
       if (!file) {
         setError("army-upload-file", "Kies een .json bestand.");
         hasError = true;
       }
+
       if (hasError) return;
 
-      el.armyUploadSubmit.disabled = true;
-      el.armyUploadSubmit.textContent = "Bezig met uploaden...";
+      pendingArmyUpload = { playerName, file };
+      openArmyUploadPinModal(playerName);
+    }
+
+    function openArmyUploadPinModal(playerName) {
+      if (!el.armyUploadPinModal) return;
+
+      el.armyUploadPinCopy.textContent =
+        `Voer de 4-cijferige PIN van ${playerName} in om deze army list te uploaden.`;
+      el.armyUploadPinPopup.value = "";
+      el.armyUploadPinError.textContent = "";
+
+      el.armyUploadPinModal.classList.remove("hidden");
+      el.armyUploadPinModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+
+      setTimeout(() => el.armyUploadPinPopup.focus(), 0);
+    }
+
+    function closeArmyUploadPinModal() {
+      if (!el.armyUploadPinModal) return;
+
+      el.armyUploadPinModal.classList.add("hidden");
+      el.armyUploadPinModal.setAttribute("aria-hidden", "true");
+      el.armyUploadPinPopup.value = "";
+      el.armyUploadPinError.textContent = "";
+      document.body.style.overflow = "";
+      pendingArmyUpload = null;
+    }
+
+    async function confirmArmyUploadWithPin() {
+      if (!pendingArmyUpload) return;
+
+      const playerName = pendingArmyUpload.playerName;
+      const file = pendingArmyUpload.file;
+      const pin = String(el.armyUploadPinPopup.value || "").trim();
+
+      el.armyUploadPinError.textContent = "";
+
+      if (!/^\d{4}$/.test(pin)) {
+        el.armyUploadPinError.textContent = "Voer een geldige 4-cijferige PIN in.";
+        return;
+      }
+
+      el.armyUploadPinConfirm.disabled = true;
+      el.armyUploadPinConfirm.textContent = "Uploaden...";
 
       try {
         const rawText = await file.text();
         const rawJson = JSON.parse(rawText);
 
-        // Alleen het originele bestand en de gekozen speler worden verstuurd.
-        // Alle normalisatie en puntentelling gebeurt betrouwbaar op de server.
-        const payload = {
-          action: "saveArmyList",
-          playerName,
-          rawJson,
-        };
-
         const response = await fetch(SHEETS_WEBHOOK_URL, {
           method: "POST",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            action: "saveArmyList",
+            playerName,
+            pin,
+            rawJson,
+          }),
           redirect: "follow",
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP fout: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP fout: ${response.status}`);
 
         const result = await response.json();
+
         if (!result || !result.ok) {
-          if (result && result.errorCode === "INVALID_ARMY_LIST") {
-            renderUploadStatus("error", "Incorrecte lijst", "De lijst is niet opgeslagen.");
+          if (result && result.errorCode === "INVALID_PIN") {
+            el.armyUploadPinError.textContent = result.error || "Onjuiste PIN.";
             return;
           }
-          throw new Error((result && result.error) || "Onbekende fout bij uploaden");
+
+          // Voor inhoudelijke JSON/lijstfouten sluiten we de PIN-popup en tonen
+          // we de bestaande compacte uploadmelding op de pagina.
+          const errorCode = result && result.errorCode;
+          const error = result && result.error;
+          const shortError = result && result.shortError;
+          const detectedArmy = String(result && result.detectedArmy || "").trim();
+
+          closeArmyUploadPinModal();
+
+          if (errorCode === "GAME_SYSTEM_FILE") {
+            renderUploadStatus(
+              "error",
+              "Geen army list",
+              detectedArmy
+                ? `Game-systembestand voor ${detectedArmy} herkend.`
+                : (shortError || "Game-systembestand herkend."),
+              error || "Dit bestand bevat geen gespeelde army list."
+            );
+            return;
+          }
+
+          if (errorCode === "INVALID_ARMY_LIST" || errorCode === "UNSUPPORTED_JSON_FORMAT") {
+            renderUploadStatus(
+              "error",
+              "Incorrecte lijst",
+              shortError || "De lijst is niet opgeslagen.",
+              error || "Het bestand kon niet als army list worden verwerkt."
+            );
+            return;
+          }
+
+          throw new Error(error || "Onbekende fout bij uploaden");
         }
+
+        closeArmyUploadPinModal();
 
         renderUploadStatus(
           "success",
           `Army list van ${playerName} opgeslagen.`,
           `${Number(result.usedPoints || 0)}/${Number(result.maximumPoints || 0)} ptn ✓`
         );
+
         el.armyUploadForm.reset();
         await loadArmyLists();
       } catch (error) {
         console.error("Fout bij uploaden army list:", error);
-        renderUploadStatus("error", "Upload mislukt", error.message || "De lijst is niet opgeslagen.");
+
+        if (error instanceof SyntaxError) {
+          el.armyUploadPinError.textContent = "Het gekozen bestand bevat geen geldige JSON.";
+        } else {
+          el.armyUploadPinError.textContent =
+            error.message || "De lijst kon niet worden opgeslagen.";
+        }
       } finally {
-        el.armyUploadSubmit.disabled = false;
-        el.armyUploadSubmit.textContent = "Lijst uploaden";
+        el.armyUploadPinConfirm.disabled = false;
+        el.armyUploadPinConfirm.textContent = "Upload bevestigen";
+      }
+    }
+
+    function openArmyDeleteModal(playerName) {
+      pendingArmyDeletePlayer = String(playerName || "").trim();
+      if (!pendingArmyDeletePlayer || !el.armyDeleteModal) return;
+
+      el.armyDeleteCopy.textContent = `Je staat op het punt de opgeslagen army list van ${pendingArmyDeletePlayer} te verwijderen. Voer de PIN van ${pendingArmyDeletePlayer} in om te bevestigen.`;
+      el.armyDeletePin.value = "";
+      el.armyDeleteError.textContent = "";
+      el.armyDeleteModal.classList.remove("hidden");
+      el.armyDeleteModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => el.armyDeletePin.focus(), 0);
+    }
+
+    function closeArmyDeleteModal() {
+      pendingArmyDeletePlayer = "";
+      if (!el.armyDeleteModal) return;
+      el.armyDeleteModal.classList.add("hidden");
+      el.armyDeleteModal.setAttribute("aria-hidden", "true");
+      el.armyDeletePin.value = "";
+      el.armyDeleteError.textContent = "";
+      document.body.style.overflow = "";
+    }
+
+    async function confirmArmyDelete() {
+      const playerName = pendingArmyDeletePlayer;
+      const pin = String(el.armyDeletePin && el.armyDeletePin.value || "").trim();
+
+      el.armyDeleteError.textContent = "";
+      if (!playerName) return;
+      if (!/^\d{4}$/.test(pin)) {
+        el.armyDeleteError.textContent = "Voer een geldige 4-cijferige PIN in.";
+        return;
+      }
+
+      el.armyDeleteConfirm.disabled = true;
+      el.armyDeleteConfirm.textContent = "Verwijderen...";
+
+      try {
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "deleteArmyList",
+            playerName,
+            pin,
+          }),
+          redirect: "follow",
+        });
+
+        if (!response.ok) throw new Error(`HTTP fout: ${response.status}`);
+        const result = await response.json();
+
+        if (!result || !result.ok) {
+          el.armyDeleteError.textContent = (result && result.error) || "De lijst kon niet worden verwijderd.";
+          return;
+        }
+
+        closeArmyDeleteModal();
+        await loadArmyLists();
+      } catch (error) {
+        console.error("Fout bij verwijderen army list:", error);
+        el.armyDeleteError.textContent = error.message || "De lijst kon niet worden verwijderd.";
+      } finally {
+        el.armyDeleteConfirm.disabled = false;
+        el.armyDeleteConfirm.textContent = "Lijst verwijderen";
       }
     }
 
@@ -3459,8 +3854,16 @@ function closeArmyListSummary() {
       renderTableFromRows(rows, el.standingsHead, el.standingsBody, el.standingsTableWrap, 'Er zijn nog geen standen beschikbaar.');
     }
 
+    function getResultStatusMeta(status) {
+      const normalized = String(status || "confirmed").toLowerCase();
+      if (normalized === "pending") return { label: "Niet bevestigd", cls: "pending" };
+      if (normalized === "disputed") return { label: "Betwist", cls: "disputed" };
+      return { label: "Bevestigd", cls: "confirmed" };
+    }
+
     function renderResultsHistory(results) {
       const items = Array.isArray(results) ? results : [];
+      resultsByMatchKey = Object.fromEntries(items.filter((item) => item && item.matchKey).map((item) => [item.matchKey, item]));
 
       if (!items.length) {
         el.resultsHistoryList.innerHTML = '<p class="results-history-empty">Er zijn nog geen resultaten opgeslagen.</p>';
@@ -3471,16 +3874,157 @@ function closeArmyListSummary() {
         const text = String(item && item.text || '').trim();
         const resultType = String(item && item.resultType || '').trim();
         const difference = Number(item && item.vpDifference || 0);
+        const status = getResultStatusMeta(item && item.status);
         return `
           <div class="results-history-item">
             <p class="results-history-text">${escapeHtml(text)}</p>
             <div class="results-history-badges">
+              <span class="badge result-status-badge ${status.cls}">${escapeHtml(status.label)}</span>
               ${resultType ? `<span class="badge">${escapeHtml(resultType)}</span>` : ''}
               <span class="badge">+${Number.isFinite(difference) ? difference : 0} VP</span>
+              <button type="button" class="result-details-button" data-result-details="${escapeHtml(item.matchKey || '')}" aria-label="Bekijk resultaatdetails" title="Bekijk details">👁</button>
             </div>
           </div>
         `;
       }).join('');
+
+      el.resultsHistoryList.querySelectorAll('[data-result-details]').forEach((button) => {
+        button.addEventListener('click', () => openResultDetails(button.dataset.resultDetails));
+      });
+    }
+
+    function formatHistoryEvent(event) {
+      const labels = { created: 'Resultaat ingediend', updated: 'Resultaat aangepast; bevestigingen ingetrokken', confirmed: 'Bevestigd', disputed: 'Betwist' };
+      const label = labels[String(event && event.action || '')] || String(event && event.action || 'Wijziging');
+      const who = event && event.player ? ` door ${event.player}` : '';
+      let when = '';
+      if (event && event.at) {
+        const date = new Date(event.at);
+        if (!Number.isNaN(date.getTime())) when = ` · ${date.toLocaleString('nl-NL')}`;
+      }
+      return `${label}${who}${when}`;
+    }
+
+    function renderResultPlayerCard(match, player) {
+      const confirmedText = player.confirmed ? '✓ Bevestigd' : '○ Nog niet bevestigd';
+      const units = Array.isArray(player.units) ? player.units : [];
+      const unitsHtml = units.length ? `
+        <div class="result-unit-section">
+          <p class="result-detail-subtitle">Vernietiging van army van ${escapeHtml(player.opponent || 'tegenstander')}</p>
+          <div class="result-unit-list">
+            ${units.map((unit) => `
+              <div class="result-unit-row">
+                <span>${escapeHtml((Number(unit.quantity || 1) > 1 ? `${Number(unit.quantity)} ` : '') + (unit.name || 'Unit'))}</span>
+                <strong>${Number(unit.destroyedPercent || 0)}%${unit.bannerCaptured ? ' · banner' : ''}</strong>
+              </div>
+            `).join('')}
+          </div>
+        </div>` : '';
+
+      const actions = String(match.status || 'confirmed') === 'confirmed' ? '' : `
+        <div class="result-confirmation-line">
+          <span class="result-confirmation-state">${confirmedText}</span>
+          ${!player.confirmed && String(match.status) !== 'disputed' ? `<button type="button" class="result-action-button" data-result-action="confirm" data-result-player="${escapeHtml(player.name)}">Bevestigen</button>` : ''}
+          ${String(match.status) !== 'disputed' ? `<button type="button" class="result-action-button is-danger" data-result-action="dispute" data-result-player="${escapeHtml(player.name)}">Betwisten</button>` : ''}
+        </div>`;
+
+      return `
+        <div class="result-detail-player">
+          <p class="result-detail-player-name">${escapeHtml(player.name || '')}</p>
+          <p class="result-detail-score">${Number(player.totalScore || 0).toLocaleString('nl-NL')}</p>
+          <p class="result-detail-breakdown">${Number(player.victoryPoints || 0)} VP · ${Number(player.bannersCaptured || 0)} Banners · ${Number(player.enemyGeneralSlain || 0) ? 'General Killed' : 'No General Killed'} · ${Number(player.bonusObjectives || 0) ? 'Bonus Objective Completed' : 'No Bonus Objective'}</p>
+          ${actions || `<div class="result-confirmation-line"><span class="result-confirmation-state">${confirmedText}</span></div>`}
+          ${unitsHtml}
+        </div>`;
+    }
+
+    function openResultDetails(matchKey) {
+      const match = resultsByMatchKey[matchKey];
+      if (!match) return;
+      activeResultMatchKey = matchKey;
+      activePinAction = null;
+      const status = getResultStatusMeta(match.status);
+      el.resultDetailTitle.textContent = match.text || 'Resultaatdetails';
+      el.resultDetailContent.innerHTML = `
+        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:4px;">
+          <span class="badge result-status-badge ${status.cls}">${escapeHtml(status.label)}</span>
+          <span class="badge">${escapeHtml(match.matchSize || '')}</span>
+          ${match.resultType ? `<span class="badge">${escapeHtml(match.resultType)}</span>` : ''}
+        </div>
+        <div class="result-detail-summary-grid">
+          ${(match.players || []).map((player) => renderResultPlayerCard(match, player)).join('')}
+        </div>
+        <div id="result-pin-panel-slot"></div>
+        ${Array.isArray(match.history) && match.history.length ? `
+          <div class="result-history-section">
+            <p class="result-detail-subtitle">Historie</p>
+            <ul class="result-history-mini">${match.history.map((event) => `<li>${escapeHtml(formatHistoryEvent(event))}</li>`).join('')}</ul>
+          </div>` : ''}
+      `;
+
+      el.resultDetailContent.querySelectorAll('[data-result-action]').forEach((button) => {
+        button.addEventListener('click', () => showResultPinPanel(button.dataset.resultAction, button.dataset.resultPlayer));
+      });
+      el.resultDetailModal.classList.remove('hidden');
+      el.resultDetailModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeResultDetails() {
+      el.resultDetailModal.classList.add('hidden');
+      el.resultDetailModal.setAttribute('aria-hidden', 'true');
+      activeResultMatchKey = '';
+      activePinAction = null;
+      document.body.style.overflow = '';
+    }
+
+    function showResultPinPanel(action, playerName) {
+      activePinAction = { action, playerName };
+      const slot = document.getElementById('result-pin-panel-slot');
+      if (!slot) return;
+      const verb = action === 'dispute' ? 'Betwisten' : 'Bevestigen';
+      slot.innerHTML = `
+        <div class="result-pin-panel">
+          <p class="result-detail-subtitle">${verb} als ${escapeHtml(playerName)}</p>
+          <div class="result-pin-row">
+            <input id="result-pin-input" class="result-pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="PIN" aria-label="4-cijferige PIN">
+            <button type="button" class="button" id="result-pin-submit">${verb}</button>
+            <button type="button" class="result-action-button" id="result-pin-cancel">Annuleren</button>
+          </div>
+          <p id="result-pin-message" class="result-pin-message">Voer de 4-cijferige PIN van ${escapeHtml(playerName)} in.</p>
+        </div>`;
+      const input = document.getElementById('result-pin-input');
+      input.focus();
+      input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); });
+      document.getElementById('result-pin-cancel').addEventListener('click', () => { slot.innerHTML = ''; activePinAction = null; });
+      document.getElementById('result-pin-submit').addEventListener('click', submitResultPinAction);
+      input.addEventListener('keydown', (event) => { if (event.key === 'Enter') submitResultPinAction(); });
+    }
+
+    async function submitResultPinAction() {
+      if (!activePinAction || !activeResultMatchKey) return;
+      const input = document.getElementById('result-pin-input');
+      const message = document.getElementById('result-pin-message');
+      const pin = String(input && input.value || '');
+      if (!/^\d{4}$/.test(pin)) { if (message) message.textContent = 'Voer precies 4 cijfers in.'; return; }
+
+      const actionName = activePinAction.action === 'dispute' ? 'disputeResult' : 'confirmResult';
+      try {
+        if (message) message.textContent = 'Bezig...';
+        const response = await fetch(SHEETS_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: actionName, matchKey: activeResultMatchKey, playerName: activePinAction.playerName, pin }),
+          redirect: 'follow',
+        });
+        if (!response.ok) throw new Error(`HTTP fout: ${response.status}`);
+        const result = await response.json();
+        if (!result || !result.ok) throw new Error((result && result.error) || 'Actie mislukt.');
+        closeResultDetails();
+        await loadLiveStandData();
+      } catch (error) {
+        if (message) message.textContent = error.message || 'Actie mislukt.';
+      }
     }
 
     function setRefreshButtonLoading(isLoading) {
@@ -3756,8 +4300,29 @@ document.querySelectorAll("[data-close-modal]").forEach((button) => {
 if (el.armyListSummaryClose) {
   el.armyListSummaryClose.addEventListener("click", closeArmyListSummary);
 }
+if (el.armyDeleteClose) el.armyDeleteClose.addEventListener("click", closeArmyDeleteModal);
+if (el.armyDeleteCancel) el.armyDeleteCancel.addEventListener("click", closeArmyDeleteModal);
+if (el.armyDeleteBackdrop) el.armyDeleteBackdrop.addEventListener("click", closeArmyDeleteModal);
+if (el.armyDeleteConfirm) el.armyDeleteConfirm.addEventListener("click", confirmArmyDelete);
+if (el.armyDeletePin) {
+  el.armyDeletePin.addEventListener("input", () => {
+    el.armyDeletePin.value = sanitizeInteger(el.armyDeletePin.value).slice(0, 4);
+  });
+  el.armyDeletePin.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      confirmArmyDelete();
+    }
+  });
+}
 if (el.armyListSummaryBackdrop) {
   el.armyListSummaryBackdrop.addEventListener("click", closeArmyListSummary);
+}
+if (el.resultDetailClose) {
+  el.resultDetailClose.addEventListener("click", closeResultDetails);
+}
+if (el.resultDetailBackdrop) {
+  el.resultDetailBackdrop.addEventListener("click", closeResultDetails);
 }
 
 document.addEventListener("keydown", (event) => {
@@ -3765,6 +4330,7 @@ document.addEventListener("keydown", (event) => {
     closeVpModal("speler1");
     closeVpModal("speler2");
     closeArmyListSummary();
+    closeResultDetails();
   }
 });
 
@@ -3798,8 +4364,8 @@ document.addEventListener("keydown", (event) => {
         console.log("Verzonden naar Google Sheets:", rows);
         showStatus(
           "success",
-          "Resultaat succesvol verzonden",
-          result.message || "Het resultaat is opgeslagen."
+          "Resultaat opgeslagen",
+          result.message || "Het resultaat is opgeslagen en wacht op bevestiging."
         );
       } catch (error) {
         console.error("Fout bij verzenden:", error);
@@ -3834,6 +4400,22 @@ document.addEventListener("keydown", (event) => {
     el.standingsRefresh.addEventListener("click", () => {
       loadLiveStandData();
     });
+
+    if (el.armyUploadPinPopup) {
+      el.armyUploadPinPopup.addEventListener("input", () => {
+        el.armyUploadPinPopup.value = sanitizeInteger(el.armyUploadPinPopup.value).slice(0, 4);
+      });
+      el.armyUploadPinPopup.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          confirmArmyUploadWithPin();
+        }
+      });
+    }
+    if (el.armyUploadPinClose) el.armyUploadPinClose.addEventListener("click", closeArmyUploadPinModal);
+    if (el.armyUploadPinCancel) el.armyUploadPinCancel.addEventListener("click", closeArmyUploadPinModal);
+    if (el.armyUploadPinBackdrop) el.armyUploadPinBackdrop.addEventListener("click", closeArmyUploadPinModal);
+    if (el.armyUploadPinConfirm) el.armyUploadPinConfirm.addEventListener("click", confirmArmyUploadWithPin);
 
     el.armyUploadForm.addEventListener("submit", handleArmyUpload);
 
