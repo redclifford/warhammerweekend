@@ -1913,7 +1913,7 @@
               </div>
               <div class="field-group">
                 <label for="speler1-banners" class="label">Banners Captured</label>
-                <input id="speler1-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <input id="speler1-banners" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" placeholder="0 - 99" />
                 <div class="error" id="error-speler1-bannersCaptured"></div>
               </div>
               <div class="field-group">
@@ -2019,7 +2019,7 @@
               </div>
               <div class="field-group">
                 <label for="speler2-banners" class="label">Banners Captured</label>
-                <input id="speler2-banners" type="text" inputmode="numeric" placeholder="0 - 9" />
+                <input id="speler2-banners" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" placeholder="0 - 99" />
                 <div class="error" id="error-speler2-bannersCaptured"></div>
               </div>
               <div class="field-group">
@@ -2253,6 +2253,8 @@
     let armyListsByPlayer = {};
     const vpSelections = { speler1: {}, speler2: {} };
     const bannerSelections = { speler1: {}, speler2: {} };
+    const bannersManual = { speler1: false, speler2: false };
+    const vpManual = { speler1: false, speler2: false };
     let resultsByMatchKey = {};
     let activeResultMatchKey = "";
     let activePinAction = null;
@@ -2550,8 +2552,8 @@
 
         if (speler.bannersCaptured === "") {
           errors[`${prefix}.bannersCaptured`] = "Banners Captured is verplicht.";
-        } else if (Number(speler.bannersCaptured) > 9) {
-          errors[`${prefix}.bannersCaptured`] = "Maximum is 9.";
+        } else if (Number(speler.bannersCaptured) > 99) {
+          errors[`${prefix}.bannersCaptured`] = "Maximum is 99.";
         }
       });
 
@@ -2703,7 +2705,7 @@
     }
 
     function canOpenStandView(currentForm) {
-      return !hasStartedForm(currentForm) || Object.keys(validateForm(currentForm)).length === 0;
+      return !hasStartedForm(currentForm);
     }
 
     function hideNavLockMessage() {
@@ -2711,7 +2713,7 @@
     }
 
     function showNavLockMessage() {
-      el.navLockMessage.textContent = "Vul eerst het formulier helemaal in";
+      el.navLockMessage.textContent = "Verzend het formulier of maak het eerst leeg";
       el.navLockMessage.classList.remove("hidden");
     }
 
@@ -2719,6 +2721,9 @@
       const isBlocked = !canOpenStandView(form);
       el.navStand.classList.toggle("is-disabled", isBlocked);
       el.navStand.setAttribute("aria-disabled", isBlocked ? "true" : "false");
+      const isArmyListsBlocked = hasStartedForm(form);
+      el.navArmyLists.classList.toggle("is-disabled", isArmyListsBlocked);
+      el.navArmyLists.setAttribute("aria-disabled", isArmyListsBlocked ? "true" : "false");
       if (!isBlocked) hideNavLockMessage();
     }
 
@@ -3199,12 +3204,16 @@ function updateVictoryPointsFromSelections(playerKey) {
     return sum + (selected === "ja" ? 1 : 0);
   }, 0);
 
-  form[playerKey].victoryPoints = String(totalVp);
-  form[playerKey].bannersCaptured = String(totalBanners);
+  if (!vpManual[playerKey]) {
+    form[playerKey].victoryPoints = String(totalVp);
+  }
+  if (!bannersManual[playerKey]) {
+    form[playerKey].bannersCaptured = String(totalBanners);
+  }
 
   el[playerKey].victoryPoints.value = form[playerKey].victoryPoints;
   el[playerKey].bannersCaptured.value = form[playerKey].bannersCaptured;
-  el[playerKey].bannersCaptured.readOnly = true;
+  el[playerKey].bannersCaptured.readOnly = false;
 
   renderSummary();
   updateStandNavState();
@@ -3302,6 +3311,7 @@ function attachOpponentSelectListeners(container) {
       const playerKey = event.target.dataset.player;
       const entryId = event.target.dataset.entryId;
       vpSelections[playerKey][entryId] = event.target.value;
+      vpManual[playerKey] = false;
       updateVictoryPointsFromSelections(playerKey);
       renderOpponentArmyPanel(playerKey);
     });
@@ -3312,6 +3322,7 @@ function attachOpponentSelectListeners(container) {
       const playerKey = event.target.dataset.player;
       const entryId = event.target.dataset.entryId;
       bannerSelections[playerKey][entryId] = event.target.value;
+      bannersManual[playerKey] = false;
       updateVictoryPointsFromSelections(playerKey);
       renderOpponentArmyPanel(playerKey);
     });
@@ -4240,6 +4251,10 @@ function closeArmyListSummary() {
       vpSelections.speler2 = {};
       bannerSelections.speler1 = {};
       bannerSelections.speler2 = {};
+      bannersManual.speler1 = false;
+      bannersManual.speler2 = false;
+      vpManual.speler1 = false;
+      vpManual.speler2 = false;
       syncInputsFromState();
       renderErrors({});
       renderSummary();
@@ -4318,9 +4333,15 @@ function closeArmyListSummary() {
     el.speler2.naam.addEventListener("change", (e) => { form.speler2.naam = e.target.value; renderSummary(); updateStandNavState(); renderOpponentArmyPanels(); });
 
     bindVictoryPointsInput(el.speler1.victoryPoints, "speler1");
-    bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 9);
+    bindTextInput(el.speler1.bannersCaptured, "speler1", "bannersCaptured", 99);
     bindVictoryPointsInput(el.speler2.victoryPoints, "speler2");
-    bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 9);
+    bindTextInput(el.speler2.bannersCaptured, "speler2", "bannersCaptured", 99);
+    el.speler1.bannersCaptured.addEventListener("input", () => { bannersManual.speler1 = true; });
+    el.speler2.bannersCaptured.addEventListener("input", () => { bannersManual.speler2 = true; });
+    el.speler1.victoryPoints.addEventListener("input", () => { vpManual.speler1 = true; });
+    el.speler1.victoryPoints.addEventListener("paste", () => { vpManual.speler1 = true; });
+    el.speler2.victoryPoints.addEventListener("input", () => { vpManual.speler2 = true; });
+    el.speler2.victoryPoints.addEventListener("paste", () => { vpManual.speler2 = true; });
 
     setupFieldInfoPopovers();
 
@@ -4482,6 +4503,11 @@ document.addEventListener("keydown", (event) => {
     });
 
     el.navArmyLists.addEventListener("click", () => {
+      if (hasStartedForm(form)) {
+        el.navLockMessage.textContent = "Verzend het formulier of maak het eerst leeg";
+        el.navLockMessage.classList.remove("hidden");
+        return;
+      }
       hideNavLockMessage();
       setActiveView("army-lists");
     });
